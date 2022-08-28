@@ -21,7 +21,7 @@ func main() {
 	myApp := app.New()
 	w := myApp.NewWindow("Image")
 
-	cube := mesh.Cube(geometry.VectorZero(), geometry.VectorZero(), geometry.VectorNew(400, 400, 400))
+	cube := mesh.Cube(geometry.VectorNew(100, 0, 0), geometry.VectorNew(100, 0, 0), geometry.VectorNew(400, 400, 400))
 
 	
 	src := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))

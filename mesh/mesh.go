@@ -39,6 +39,24 @@ func (m *Mesh) Draw(image *image.RGBA, cam *render.Camera, lights []render.Light
 }
 
 
+func (m *Mesh) Rotate(rotation geometry.Vector3) {
+	negativePosition := geometry.VectorNew(-m.Position.X, -m.Position.Y, -m.Position.Z)
+
+	m.Translate(negativePosition)
+	m.rotateOrigin(rotation)
+	m.Translate(m.Position)
+	m.Rotation.AddAssign(rotation)
+}
+
+func (m *Mesh) rotateOrigin(rotation geometry.Vector3) {
+	for i := range m.Triangles {
+		m.Triangles[i].A.Rotate(rotation)
+		m.Triangles[i].B.Rotate(rotation)
+		m.Triangles[i].C.Rotate(rotation)
+	}
+	m.Position.AddAssign(rotation)
+}
+
 
 func (m *Mesh) Translate(position geometry.Vector3) {
 	for i := range m.Triangles {
@@ -86,6 +104,7 @@ func Cube(position geometry.Vector3, rotation geometry.Vector3, size geometry.Ve
 	triangles[11] = geometry.TriangleNew(v2, v6, v7)
 
 	result := Mesh{triangles, material.Material{}, geometry.VectorZero(), geometry.VectorZero()}
-	//result.Translate(position)
+	result.Translate(position)
+	result.Rotate(rotation)
 	return result
 }
