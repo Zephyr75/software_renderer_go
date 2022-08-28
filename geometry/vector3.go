@@ -1,10 +1,9 @@
-package mesh
+package geometry
 
 import (
 	"image/color"
 	"math"
 	"overdrive/utilities"
-	"overdrive/draw"
 )
 
 type Vector3 struct {
@@ -49,7 +48,7 @@ func (v *Vector3) Rotate(r Vector3) {
 	v.Z = -x * math.Sin(ry) + y * math.Cos(ry) * math.Sin(rx) + z * math.Cos(ry) * math.Cos(rx)
 }
 
-func (v Vector3) Converted() draw.Point {
+func (v Vector3) Converted() Point {
 	v.applyPerspective()
 	v.centerScreen()
 	return v.toPoint()
@@ -67,8 +66,8 @@ func (v *Vector3) centerScreen() {
 	v.Y += utilities.RESOLUTION_Y / 2
 }
 
-func (v Vector3) toPoint() draw.Point {
-	return draw.Point{int(v.X), int(v.Y)}
+func (v Vector3) toPoint() Point {
+	return Point{int(v.X), int(v.Y)}
 }
 
 

@@ -1,4 +1,4 @@
-package draw
+package geometry
 
 
 type Point struct {

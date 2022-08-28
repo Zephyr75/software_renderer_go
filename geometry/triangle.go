@@ -1,8 +1,7 @@
-package mesh
+package geometry
 
 import (
 	"image"
-	"overdrive/draw"
 	"github.com/StephaneBunel/bresenham"
 	"image/color"
 )
@@ -13,11 +12,25 @@ type Triangle struct {
 	C Vector3
 }
 
+func (t Triangle) Normal() Vector3 {
+	v1 := t.B.Sub(t.A)
+	v1_norm := v1.Norm()
+	v1.X /= v1_norm
+	v1.Y /= v1_norm
+	v1.Z /= v1_norm
+	v2 := t.C.Sub(t.A)
+	v2_norm := v2.Norm()
+	v2.X /= v2_norm
+	v2.Y /= v2_norm
+	v2.Z /= v2_norm
+	return v1.Cross(v2)
+}
+
 func (t *Triangle) Draw(image *image.RGBA) {
 	vertices := []Vector3{t.A, t.B, t.C}
 
-	points := make([]draw.Point, 3)
-	
+	points := make([]Point, 3)
+
 	for i, v := range vertices {
 		points[i] = v.Converted()
 	}
@@ -66,7 +79,7 @@ func (t *Triangle) Draw(image *image.RGBA) {
 	
 }
 
-func f(start, end draw.Point, y int) int {
+func f(start, end Point, y int) int {
 	height := end.Y - start.Y
 	if height == 0 {
 		height = 1
