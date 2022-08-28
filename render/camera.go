@@ -2,11 +2,11 @@ package render
 
 
 import (
-	"mesh/vector3"
+	"overdrive/mesh"
 )
 
 
 type Camera struct {
-	position vector3.Vector3
-	direction vector3.Vector3
+	position mesh.Vector3
+	direction mesh.Vector3
 }

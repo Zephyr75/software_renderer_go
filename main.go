@@ -14,11 +14,24 @@ import (
 	"overdrive/test"
 	"time"
 	"github.com/StephaneBunel/bresenham"
+	"overdrive/mesh"
+	//"overdrive/render"
+	"overdrive/material"
+
 )
 
 func main() {
 	myApp := app.New()
 	w := myApp.NewWindow("Image")
+
+
+	vect := mesh.Vector3{
+		1,
+		2,
+		3,
+		color.Black,
+		material.Material{},
+	}
 
 	//set src to a white image of 500 x 500 with a black pixel in the middle
 	src := image.NewRGBA(image.Rect(0, 0, 500, 500))

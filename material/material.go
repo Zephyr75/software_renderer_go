@@ -1,4 +1,4 @@
-package render
+package material
 
 
 import (
@@ -9,7 +9,7 @@ type MaterialType byte
 
 const (
 	FlatColor MaterialType = 0
-	RTexture = 1
+	Texture = 1
 )
 
 type Material struct {
