@@ -52,6 +52,41 @@ func (v *Vector3) Rotate(r Vector3) {
 	v.Z = -x * math.Sin(ry) + y * math.Cos(ry) * math.Sin(rx) + z * math.Cos(ry) * math.Cos(rx)
 }
 
+func (v Vector3) Converted() draw.Point {
+	v.applyPerspective()
+	v.centerScreen()
+	return v.toPoint()
+}
+
+func (v *Vector3) applyPerspective() {
+	z0 := utilities.Z0()
+	v.X = v.X * z0 / (z0 + v.Z)
+	v.Y = v.Y * z0 / (z0 + v.Z)
+	v.Z = z0
+}
+
+func (v *Vector3) centerScreen() {
+	v.X += utilities.RESOLUTION_X / 2
+	v.Y += utilities.RESOLUTION_Y / 2
+}
+
+func (v Vector3) toPoint() draw.Point {
+	return draw.Point{int(v.X), int(v.Y)}
+}
+
+
+func (v Vector3) Distance(v2 Vector3) float64 {
+	return math.Sqrt(math.Pow(v.X - v2.X, 2) + math.Pow(v.Y - v2.Y, 2) + math.Pow(v.Z - v2.Z, 2))
+}
+
+/*
+ ██████  ██████  ███████ ██████   █████  ████████  ██████  ██████  ███████ 
+██    ██ ██   ██ ██      ██   ██ ██   ██    ██    ██    ██ ██   ██ ██      
+██    ██ ██████  █████   ██████  ███████    ██    ██    ██ ██████  ███████ 
+██    ██ ██      ██      ██   ██ ██   ██    ██    ██    ██ ██   ██      ██ 
+ ██████  ██      ███████ ██   ██ ██   ██    ██     ██████  ██   ██ ███████                                   
+*/
+
 func (v Vector3) Add(v2 Vector3) Vector3 {
 	return Vector3{
 		v.X + v2.X,
@@ -82,24 +117,4 @@ func (v *Vector3) SubAssign(v2 Vector3) {
 	v.X -= v2.X
 	v.Y -= v2.Y
 	v.Z -= v2.Z
-}
-
-func (v *Vector3) ApplyPerspective() {
-	z0 := utilities.Z0()
-	v.X = v.X * z0 / (z0 + v.Z)
-	v.Y = v.Y * z0 / (z0 + v.Z)
-	v.Z = z0
-}
-
-func (v *Vector3) CenterScreen() {
-	v.X += utilities.RESOLUTION_X / 2
-	v.Y += utilities.RESOLUTION_Y / 2
-}
-
-func (v Vector3) Distance(v2 Vector3) float64 {
-	return math.Sqrt(math.Pow(v.X - v2.X, 2) + math.Pow(v.Y - v2.Y, 2) + math.Pow(v.Z - v2.Z, 2))
-}
-
-func (v Vector3) ToPoint() draw.Point {
-	return draw.Point{int(v.X), int(v.Y)}
 }
