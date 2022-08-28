@@ -1,6 +1,7 @@
 package geometry
 
 import (
+	"fmt"
 	"image"
 	"github.com/StephaneBunel/bresenham"
 	"image/color"
@@ -54,7 +55,7 @@ func (t *Triangle) Draw(image *image.RGBA) {
 	for y := top; y < bottom; y++ {
 		var min int
 		var max int
-		if y > mid {
+		if y < mid {
 			a := f(p1, p2, y)
 			b := f(p1, p3, y)
 			if a < b {
@@ -75,6 +76,9 @@ func (t *Triangle) Draw(image *image.RGBA) {
 				max = a
 			}
 		}
+
+		fmt.Println("y:", y, "min:", min, "max:", max)
+
 		//bresenham.DrawLine(image, min, y, max, y, t.A.LightAmount)
 		bresenham.DrawLine(image, min, y, max, y, color.White)
 
