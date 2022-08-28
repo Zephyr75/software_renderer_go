@@ -15,11 +15,11 @@ const (
 )
 
 type Light struct {
-	position geometry.Vector3
-	direction geometry.Vector3
-	lightType LightType
-	color color.Color
-	length float64
+	Position geometry.Vector3
+	Direction geometry.Vector3
+	LightType LightType
+	Color color.Color
+	Length float64
 }
 
 

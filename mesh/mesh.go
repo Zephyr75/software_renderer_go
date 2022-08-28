@@ -30,7 +30,11 @@ func (m *Mesh) Draw(image *image.RGBA, cam *render.Camera, lights []render.Light
 		}
 	}
 
-	
+	//TODO sort triangles by distance to camera
+
+	for _, t := range m.Triangles {
+		t.Draw(image)
+	}
 	
 }
 
