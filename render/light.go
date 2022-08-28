@@ -16,7 +16,7 @@ const (
 
 type Light struct {
 	Position geometry.Vector3
-	Direction geometry.Vector3
+	Rotation geometry.Vector3
 	LightType LightType
 	Color color.Color
 	Length float64

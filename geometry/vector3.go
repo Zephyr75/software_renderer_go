@@ -84,7 +84,11 @@ func (v Vector3) Distance(v2 Vector3) float64 {
 */
 
 func VectorZero() Vector3 {
-	return Vector3{0, 0, 0, color.Black}
+	return Vector3{0, 0, 0, color.White}
+}
+
+func VectorNew(x, y, z float64) Vector3 {
+	return Vector3{x, y, z, color.White}
 }
 
 /*

@@ -12,6 +12,10 @@ type Triangle struct {
 	C Vector3
 }
 
+func TriangleNew(a, b, c Vector3) Triangle {
+	return Triangle{a, b, c}
+}
+
 func (t Triangle) Normal() Vector3 {
 	v1 := t.B.Sub(t.A)
 	v1_norm := v1.Norm()

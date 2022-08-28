@@ -21,7 +21,7 @@ func main() {
 	myApp := app.New()
 	w := myApp.NewWindow("Image")
 
-	cube := mesh.Cube(geometry.VectorZero(), geometry.VectorZero(), geometry.Vector3{400, 400, 400, color.White})
+	cube := mesh.Cube(geometry.VectorZero(), geometry.VectorZero(), geometry.VectorNew(400, 400, 400))
 
 	
 	src := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
@@ -31,9 +31,18 @@ func main() {
 		}
 	}
 
-	cam := render.Camera{geometry.VectorZero(), geometry.Vector3{0, 0, -800, color.White}}
+	cam := render.Camera{
+		Position: geometry.VectorZero(), 
+		Rotation: geometry.VectorNew(0, 0, -800)}
 
-	light := render.Light{geometry.Vector3{0, 0, 0, color.White}, geometry.Vector3{0, 0, 0, color.White}, render.Ambient, color.White, 0}
+
+	light := render.Light{
+		Position: geometry.VectorZero(),
+		Rotation: geometry.VectorZero(),
+		LightType: render.Ambient,
+		Color: color.White,
+		Length: 0,
+	}
 
 	cube.Draw(src, &cam, []render.Light{light})
 

@@ -2,7 +2,6 @@ package mesh
 
 import (
 	"image"
-	"image/color"
 	"overdrive/material"
 	"overdrive/geometry"
 	"overdrive/render"
@@ -63,27 +62,27 @@ func (m *Mesh) Translate(position geometry.Vector3) {
 */
 
 func Cube(position geometry.Vector3, rotation geometry.Vector3, size geometry.Vector3) Mesh {
-	v0 := geometry.Vector3{size.X / 2, size.Y / 2, size.Z / 2, color.Black}
-	v1 := geometry.Vector3{size.X / 2, size.Y / 2, -size.Z / 2, color.Black}
-	v2 := geometry.Vector3{size.X / 2, -size.Y / 2, size.Z / 2, color.Black}
-	v3 := geometry.Vector3{size.X / 2, -size.Y / 2, -size.Z / 2, color.Black}
-	v4 := geometry.Vector3{-size.X / 2, size.Y / 2, size.Z / 2, color.Black}
-	v5 := geometry.Vector3{-size.X / 2, size.Y / 2, -size.Z / 2, color.Black}
-	v6 := geometry.Vector3{-size.X / 2, -size.Y / 2, size.Z / 2, color.Black}
-	v7 := geometry.Vector3{-size.X / 2, -size.Y / 2, -size.Z / 2, color.Black}
-	triangles := make([]geometry.Triangle, 8)
-	triangles[0] = geometry.Triangle{v1, v3, v7}
-	triangles[1] = geometry.Triangle{v7, v5, v1}
-	triangles[2] = geometry.Triangle{v2, v0, v4}
-	triangles[3] = geometry.Triangle{v2, v4, v6}
-	triangles[4] = geometry.Triangle{v0, v3, v1}
-	triangles[5] = geometry.Triangle{v0, v2, v3}
-	triangles[6] = geometry.Triangle{v4, v5, v7}
-	triangles[7] = geometry.Triangle{v7, v6, v4}
-	triangles[8] = geometry.Triangle{v5, v0, v1}
-	triangles[9] = geometry.Triangle{v5, v4, v0}
-	triangles[10] = geometry.Triangle{v7, v3, v2}
-	triangles[11] = geometry.Triangle{v2, v6, v7}
+	v0 := geometry.VectorNew(size.X / 2, size.Y / 2, size.Z / 2)
+	v1 := geometry.VectorNew(size.X / 2, size.Y / 2, -size.Z / 2)
+	v2 := geometry.VectorNew(size.X / 2, -size.Y / 2, size.Z / 2)
+	v3 := geometry.VectorNew(size.X / 2, -size.Y / 2, -size.Z / 2)
+	v4 := geometry.VectorNew(-size.X / 2, size.Y / 2, size.Z / 2)
+	v5 := geometry.VectorNew(-size.X / 2, size.Y / 2, -size.Z / 2)
+	v6 := geometry.VectorNew(-size.X / 2, -size.Y / 2, size.Z / 2)
+	v7 := geometry.VectorNew(-size.X / 2, -size.Y / 2, -size.Z / 2)
+	triangles := make([]geometry.Triangle, 12)
+	triangles[0] = geometry.TriangleNew(v1, v3, v7)
+	triangles[1] = geometry.TriangleNew(v7, v5, v1)
+	triangles[2] = geometry.TriangleNew(v2, v0, v4)
+	triangles[3] = geometry.TriangleNew(v2, v4, v6)
+	triangles[4] = geometry.TriangleNew(v0, v3, v1)
+	triangles[5] = geometry.TriangleNew(v0, v2, v3)
+	triangles[6] = geometry.TriangleNew(v4, v5, v7)
+	triangles[7] = geometry.TriangleNew(v7, v6, v4)
+	triangles[8] = geometry.TriangleNew(v5, v0, v1)
+	triangles[9] = geometry.TriangleNew(v5, v4, v0)
+	triangles[10] = geometry.TriangleNew(v7, v3, v2)
+	triangles[11] = geometry.TriangleNew(v2, v6, v7)
 
 	result := Mesh{triangles, material.Material{}, geometry.VectorZero(), geometry.VectorZero()}
 	//result.Translate(position)
