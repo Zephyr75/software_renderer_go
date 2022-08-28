@@ -15,7 +15,9 @@ type Triangle struct {
 
 func (t *Triangle) Draw(image *image.RGBA) {
 	vertices := []Vector3{t.A, t.B, t.C}
+
 	points := make([]draw.Point, 3)
+	
 	for i, v := range vertices {
 		points[i] = v.Converted()
 	}
@@ -56,7 +58,8 @@ func (t *Triangle) Draw(image *image.RGBA) {
 				max = a
 			}
 		}
-		bresenham.DrawLine(image, min, y, max, y, t.A.LightAmount)
+		//bresenham.DrawLine(image, min, y, max, y, t.A.LightAmount)
+		bresenham.DrawLine(image, min, y, max, y, color.White)
 
 	}
 			

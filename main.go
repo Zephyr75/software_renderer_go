@@ -16,7 +16,6 @@ import (
 	"github.com/StephaneBunel/bresenham"
 	"overdrive/mesh"
 	//"overdrive/render"
-	"overdrive/material"
 
 )
 
@@ -30,7 +29,6 @@ func main() {
 		2,
 		3,
 		color.Black,
-		material.Material{},
 	}
 
 	//set src to a white image of 500 x 500 with a black pixel in the middle

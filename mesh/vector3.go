@@ -3,7 +3,6 @@ package mesh
 import (
 	"image/color"
 	"math"
-	"overdrive/material"
 	"overdrive/utilities"
 	"overdrive/draw"
 )
@@ -13,7 +12,6 @@ type Vector3 struct {
 	Y float64
 	Z float64
 	LightAmount color.Color
-	Material material.Material
 }
 
 func (v Vector3) Norm() float64 {
@@ -33,7 +31,6 @@ func (v Vector3) Cross(v2 Vector3) Vector3 {
 		v.Z * v2.X - v.X * v2.Z,
 		v.X * v2.Y - v.Y * v2.X,
 		color.Black,
-		material.Material{},
 	}
 }
 
@@ -80,11 +77,23 @@ func (v Vector3) Distance(v2 Vector3) float64 {
 }
 
 /*
+ ██████  ██████  ███    ██ ███████ ████████ ██████  ██    ██  ██████ ████████  ██████  ██████  ███████ 
+██      ██    ██ ████   ██ ██         ██    ██   ██ ██    ██ ██         ██    ██    ██ ██   ██ ██      
+██      ██    ██ ██ ██  ██ ███████    ██    ██████  ██    ██ ██         ██    ██    ██ ██████  ███████ 
+██      ██    ██ ██  ██ ██      ██    ██    ██   ██ ██    ██ ██         ██    ██    ██ ██   ██      ██ 
+ ██████  ██████  ██   ████ ███████    ██    ██   ██  ██████   ██████    ██     ██████  ██   ██ ███████ 
+*/
+
+func VectorZero() Vector3 {
+	return Vector3{0, 0, 0, color.Black}
+}
+
+/*
  ██████  ██████  ███████ ██████   █████  ████████  ██████  ██████  ███████ 
 ██    ██ ██   ██ ██      ██   ██ ██   ██    ██    ██    ██ ██   ██ ██      
 ██    ██ ██████  █████   ██████  ███████    ██    ██    ██ ██████  ███████ 
 ██    ██ ██      ██      ██   ██ ██   ██    ██    ██    ██ ██   ██      ██ 
- ██████  ██      ███████ ██   ██ ██   ██    ██     ██████  ██   ██ ███████                                   
+ ██████  ██      ███████ ██   ██ ██   ██    ██     ██████  ██   ██ ███████                               
 */
 
 func (v Vector3) Add(v2 Vector3) Vector3 {
@@ -93,7 +102,6 @@ func (v Vector3) Add(v2 Vector3) Vector3 {
 		v.Y + v2.Y,
 		v.Z + v2.Z,
 		color.Black,
-		material.Material{},
 	}
 }
 
@@ -109,7 +117,6 @@ func (v Vector3) Sub(v2 Vector3) Vector3 {
 		v.Y - v2.Y,
 		v.Z - v2.Z,
 		color.Black,
-		material.Material{},
 	}
 }
 
