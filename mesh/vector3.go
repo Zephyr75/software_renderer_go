@@ -5,6 +5,7 @@ import (
 	"math"
 	"overdrive/material"
 	"overdrive/utilities"
+	"overdrive/draw"
 )
 
 type Vector3 struct {
@@ -97,4 +98,8 @@ func (v *Vector3) CenterScreen() {
 
 func (v Vector3) Distance(v2 Vector3) float64 {
 	return math.Sqrt(math.Pow(v.X - v2.X, 2) + math.Pow(v.Y - v2.Y, 2) + math.Pow(v.Z - v2.Z, 2))
+}
+
+func (v Vector3) ToPoint() draw.Point {
+	return draw.Point{int(v.X), int(v.Y)}
 }

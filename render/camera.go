@@ -7,6 +7,13 @@ import (
 
 
 type Camera struct {
-	position mesh.Vector3
-	direction mesh.Vector3
+	Position mesh.Vector3
+	Rotation mesh.Vector3
 }
+
+func (c *Camera) applyCameraVertex(v *mesh.Vector3) {
+	v.Rotate(c.Rotation)
+	v.SubAssign(c.Position)
+}
+
+func (c *Camera) ApplyCamera()
