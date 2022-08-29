@@ -20,61 +20,44 @@ import (
 )
 
 func main() {
+
 	myApp := app.New()
-	w := myApp.NewWindow("Image")
+	myWindow := myApp.NewWindow("Overdrive")
+	myCanvas := myWindow.Canvas()
 
-	
-
-	// for i := 0; i < 500; i++ {
-	// 	go src.Set(250, i, color.Black)
-	// 	go src.Set(i, i, color.Black)
-	// }
-	// time.Sleep(10 * time.Millisecond)
-
-	go drawWorld(&w)
-
-	//w.SetContent(image)
-
-	w.ShowAndRun()
-}
-
-
-func drawWorld(window *fyne.Window) {
-	cube := mesh.Cube(geometry.VectorNew(100, 0, 0), geometry.VectorNew(100, 0, 0), geometry.VectorNew(400, 400, 400))
-	
 	src := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
-	for x := 0; x < utilities.RESOLUTION_X; x++ {
-		for y := 0; y < utilities.RESOLUTION_Y; y++ {
-			src.Set(x, y, color.Black)
+	img := canvas.NewImageFromImage(src)
+	myCanvas.SetContent(img)
+
+	go func() {
+		cube := mesh.Cube(geometry.VectorNew(100, 0, 0), geometry.VectorNew(100, 0, 0), geometry.VectorNew(400, 400, 400))
+		cam := render.Camera{
+			Position: geometry.VectorZero(), 
+			Rotation: geometry.VectorNew(0, 0, -800)}
+		light := render.Light{
+			Position: geometry.VectorZero(),
+			Rotation: geometry.VectorZero(),
+			LightType: render.Ambient,
+			Color: color.White,
+			Length: 0,
 		}
-	}
+	
+		start := time.Now()
+		src = image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
 
-	cam := render.Camera{
-		Position: geometry.VectorZero(), 
-		Rotation: geometry.VectorNew(0, 0, -800)}
+		for i := 0; i < 10000; i++ {
+			cube.Draw(src, &cam, []render.Light{light})
+			cube.Translate(geometry.VectorNew(0, 1, 0))
+			img = canvas.NewImageFromImage(src)
+			img.FillMode = canvas.ImageFillOriginal
+			//img.FillColor = green
+			img.Refresh()
+			
+			fmt.Println("fps: ", 1000 / time.Since(start).Milliseconds())
+			start = time.Now()
+		}
+	}()
 
-
-	light := render.Light{
-		Position: geometry.VectorZero(),
-		Rotation: geometry.VectorZero(),
-		LightType: render.Ambient,
-		Color: color.White,
-		Length: 0,
-	}
-
-	start := time.Now()
-
-	for i := 0; i < 1000; i++ {
-		cube.Draw(src, &cam, []render.Light{light})
-		cube.Translate(geometry.VectorNew(0, 1, 0))
-		image := canvas.NewImageFromImage(src)
-		image.FillMode = canvas.ImageFillOriginal
-		(*window).SetContent(image)
-		(*window).Canvas().Refresh(image)
-		//image.Refresh()
-		
-		fmt.Println("fps: ", 1000 / time.Since(start).Milliseconds())
-		start = time.Now()
-	}
-
+	myWindow.Resize(fyne.NewSize(1000, 500))
+	myWindow.ShowAndRun()
 }
