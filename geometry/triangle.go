@@ -1,7 +1,6 @@
 package geometry
 
 import (
-	"fmt"
 	"image"
 	"github.com/StephaneBunel/bresenham"
 	"image/color"
@@ -77,7 +76,7 @@ func (t *Triangle) Draw(image *image.RGBA) {
 			}
 		}
 
-		fmt.Println("y:", y, "min:", min, "max:", max)
+		//fmt.Println("y:", y, "min:", min, "max:", max)
 
 		//bresenham.DrawLine(image, min, y, max, y, t.A.LightAmount)
 		bresenham.DrawLine(image, min, y, max, y, color.White)

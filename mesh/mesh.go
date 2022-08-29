@@ -14,7 +14,7 @@ type Mesh struct {
 	Rotation geometry.Vector3
 }
 
-func (m *Mesh) Draw(image *image.RGBA, cam *render.Camera, lights []render.Light) {
+func (m Mesh) Draw(image *image.RGBA, cam *render.Camera, lights []render.Light) {
 	
 	for _, t := range m.Triangles {
 		cam.ApplyCamera(&t)
