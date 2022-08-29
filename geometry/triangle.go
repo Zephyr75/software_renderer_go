@@ -4,6 +4,7 @@ import (
 	"image"
 	"github.com/StephaneBunel/bresenham"
 	"image/color"
+	"sync"
 )
 
 type Triangle struct {
@@ -50,39 +51,47 @@ func (t *Triangle) Draw(image *image.RGBA) {
 	var p1, p2, p3 = points[0], points[1], points[2]
 	var top, mid, bottom = p1.Y, p2.Y, p3.Y
 
-	//iterate from top to bottom
+	wg := sync.WaitGroup{}
+
+	
 	for y := top; y < bottom; y++ {
-		var min int
-		var max int
-		if y < mid {
-			a := f(p1, p2, y)
-			b := f(p1, p3, y)
-			if a < b {
-				min = a
-				max = b
+
+		wg.Add(1)
+		
+		go func(y int) {
+			var min int
+			var max int
+			if y < mid {
+				a := f(p1, p2, y)
+				b := f(p1, p3, y)
+				if a < b {
+					min = a
+					max = b
+				} else {
+					min = b
+					max = a
+				}
 			} else {
-				min = b
-				max = a
+				a := f(p2, p3, y)
+				b := f(p1, p3, y)
+				if a < b {
+					min = a
+					max = b
+				} else {
+					min = b
+					max = a
+				}
 			}
-		} else {
-			a := f(p2, p3, y)
-			b := f(p1, p3, y)
-			if a < b {
-				min = a
-				max = b
-			} else {
-				min = b
-				max = a
-			}
-		}
 
-		//fmt.Println("y:", y, "min:", min, "max:", max)
+			//fmt.Println("y:", y, "min:", min, "max:", max)
 
-		//bresenham.DrawLine(image, min, y, max, y, t.A.LightAmount)
-		bresenham.DrawLine(image, min, y, max, y, color.White)
-
+			//bresenham.DrawLine(image, min, y, max, y, t.A.LightAmount)
+			bresenham.DrawLine(image, min, y, max, y, color.White)
+			wg.Done()
+		}(y)
 	}
-			
+	
+	wg.Wait()
 	
 }
 
