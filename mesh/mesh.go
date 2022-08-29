@@ -23,9 +23,9 @@ func (m Mesh) Draw(image *image.RGBA, cam *render.Camera, lights []render.Light)
 	for _, t := range m.Triangles {
 		normal := t.Normal()
 		for _, l := range lights {
-			l.ApplyLight(t.A, normal)
-			l.ApplyLight(t.B, normal)
-			l.ApplyLight(t.C, normal)
+			l.ApplyLight(&t.A, normal)
+			l.ApplyLight(&t.B, normal)
+			l.ApplyLight(&t.C, normal)
 		}
 	}
 

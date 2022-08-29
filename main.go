@@ -14,6 +14,7 @@ import (
 	
 	"fmt"
 	"time"
+	"sync"
 )
 
 func main() {
@@ -21,9 +22,9 @@ func main() {
 	myWindow := myApp.NewWindow("Canvas")
 	myCanvas := myWindow.Canvas()
 
-	src := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
-	rect := canvas.NewImageFromImage(src)
-	myCanvas.SetContent(rect)
+	img := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
+	viewport := canvas.NewImageFromImage(img)
+	myCanvas.SetContent(viewport)
 
 	go func() {
 
@@ -41,6 +42,9 @@ func main() {
 
 		start := time.Now()
 
+		//make an array of 20 filled with cube
+		cubes := make([]mesh.Mesh, 20)
+
 		for {
 			// for x := 0; x < utilities.RESOLUTION_X; x++ {
 			// 	for y := 0; y < utilities.RESOLUTION_Y; y++ {
@@ -48,14 +52,31 @@ func main() {
 			// 	}
 			// }
 
-			src = image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
+			img = image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
 
-			cube.Draw(src, &cam, []render.Light{light})
+			for i := range cubes {
+				cubes[i] = cube
+			}
+
+			wg := sync.WaitGroup{}
+
+			for i := range cubes {
+
+				wg.Add(1)
+				go func(i int) {
+					cubes[i].Draw(img, &cam, []render.Light{light})
+					wg.Done()
+				}(i)
+				
+			}
+
+			wg.Wait()
+
 			cube.Translate(geometry.VectorNew(0, 1, 0))
 			cube.Rotate(geometry.VectorNew(0, 0.01, 0))
 
-			rect.Image = src
-			rect.Refresh()
+			viewport.Image = img
+			viewport.Refresh()
 
 			t := time.Since(start).Milliseconds()
 			if t == 0 {

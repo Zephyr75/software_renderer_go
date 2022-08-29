@@ -3,7 +3,7 @@ package geometry
 import (
 	"image"
 	"github.com/StephaneBunel/bresenham"
-	"image/color"
+	// "image/color"
 	"sync"
 )
 
@@ -31,7 +31,7 @@ func (t Triangle) Normal() Vector3 {
 	return v1.Cross(v2)
 }
 
-func (t *Triangle) Draw(image *image.RGBA) {
+func (t *Triangle) Draw(img *image.RGBA) {
 	vertices := []Vector3{t.A, t.B, t.C}
 
 	points := make([]Point, 3)
@@ -85,8 +85,16 @@ func (t *Triangle) Draw(image *image.RGBA) {
 
 			//fmt.Println("y:", y, "min:", min, "max:", max)
 
-			//bresenham.DrawLine(image, min, y, max, y, t.A.LightAmount)
-			bresenham.DrawLine(image, min, y, max, y, color.White)
+			
+			
+			// image.Set(min, y, color.White)
+			// image.Set(max, y, color.White)
+
+			bresenham.DrawLine(img, min, y, max, y, t.A.LightAmount)
+			//bresenham.DrawLine(img, min, y, max, y, color.White)
+
+			// min = max
+			// max = min
 			wg.Done()
 		}(y)
 	}
