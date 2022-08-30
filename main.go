@@ -12,6 +12,9 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/widget"
 
 	"fmt"
 	"sync"
@@ -19,13 +22,30 @@ import (
 )
 
 func main() {
+	// text1 := canvas.NewText("1", color.White)
+	// textFps := canvas.NewText("2", color.White)
+	
+	
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Canvas")
 	myCanvas := myWindow.Canvas()
 
 	img := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
 	viewport := canvas.NewImageFromImage(img)
-	myCanvas.SetContent(viewport)
+	
+	// grid := container.New(layout.NewGridLayout(2), viewport, textFps, content)
+	
+
+	bottom := widget.NewButton("Assets browser", func() {
+		fmt.Println("tapped")
+	})
+
+	right := canvas.NewText("fps", color.White)
+	// middle := canvas.NewText("content", color.White)
+	content := container.New(layout.NewBorderLayout(nil, bottom, nil, right),
+		bottom, right, viewport)
+
+	myCanvas.SetContent(content)
 
 	go func() {
 
@@ -42,7 +62,7 @@ func main() {
 
 		start := time.Now()
 
-		cubes := make([]mesh.Mesh, 100)
+		cubes := make([]mesh.Mesh, 10)
 		cube := mesh.Cube(geometry.NewVector(0, 0, 0), geometry.ZeroVector(), geometry.NewVector(400, 400, 400))
 
 		for {
@@ -84,7 +104,10 @@ func main() {
 			if t == 0 {
 				t = 1
 			}
-			fmt.Println("fps: ", 1000/t)
+
+			right.Text = fmt.Sprint("fps : ", 1000/t)
+			right.Refresh()
+
 			start = time.Now()
 			// break
 		}
