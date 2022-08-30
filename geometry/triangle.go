@@ -2,9 +2,12 @@ package geometry
 
 import (
 	"image"
+
 	"github.com/StephaneBunel/bresenham"
+
 	// "image/color"
 	"sync"
+	// "fmt"
 )
 
 type Triangle struct {
@@ -28,10 +31,16 @@ func (t Triangle) Normal() Vector3 {
 	v2.X /= v2_norm
 	v2.Y /= v2_norm
 	v2.Z /= v2_norm
+
+	//TODO: replace with clean division
 	return v1.Cross(v2)
 }
 
 func (t *Triangle) Draw(img *image.RGBA) {
+
+	// fmt.Println("2")
+	// fmt.Println(t.A.LightAmount.RGBA())
+
 	vertices := []Vector3{t.A, t.B, t.C}
 
 	points := make([]Point, 3)
@@ -53,11 +62,10 @@ func (t *Triangle) Draw(img *image.RGBA) {
 
 	wg := sync.WaitGroup{}
 
-	
 	for y := top; y < bottom; y++ {
 
 		wg.Add(1)
-		
+
 		go func(y int) {
 			var min int
 			var max int
@@ -85,8 +93,6 @@ func (t *Triangle) Draw(img *image.RGBA) {
 
 			//fmt.Println("y:", y, "min:", min, "max:", max)
 
-			
-			
 			// image.Set(min, y, color.White)
 			// image.Set(max, y, color.White)
 
@@ -98,9 +104,9 @@ func (t *Triangle) Draw(img *image.RGBA) {
 			wg.Done()
 		}(y)
 	}
-	
+
 	wg.Wait()
-	
+
 }
 
 func f(start, end Point, y int) int {
@@ -108,5 +114,5 @@ func f(start, end Point, y int) int {
 	if height == 0 {
 		height = 1
 	}
-	return start.X + (end.X - start.X) * (y - start.Y) / height
+	return start.X + (end.X-start.X)*(y-start.Y)/height
 }

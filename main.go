@@ -1,20 +1,21 @@
 package main
 
 import (
-	"image/color"
 	"image"
+	"image/color"
+
+	"overdrive/geometry"
+	"overdrive/mesh"
+	"overdrive/render"
+	"overdrive/utilities"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
-	"overdrive/utilities"
-	"overdrive/mesh"
-	"overdrive/geometry"
-	"overdrive/render"
-	
+
 	"fmt"
-	"time"
 	"sync"
+	"time"
 )
 
 func main() {
@@ -30,20 +31,20 @@ func main() {
 
 		cube := mesh.Cube(geometry.VectorNew(100, 0, 0), geometry.VectorNew(100, 0, 0), geometry.VectorNew(400, 400, 400))
 		cam := render.Camera{
-			Position: geometry.VectorZero(), 
-			Rotation: geometry.VectorNew(0, 0, -800)}
+			Position: geometry.VectorNew(0, 0, 0),
+			Rotation: geometry.VectorZero()}
 		light := render.Light{
-			Position: geometry.VectorZero(),
-			Rotation: geometry.VectorZero(),
-			LightType: render.Ambient,
-			Color: color.White,
-			Length: 0,
+			Position:  geometry.VectorZero(),
+			Rotation:  geometry.VectorNew(0, 0, -800),
+			LightType: render.Directional,
+			Color:     color.RGBA{255, 255, 255, 255},
+			Length:    0,
 		}
 
 		start := time.Now()
 
 		//make an array of 20 filled with cube
-		cubes := make([]mesh.Mesh, 20)
+		cubes := make([]mesh.Mesh, 1)
 
 		for {
 			// for x := 0; x < utilities.RESOLUTION_X; x++ {
@@ -67,13 +68,13 @@ func main() {
 					cubes[i].Draw(img, &cam, []render.Light{light})
 					wg.Done()
 				}(i)
-				
+
 			}
 
 			wg.Wait()
 
-			cube.Translate(geometry.VectorNew(0, 1, 0))
-			cube.Rotate(geometry.VectorNew(0, 0.01, 0))
+			//cube.Translate(geometry.VectorNew(0, 0, 1))
+			//cube.Rotate(geometry.VectorNew(0, 0.01, 0))
 
 			viewport.Image = img
 			viewport.Refresh()
@@ -82,7 +83,7 @@ func main() {
 			if t == 0 {
 				t = 1
 			}
-			fmt.Println("fps: ", 1000 / t)
+			fmt.Println("fps: ", 1000/t)
 			start = time.Now()
 		}
 	}()

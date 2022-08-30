@@ -12,7 +12,7 @@ type Camera struct {
 }
 
 func (c *Camera) applyCameraVertex(v *geometry.Vector3) {
-	v.Rotate(c.Rotation)
+	//v.Rotate(c.Rotation)
 	v.SubAssign(c.Position)
 }
 

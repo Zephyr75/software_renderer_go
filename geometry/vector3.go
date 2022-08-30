@@ -13,6 +13,10 @@ type Vector3 struct {
 	LightAmount color.Color
 }
 
+func (v *Vector3) ResetLightAmount() {
+	v.LightAmount = color.Black
+}
+
 func (v Vector3) Norm() float64 {
     return math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z)
 }
@@ -84,11 +88,11 @@ func (v Vector3) Distance(v2 Vector3) float64 {
 */
 
 func VectorZero() Vector3 {
-	return Vector3{0, 0, 0, color.White}
+	return Vector3{0, 0, 0, color.Black}
 }
 
 func VectorNew(x, y, z float64) Vector3 {
-	return Vector3{x, y, z, color.White}
+	return Vector3{x, y, z, color.Black}
 }
 
 /*

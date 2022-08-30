@@ -16,24 +16,30 @@ type Mesh struct {
 
 func (m Mesh) Draw(image *image.RGBA, cam *render.Camera, lights []render.Light) {
 	
-	for _, t := range m.Triangles {
-		cam.ApplyCamera(&t)
+	for i := range m.Triangles {
+		(&m.Triangles[i].A).ResetLightAmount()
+		(&m.Triangles[i].B).ResetLightAmount()
+		(&m.Triangles[i].C).ResetLightAmount()
 	}
 
-	for _, t := range m.Triangles {
-		normal := t.Normal()
+	for i := range m.Triangles {
+		cam.ApplyCamera(&m.Triangles[i])
+	}
+
+	for i := range m.Triangles {
+		normal := m.Triangles[i].Normal()
 		for _, l := range lights {
-			l.ApplyLight(&t.A, normal)
-			l.ApplyLight(&t.B, normal)
-			l.ApplyLight(&t.C, normal)
+			l.ApplyLight(&m.Triangles[i].A, normal)
+			l.ApplyLight(&m.Triangles[i].B, normal)
+			l.ApplyLight(&m.Triangles[i].C, normal)
 		}
 	}
 
-	//TODO sort triangles by distance to camera
+	//TODO: sort triangles by distance to camera
 
 
-	for _, t := range m.Triangles {
-		t.Draw(image)
+	for i := range m.Triangles {
+		m.Triangles[i].Draw(image)
 	}
 	
 }

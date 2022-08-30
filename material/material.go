@@ -9,10 +9,10 @@ type MaterialType byte
 
 const (
 	FlatColor MaterialType = 0
-	Texture = 1
+	Texture MaterialType = 1
 )
 
 type Material struct {
-	materialType MaterialType
-	color color.Color
+	MaterialType MaterialType
+	Color color.Color
 }
