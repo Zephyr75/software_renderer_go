@@ -24,17 +24,15 @@ import (
 func main() {
 	// text1 := canvas.NewText("1", color.White)
 	// textFps := canvas.NewText("2", color.White)
-	
-	
+
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Canvas")
 	myCanvas := myWindow.Canvas()
 
 	img := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
 	viewport := canvas.NewImageFromImage(img)
-	
+
 	// grid := container.New(layout.NewGridLayout(2), viewport, textFps, content)
-	
 
 	bottom := widget.NewButton("Assets browser", func() {
 		fmt.Println("tapped")
@@ -50,7 +48,7 @@ func main() {
 	go func() {
 
 		cam := render.Camera{
-			Position: geometry.NewVector(0, 0, -10),
+			Position: geometry.NewVector(0, 0, -100),
 			Rotation: geometry.ZeroVector()}
 		light := render.Light{
 			Position:  geometry.ZeroVector(),
@@ -62,14 +60,14 @@ func main() {
 
 		start := time.Now()
 
-		cubes := make([]mesh.Mesh, 10)
+		objects := make([]mesh.Mesh, 20)
 		cube := mesh.Cube(geometry.NewVector(0, 0, 0), geometry.ZeroVector(), geometry.NewVector(400, 400, 400))
+
+		suzanne := mesh.ReadObjFile()
 
 		for {
 
 			img = image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
-
-			
 
 			// for x := 0; x < utilities.RESOLUTION_X; x++ {
 			// 	for y := 0; y < utilities.RESOLUTION_Y; y++ {
@@ -77,22 +75,28 @@ func main() {
 			// 	}
 			// }
 
-			for i := range cubes {
-				cubes[i] = cube
+			for i := range objects {
+				objects[i] = suzanne
 			}
 
 			wg := sync.WaitGroup{}
 
-			for i := range cubes {
+			for i := range objects {
 				wg.Add(1)
 				go func(i int) {
-					cubes[i].Draw(img, cam, []render.Light{light})
+					objects[i].Draw(img, cam, []render.Light{light})
 					wg.Done()
 				}(i)
 
-			} //TODO Aberty666
+			}
 
 			wg.Wait()
+
+			// suzanne.Draw(img, cam, []render.Light{light})
+
+			// suzanne.Translate(geometry.NewVector(0, 0, -0.1))
+			
+			suzanne.Rotate(geometry.NewVector(0, 0.01, 0))
 
 			cube.Translate(geometry.NewVector(0, 0, 1))
 			cube.Rotate(geometry.NewVector(0, 0.01, 0))
@@ -116,3 +120,7 @@ func main() {
 	myWindow.Resize(fyne.NewSize(utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
 	myWindow.ShowAndRun()
 }
+
+
+
+			//TODO Aberty666

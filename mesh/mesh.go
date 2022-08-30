@@ -18,7 +18,7 @@ type Mesh struct {
 
 func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 
-	triangles := make([]geometry.Triangle, 12)
+	triangles := make([]geometry.Triangle, len(m.Triangles))
 
 	copy(triangles, m.Triangles[:])
 
@@ -51,10 +51,12 @@ func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 
 
 	for i := range triangles {
-		normal := triangles[i].Normal()
-		if normal.Z < 0 {
-			triangles[i].Draw(img)
-		}
+		// normal := triangles[i].Normal()
+		// if normal.Z < 0 {
+		// 	triangles[i].Draw(img)
+		// }
+		
+		triangles[i].Draw(img)
 	}
 
 }
@@ -120,4 +122,8 @@ func Cube(position geometry.Vector3, rotation geometry.Vector3, size geometry.Ve
 	result.Translate(position)
 	result.Rotate(rotation)
 	return result
+}
+
+func NewMesh(triangles []geometry.Triangle, position geometry.Vector3, rotation geometry.Vector3) Mesh {
+	return Mesh{triangles, material.NewMaterial(), position, rotation}
 }
