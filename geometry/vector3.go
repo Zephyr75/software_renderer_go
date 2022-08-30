@@ -132,3 +132,48 @@ func (v *Vector3) SubAssign(v2 Vector3) {
 	v.Y -= v2.Y
 	v.Z -= v2.Z
 }
+
+func (v Vector3) Mul(x float64) Vector3 {
+	return Vector3{
+		v.X * x,
+		v.Y * x,
+		v.Z * x,
+		color.Black,
+	}
+}
+
+func (v *Vector3) MulAssign(x float64) {
+	v.X *= x
+	v.Y *= x
+	v.Z *= x
+}
+
+func (v Vector3) Div(x float64) Vector3 {
+	return Vector3{
+		v.X / x,
+		v.Y / x,
+		v.Z / x,
+		color.Black,
+	}
+}
+
+func (v *Vector3) DivAssign(x float64) {
+	v.X /= x
+	v.Y /= x
+	v.Z /= x
+}
+
+func (v Vector3) Neg() Vector3 {
+	return Vector3{
+		-v.X,
+		-v.Y,
+		-v.Z,
+		color.Black,
+	}
+}
+
+func (v *Vector3) NegAssign() {
+	v.X = -v.X
+	v.Y = -v.Y
+	v.Z = -v.Z
+}

@@ -2,10 +2,8 @@ package geometry
 
 import (
 	"image"
+	"image/color"
 
-	"github.com/StephaneBunel/bresenham"
-
-	// "image/color"
 	"sync"
 	// "fmt"
 )
@@ -23,17 +21,15 @@ func TriangleNew(a, b, c Vector3) Triangle {
 func (t Triangle) Normal() Vector3 {
 	v1 := t.B.Sub(t.A)
 	v1_norm := v1.Norm()
-	v1.X /= v1_norm
-	v1.Y /= v1_norm
-	v1.Z /= v1_norm
+	v1.DivAssign(v1_norm)
 	v2 := t.C.Sub(t.A)
 	v2_norm := v2.Norm()
-	v2.X /= v2_norm
-	v2.Y /= v2_norm
-	v2.Z /= v2_norm
-
-	//TODO: replace with clean division
+	v2.DivAssign(v2_norm)
 	return v1.Cross(v2)
+}
+
+func (t Triangle) Average() Vector3 {
+	return t.A.Add(t.B).Add(t.C).Div(3)
 }
 
 func (t *Triangle) Draw(img *image.RGBA) {
@@ -96,8 +92,7 @@ func (t *Triangle) Draw(img *image.RGBA) {
 			// image.Set(min, y, color.White)
 			// image.Set(max, y, color.White)
 
-			bresenham.DrawLine(img, min, y, max, y, t.A.LightAmount)
-			//bresenham.DrawLine(img, min, y, max, y, color.White)
+			draw_line(int32(min), int32(y), int32(max), int32(y), t.A.LightAmount, img)
 
 			// min = max
 			// max = min
@@ -115,4 +110,52 @@ func f(start, end Point, y int) int {
 		height = 1
 	}
 	return start.X + (end.X-start.X)*(y-start.Y)/height
+}
+
+func draw_line(start_x int32, start_y int32, end_x int32, end_y int32, color color.Color, img *image.RGBA) {
+
+	// Bresenham's
+	var cx int32 = start_x
+	var cy int32 = start_y
+
+	var dx int32 = end_x - cx
+	var dy int32 = end_y - cy
+	if dx < 0 {
+		dx = 0 - dx
+	}
+	if dy < 0 {
+		dy = 0 - dy
+	}
+
+	var sx int32
+	var sy int32
+	if cx < end_x {
+		sx = 1
+	} else {
+		sx = -1
+	}
+	if cy < end_y {
+		sy = 1
+	} else {
+		sy = -1
+	}
+	var err int32 = dx - dy
+
+	var n int32
+	for n = 0; n < 1000; n++ {
+		img.Set(int(cx), int(cy), color)
+		//draw_point(cx, cy, color, screen)
+		if (cx == end_x) && (cy == end_y) {
+			return
+		}
+		var e2 int32 = 2 * err
+		if e2 > (0 - dy) {
+			err = err - dy
+			cx = cx + sx
+		}
+		if e2 < dx {
+			err = err + dx
+			cy = cy + sy
+		}
+	}
 }

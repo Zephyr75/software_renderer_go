@@ -2,9 +2,11 @@ package mesh
 
 import (
 	"image"
-	"overdrive/material"
 	"overdrive/geometry"
+	"overdrive/material"
 	"overdrive/render"
+	"sort"
+	// "fmt"
 )
 
 type Mesh struct {
@@ -14,8 +16,7 @@ type Mesh struct {
 	Rotation geometry.Vector3
 }
 
-func (m Mesh) Draw(image *image.RGBA, cam *render.Camera, lights []render.Light) {
-	
+func (m Mesh) Draw(img *image.RGBA, cam *render.Camera, lights []render.Light) {
 	for i := range m.Triangles {
 		(&m.Triangles[i].A).ResetLightAmount()
 		(&m.Triangles[i].B).ResetLightAmount()
@@ -23,6 +24,8 @@ func (m Mesh) Draw(image *image.RGBA, cam *render.Camera, lights []render.Light)
 	}
 
 	for i := range m.Triangles {
+		// fmt.Println("--------")
+		// fmt.Println("Vector Position: ", &m.Triangles[i])
 		cam.ApplyCamera(&m.Triangles[i])
 	}
 
@@ -37,9 +40,16 @@ func (m Mesh) Draw(image *image.RGBA, cam *render.Camera, lights []render.Light)
 
 	//TODO: sort triangles by distance to camera
 
+	sort.SliceStable(m.Triangles, func(i, j int) bool {
+		avgI := m.Triangles[i].Average()
+		avgJ := m.Triangles[j].Average()
+		distI := avgI.Distance(cam.Position)
+		distJ := avgJ.Distance(cam.Position)
+		return distI > distJ
+	})
 
 	for i := range m.Triangles {
-		m.Triangles[i].Draw(image)
+		m.Triangles[i].Draw(img)
 	}
 	
 }
