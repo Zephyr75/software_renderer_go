@@ -60,9 +60,7 @@ func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 }
 
 func (m *Mesh) Rotate(rotation geometry.Vector3) {
-	negativePosition := geometry.NewVector(-m.Position.X, -m.Position.Y, -m.Position.Z)
-
-	m.Translate(negativePosition)
+	m.Translate(m.Position.Neg())
 	m.rotateOrigin(rotation)
 	m.Translate(m.Position)
 	m.Rotation.AddAssign(rotation)

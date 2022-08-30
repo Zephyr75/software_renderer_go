@@ -36,19 +36,20 @@ func main() {
 			Position:  geometry.ZeroVector(),
 			Rotation:  geometry.NewVector(0, 0, -800),
 			LightType: render.Directional,
-			Color:     color.RGBA{255, 255, 255, 255},
+			Color:     color.RGBA{0, 255, 255, 255},
 			Length:    0,
 		}
 
 		start := time.Now()
 
-		//make an array of 20 filled with cube
 		cubes := make([]mesh.Mesh, 100)
 		cube := mesh.Cube(geometry.NewVector(0, 0, 0), geometry.ZeroVector(), geometry.NewVector(400, 400, 400))
 
 		for {
 
 			img = image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
+
+			
 
 			// for x := 0; x < utilities.RESOLUTION_X; x++ {
 			// 	for y := 0; y < utilities.RESOLUTION_Y; y++ {
@@ -59,9 +60,6 @@ func main() {
 			for i := range cubes {
 				cubes[i] = cube
 			}
-
-			
-			//cube.Draw(img, cam, []render.Light{light})
 
 			wg := sync.WaitGroup{}
 
@@ -76,7 +74,7 @@ func main() {
 
 			wg.Wait()
 
-			//cube.Translate(geometry.VectorNew(0, 0, 1))
+			cube.Translate(geometry.NewVector(0, 0, 1))
 			cube.Rotate(geometry.NewVector(0, 0.01, 0))
 
 			viewport.Image = img
