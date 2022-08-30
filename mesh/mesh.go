@@ -18,12 +18,9 @@ type Mesh struct {
 
 func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 
-	//make slice from triangles
 	triangles := make([]geometry.Triangle, 12)
 
 	copy(triangles, m.Triangles[:])
-
-	//fmt.Println(m.Triangles[0].A)
 
 	for i := range triangles {
 		(triangles[i].A).ResetLightAmount()
@@ -44,8 +41,6 @@ func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 		}
 	}
 
-	//TODO: sort triangles by distance to camera
-
 	sort.SliceStable(triangles, func(i, j int) bool {
 		avgI := triangles[i].Average()
 		avgJ := triangles[j].Average()
@@ -56,7 +51,10 @@ func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 
 
 	for i := range triangles {
-		triangles[i].Draw(img)
+		normal := triangles[i].Normal()
+		if normal.Z < 0 {
+			triangles[i].Draw(img)
+		}
 	}
 
 }
