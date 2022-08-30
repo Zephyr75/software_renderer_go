@@ -14,7 +14,7 @@ import (
 	"fyne.io/fyne/v2/canvas"
 
 	"fmt"
-	// "sync"
+	"sync"
 	"time"
 )
 
@@ -43,43 +43,41 @@ func main() {
 		start := time.Now()
 
 		//make an array of 20 filled with cube
-		// cubes := make([]mesh.Mesh, 1)
+		cubes := make([]mesh.Mesh, 100)
 		cube := mesh.Cube(geometry.NewVector(0, 0, 0), geometry.ZeroVector(), geometry.NewVector(400, 400, 400))
 
 		for {
-			// fmt.Println("cube: ", cube.Position)
-			// fmt.Println("cam: ", cam.Position)
-
-			// for x := 0; x < utilities.RESOLUTION_X; x++ {
-			// 	for y := 0; y < utilities.RESOLUTION_Y; y++ {
-			// 		src.Set(x, y, color.Black)
-			// 	}
-			// }
 
 			img = image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
 
-			// for i := range cubes {
-			// 	cubes[i] = cube
+			// for x := 0; x < utilities.RESOLUTION_X; x++ {
+			// 	for y := 0; y < utilities.RESOLUTION_Y; y++ {
+			// 		img.Set(x, y, color.Black)
+			// 	}
 			// }
 
+			for i := range cubes {
+				cubes[i] = cube
+			}
+
 			
-			cube.Draw(img, cam, []render.Light{light})
+			//cube.Draw(img, cam, []render.Light{light})
 
-			// wg := sync.WaitGroup{}
+			wg := sync.WaitGroup{}
 
-			// for i := range cubes {
-			// 	wg.Add(1)
-			// 	go func(i int) {
-			// 		cubes[i].Draw(img, &cam, []render.Light{light})
-			// 		wg.Done()
-			// 	}(i)
+			for i := range cubes {
+				wg.Add(1)
+				go func(i int) {
+					cubes[i].Draw(img, cam, []render.Light{light})
+					wg.Done()
+				}(i)
 
-			// } //TODO Aberty666
+			} //TODO Aberty666
 
-			// wg.Wait()
+			wg.Wait()
 
 			//cube.Translate(geometry.VectorNew(0, 0, 1))
-			cube.Rotate(geometry.NewVector(0, 0.001, 0))
+			cube.Rotate(geometry.NewVector(0, 0.01, 0))
 
 			viewport.Image = img
 			viewport.Refresh()
