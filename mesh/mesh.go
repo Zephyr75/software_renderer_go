@@ -10,7 +10,7 @@ import (
 )
 
 type Mesh struct {
-	Triangles []geometry.Triangle
+	Triangles [12]geometry.Triangle
 	Material  material.Material
 	Position  geometry.Vector3
 	Rotation  geometry.Vector3
@@ -18,39 +18,45 @@ type Mesh struct {
 
 func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 
+	//make slice from triangles
+	triangles := make([]geometry.Triangle, 12)
+
+	copy(triangles, m.Triangles[:])
+
 	//fmt.Println(m.Triangles[0].A)
 
-	for i := range m.Triangles {
-		(m.Triangles[i].A).ResetLightAmount()
-		(m.Triangles[i].B).ResetLightAmount()
-		(m.Triangles[i].C).ResetLightAmount()
+	for i := range triangles {
+		(triangles[i].A).ResetLightAmount()
+		(triangles[i].B).ResetLightAmount()
+		(triangles[i].C).ResetLightAmount()
 	}
 
-	for i := range m.Triangles {
-		cam.ApplyCamera(&(m.Triangles[i]))
+	for i := range triangles {
+		cam.ApplyCamera(&(triangles[i]))
 	}
 
-	for i := range m.Triangles {
-		normal := m.Triangles[i].Normal()
+	for i := range triangles {
+		normal := triangles[i].Normal()
 		for _, l := range lights {
-			l.ApplyLight(&(m.Triangles[i].A), normal)
-			l.ApplyLight(&(m.Triangles[i].B), normal)
-			l.ApplyLight(&(m.Triangles[i].C), normal)
+			l.ApplyLight(&(triangles[i].A), normal)
+			l.ApplyLight(&(triangles[i].B), normal)
+			l.ApplyLight(&(triangles[i].C), normal)
 		}
 	}
 
 	//TODO: sort triangles by distance to camera
 
-	sort.SliceStable(m.Triangles, func(i, j int) bool {
-		avgI := m.Triangles[i].Average()
-		avgJ := m.Triangles[j].Average()
+	sort.SliceStable(triangles, func(i, j int) bool {
+		avgI := triangles[i].Average()
+		avgJ := triangles[j].Average()
 		distI := avgI.Distance(cam.Position)
 		distJ := avgJ.Distance(cam.Position)
 		return distI > distJ
 	})
 
-	for i := range m.Triangles {
-		m.Triangles[i].Draw(img)
+
+	for i := range triangles {
+		triangles[i].Draw(img)
 	}
 
 }
@@ -104,7 +110,8 @@ func Cube(position geometry.Vector3, rotation geometry.Vector3, size geometry.Ve
 	v5 := geometry.NewVector(-size.X/2, size.Y/2, -size.Z/2)
 	v6 := geometry.NewVector(-size.X/2, -size.Y/2, size.Z/2)
 	v7 := geometry.NewVector(-size.X/2, -size.Y/2, -size.Z/2)
-	triangles := make([]geometry.Triangle, 12)
+	//triangles := make([]geometry.Triangle, 12)
+	var triangles [12]geometry.Triangle
 	triangles[0] = geometry.NewTriangle(v1, v3, v7)
 	triangles[1] = geometry.NewTriangle(v7, v5, v1)
 	triangles[2] = geometry.NewTriangle(v2, v0, v4)

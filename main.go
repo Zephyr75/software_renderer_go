@@ -63,7 +63,6 @@ func main() {
 			// }
 
 			
-			fmt.Println(cube.Triangles[0].A)
 			cube.Draw(img, cam, []render.Light{light})
 
 			// wg := sync.WaitGroup{}
@@ -80,7 +79,7 @@ func main() {
 			// wg.Wait()
 
 			//cube.Translate(geometry.VectorNew(0, 0, 1))
-			//cube.Rotate(geometry.VectorNew(0, 0.01, 0))
+			cube.Rotate(geometry.NewVector(0, 0.001, 0))
 
 			viewport.Image = img
 			viewport.Refresh()
