@@ -14,7 +14,7 @@ type Triangle struct {
 	C Vector3
 }
 
-func TriangleNew(a, b, c Vector3) Triangle {
+func NewTriangle(a, b, c Vector3) Triangle {
 	return Triangle{a, b, c}
 }
 

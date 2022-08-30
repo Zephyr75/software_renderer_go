@@ -2,10 +2,7 @@ module overdrive
 
 go 1.19
 
-require (
-	fyne.io/fyne/v2 v2.2.3
-	github.com/StephaneBunel/bresenham v0.0.0-20211027152503-ec76d7b8e923
-)
+require fyne.io/fyne/v2 v2.2.3
 
 require (
 	fyne.io/systray v1.10.1-0.20220621085403-9a2652634e93 // indirect
