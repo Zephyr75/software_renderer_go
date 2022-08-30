@@ -10,7 +10,7 @@ import (
 )
 
 type Mesh struct {
-	Triangles [12]geometry.Triangle
+	Triangles []geometry.Triangle
 	Material  material.Material
 	Position  geometry.Vector3
 	Rotation  geometry.Vector3
@@ -85,11 +85,6 @@ func (m *Mesh) Translate(position geometry.Vector3) {
 		m.Triangles[i].B.AddAssign(position)
 		m.Triangles[i].C.AddAssign(position)
 	}
-	// for _, t := range m.geometry.Triangles {
-	// 	t.A.AddAssign(position)
-	// 	t.B.AddAssign(position)
-	// 	t.C.AddAssign(position)
-	// }
 	m.Position.AddAssign(position)
 }
 
@@ -110,8 +105,8 @@ func Cube(position geometry.Vector3, rotation geometry.Vector3, size geometry.Ve
 	v5 := geometry.NewVector(-size.X/2, size.Y/2, -size.Z/2)
 	v6 := geometry.NewVector(-size.X/2, -size.Y/2, size.Z/2)
 	v7 := geometry.NewVector(-size.X/2, -size.Y/2, -size.Z/2)
-	//triangles := make([]geometry.Triangle, 12)
-	var triangles [12]geometry.Triangle
+	triangles := make([]geometry.Triangle, 12)
+	//var triangles [12]geometry.Triangle
 	triangles[0] = geometry.NewTriangle(v1, v3, v7)
 	triangles[1] = geometry.NewTriangle(v7, v5, v1)
 	triangles[2] = geometry.NewTriangle(v2, v0, v4)
