@@ -10,8 +10,8 @@ import (
 )
 
 //read file suzanne.obj in folder obj
-func ReadObjFile() Mesh {
-	file, err := os.Open("obj/suzanne.obj")
+func ReadObjFile(name string) Mesh {
+	file, err := os.Open(name)
 	if err != nil {
 		log.Fatal(err)
 	}

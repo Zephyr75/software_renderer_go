@@ -51,7 +51,7 @@ func main() {
 			Position: geometry.NewVector(0, 0, -100),
 			Rotation: geometry.NewVector(100, 0, 0)}
 		light := render.Light{
-			Position:  geometry.NewVector(100, 0, -100),
+			Position:  geometry.NewVector(100, 200, 0),
 			Rotation:  geometry.ZeroVector(),
 			LightType: render.Point,
 			Color:     color.RGBA{0, 255, 255, 255},
@@ -61,12 +61,9 @@ func main() {
 		start := time.Now()
 
 		// objects := make([]mesh.Mesh, 10)
-		// ground := mesh.Cube(geometry.NewVector(0, 200, 0), geometry.ZeroVector(), geometry.NewVector(1000, 100, 1000))
-		
 
-		suzanne := mesh.ReadObjFile()
-
-		// suzanne.Translate(geometry.NewVector(200, 0, 0))
+		suzanne := mesh.ReadObjFile("obj/suzanne.obj")
+		ground := mesh.ReadObjFile("obj/ground.obj")
 
 
 		for {
@@ -93,11 +90,11 @@ func main() {
 			// }
 			// wg.Wait()
 
-			// ground.Draw(img, cam, []render.Light{light})
+			ground.Draw(img, cam, []render.Light{light})
 			suzanne.Draw(img, cam, []render.Light{light})
 
 			
-			suzanne.Rotate(geometry.NewVector(0, 0.003, 0))
+			suzanne.Rotate(geometry.NewVector(0, 0.01, 0))
 
 			
 
