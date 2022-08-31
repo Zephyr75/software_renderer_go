@@ -49,25 +49,25 @@ func main() {
 
 		cam := render.Camera{
 			Position: geometry.NewVector(0, 0, -100),
-			Rotation: geometry.ZeroVector()}
+			Rotation: geometry.NewVector(100, 0, 0)}
 		light := render.Light{
-			Position:  geometry.NewVector(0, 0, -100),
+			Position:  geometry.NewVector(100, 0, -100),
 			Rotation:  geometry.ZeroVector(),
 			LightType: render.Point,
 			Color:     color.RGBA{0, 255, 255, 255},
-			Length:    1000,
+			Length:    5000,
 		}
 
 		start := time.Now()
 
 		// objects := make([]mesh.Mesh, 10)
-		cube := mesh.Cube(geometry.NewVector(0, 0, 0), geometry.ZeroVector(), geometry.NewVector(400, 400, 400))
+		// ground := mesh.Cube(geometry.NewVector(0, 200, 0), geometry.ZeroVector(), geometry.NewVector(1000, 100, 1000))
+		
 
-		suzanne1 := mesh.ReadObjFile()
-		suzanne2 := mesh.ReadObjFile()
+		suzanne := mesh.ReadObjFile()
 
-		suzanne1.Translate(geometry.NewVector(200, 0, 0))
-		suzanne2.Translate(geometry.NewVector(-200, 0, 0))
+		// suzanne.Translate(geometry.NewVector(200, 0, 0))
+
 
 		for {
 
@@ -93,16 +93,13 @@ func main() {
 			// }
 			// wg.Wait()
 
-			suzanne2.Draw(img, cam, []render.Light{light})
-			suzanne1.Draw(img, cam, []render.Light{light})
+			// ground.Draw(img, cam, []render.Light{light})
+			suzanne.Draw(img, cam, []render.Light{light})
 
-			// suzanne.Translate(geometry.NewVector(0, 0, -0.1))
 			
-			suzanne1.Rotate(geometry.NewVector(0, 0.03, 0))
-			suzanne1.Translate(geometry.NewVector(1, 0, 0))
+			suzanne.Rotate(geometry.NewVector(0, 0.003, 0))
 
-			cube.Translate(geometry.NewVector(0, 0, 1))
-			cube.Rotate(geometry.NewVector(0, 0.01, 0))
+			
 
 			viewport.Image = img
 			viewport.Refresh()

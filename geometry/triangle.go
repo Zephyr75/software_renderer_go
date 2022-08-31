@@ -5,7 +5,6 @@ import (
 	"image/color"
 
 	"sync"
-	// "fmt"
 )
 
 type Triangle struct {
@@ -53,8 +52,8 @@ func (t *Triangle) Draw(img *image.RGBA) {
 		}
 	}
 
-	var p1, p2, p3 = points[0], points[1], points[2]
-	var top, mid, bottom = p1.Y, p2.Y, p3.Y
+	var p0, p1, p2 = points[0], points[1], points[2]
+	var top, mid, bottom = p0.Y, p1.Y, p2.Y
 
 	wg := sync.WaitGroup{}
 
@@ -66,8 +65,8 @@ func (t *Triangle) Draw(img *image.RGBA) {
 			var min int
 			var max int
 			if y < mid {
-				a := f(p1, p2, y)
-				b := f(p1, p3, y)
+				a := f(p0, p1, y)
+				b := f(p0, p2, y)
 				if a < b {
 					min = a
 					max = b
@@ -76,8 +75,8 @@ func (t *Triangle) Draw(img *image.RGBA) {
 					max = a
 				}
 			} else {
-				a := f(p2, p3, y)
-				b := f(p1, p3, y)
+				a := f(p1, p2, y)
+				b := f(p0, p2, y)
 				if a < b {
 					min = a
 					max = b
@@ -92,7 +91,45 @@ func (t *Triangle) Draw(img *image.RGBA) {
 			// image.Set(min, y, color.White)
 			// image.Set(max, y, color.White)
 
-			draw_line(int32(min), int32(y), int32(max), int32(y), t.A.LightAmount, img)
+			for x := min; x < max; x++ {
+				current := Point{x, y}
+
+				num1 := float32((p1.Y-p2.Y)*(current.X-p2.X) + (p2.X-p1.X)*(current.Y-p2.Y))
+				num2 := float32((p2.Y-p0.Y)*(current.X-p2.X) + (p0.X-p2.X)*(current.Y-p2.Y))
+
+				denum1 := float32((p1.Y-p2.Y)*(p0.X-p2.X) + (p2.X-p1.X)*(p0.Y-p2.Y))
+				if denum1 == 0 {
+					denum1 = 1
+				}
+				denum2 := float32((p1.Y-p2.Y)*(p0.X-p2.X) + (p2.X-p1.X)*(p0.Y-p2.Y))
+				if denum2 == 0 {
+					denum2 = 1
+				}
+
+				weight0 := num1 / denum1
+
+				weight1 := num2 / denum2
+
+				// fmt.Println("num1:", num1, "num2:", num2 ,"div1:", denum1, "div2:", denum2, "weight0:", weight0, "weight1:", weight1)
+
+				weight2 := 1 - weight0 - weight1
+
+				rA, gA, bA, _ := t.A.LightAmount.RGBA()
+				rB, gB, bB, _ := t.B.LightAmount.RGBA()
+				rC, gC, bC, _ := t.C.LightAmount.RGBA()
+
+				r := float32(weight0) * float32(rA) + float32(weight1)*float32(rB) + float32(weight2)*float32(rC)
+				g := float32(weight0) * float32(gA) + float32(weight1)*float32(gB) + float32(weight2)*float32(gC)
+				b := float32(weight0) * float32(bA) + float32(weight1)*float32(bB) + float32(weight2)*float32(bC)
+				r = r / 257
+				g = g / 257
+				b = b / 257
+
+				img.Set(x, y, color.RGBA{uint8(r), uint8(g), uint8(b), 255})
+				// img.Set(x, y, color.RGBA{uint8(255), uint8(255), uint8(255), 255})
+			}
+
+			// drawLine(int32(min), int32(y), int32(max), int32(y), color.RGBA{uint8(r), uint8(g), uint8(b), 255}, img)
 
 			// min = max
 			// max = min
@@ -112,7 +149,7 @@ func f(start, end Point, y int) int {
 	return start.X + (end.X-start.X)*(y-start.Y)/height
 }
 
-func draw_line(start_x int32, start_y int32, end_x int32, end_y int32, color color.Color, img *image.RGBA) {
+func drawLine(start_x int32, start_y int32, end_x int32, end_y int32, color color.Color, img *image.RGBA) {
 
 	// Bresenham's
 	var cx int32 = start_x

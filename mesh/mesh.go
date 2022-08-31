@@ -29,7 +29,12 @@ func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 	}
 
 	for i := range triangles {
-		cam.ApplyCamera(&(triangles[i]))
+		triangles[i].A.AddAssign(cam.Position.Neg())
+		triangles[i].B.AddAssign(cam.Position.Neg())
+		triangles[i].C.AddAssign(cam.Position.Neg())
+		triangles[i].A.Rotate(cam.Rotation.Neg())
+		triangles[i].B.Rotate(cam.Rotation.Neg())
+		triangles[i].C.Rotate(cam.Rotation.Neg())
 	}
 
 	for i := range triangles {
