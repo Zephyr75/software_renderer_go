@@ -5,6 +5,7 @@ import (
 	"image/color"
 
 	"overdrive/geometry"
+	"overdrive/material"
 	"overdrive/mesh"
 	"overdrive/render"
 	"overdrive/utilities"
@@ -62,19 +63,19 @@ func main() {
 
 		// objects := make([]mesh.Mesh, 10)
 
-		suzanne := mesh.ReadObjFile("obj/suzanne.obj")
-		ground := mesh.ReadObjFile("obj/ground.obj")
+		suzanne := mesh.ReadObjFile("obj/suzanne.obj", material.ColorMaterial(color.RGBA{0, 255, 255, 255}))
+		ground := mesh.ReadObjFile("obj/ground.obj", material.ColorMaterial(color.RGBA{255, 255, 0, 255}))
 
 
 		for {
 
 			img = image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
 
-			// for x := 0; x < utilities.RESOLUTION_X; x++ {
-			// 	for y := 0; y < utilities.RESOLUTION_Y; y++ {
-			// 		img.Set(x, y, color.Black)
-			// 	}
-			// }
+			for x := 0; x < utilities.RESOLUTION_X; x++ {
+				for y := 0; y < utilities.RESOLUTION_Y; y++ {
+					img.Set(x, y, color.RGBA{107, 211, 232, 255})
+				}
+			}
 
 			// for i := range objects {
 			// 	objects[i] = suzanne1
@@ -90,10 +91,10 @@ func main() {
 			// }
 			// wg.Wait()
 
+			
 			ground.Draw(img, cam, []render.Light{light})
 			suzanne.Draw(img, cam, []render.Light{light})
 
-			
 			suzanne.Rotate(geometry.NewVector(0, 0.01, 0))
 
 			

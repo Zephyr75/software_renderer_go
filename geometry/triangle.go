@@ -1,8 +1,10 @@
 package geometry
 
 import (
+	// "fmt"
 	"image"
 	"image/color"
+	"overdrive/material"
 
 	"sync"
 )
@@ -11,10 +13,11 @@ type Triangle struct {
 	A Vector3
 	B Vector3
 	C Vector3
+	Material material.Material
 }
 
 func NewTriangle(a, b, c Vector3) Triangle {
-	return Triangle{a, b, c}
+	return Triangle{a, b, c, material.NewMaterial()}
 }
 
 func (t Triangle) Normal() Vector3 {
@@ -32,6 +35,8 @@ func (t Triangle) Average() Vector3 {
 }
 
 func (t *Triangle) Draw(img *image.RGBA) {
+
+	// fmt.Println(t.Material.Color.RGBA())
 
 	// fmt.Println("2")
 	// fmt.Println(t.A.LightAmount.RGBA())
@@ -125,7 +130,12 @@ func (t *Triangle) Draw(img *image.RGBA) {
 				g = g / 257
 				b = b / 257
 
-				img.Set(x, y, color.RGBA{uint8(r), uint8(g), uint8(b), 255})
+				tR, tG, tB, _ := t.Material.Color.RGBA() 
+				tR /= 257 * 255
+				tG /= 257 * 255
+				tB /= 257 * 255
+
+				img.Set(x, y, color.RGBA{uint8(r * float32(tR)), uint8(g * float32(tG)), uint8(b * float32(tB)), 255})
 				// img.Set(x, y, color.RGBA{uint8(255), uint8(255), uint8(255), 255})
 			}
 

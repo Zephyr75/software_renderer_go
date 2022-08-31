@@ -7,10 +7,11 @@ import (
 	"log"
 	"os"
 	"overdrive/geometry"
+	"overdrive/material"
 )
 
 //read file suzanne.obj in folder obj
-func ReadObjFile(name string) Mesh {
+func ReadObjFile(name string, mtl material.Material) Mesh {
 	file, err := os.Open(name)
 	if err != nil {
 		log.Fatal(err)
@@ -41,6 +42,7 @@ func ReadObjFile(name string) Mesh {
 			face.A = vertices[v1-1]
 			face.B = vertices[v2-1]
 			face.C = vertices[v3-1]
+			face.Material = mtl
 			triangles = append(triangles, face)
 		}
 

@@ -4,14 +4,12 @@ import (
 	// "fmt"
 	"image"
 	"overdrive/geometry"
-	"overdrive/material"
 	"overdrive/render"
 	"sort"
 )
 
 type Mesh struct {
 	Triangles []geometry.Triangle
-	Material  material.Material
 	Position  geometry.Vector3
 	Rotation  geometry.Vector3
 }
@@ -60,6 +58,7 @@ func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 		if normal.Z < 0 {
 			triangles[i].Draw(img)
 		}
+		
 	}
 
 }
@@ -126,12 +125,12 @@ func Cube(position geometry.Vector3, rotation geometry.Vector3, size geometry.Ve
 	triangles[10] = geometry.NewTriangle(v7, v3, v2)
 	triangles[11] = geometry.NewTriangle(v2, v6, v7)
 
-	result := Mesh{triangles, material.NewMaterial(), geometry.ZeroVector(), geometry.ZeroVector()}
+	result := Mesh{triangles, geometry.ZeroVector(), geometry.ZeroVector()}
 	result.Translate(position)
 	result.Rotate(rotation)
 	return result
 }
 
 func NewMesh(triangles []geometry.Triangle, position geometry.Vector3, rotation geometry.Vector3) Mesh {
-	return Mesh{triangles, material.NewMaterial(), position, rotation}
+	return Mesh{triangles, position, rotation}
 }

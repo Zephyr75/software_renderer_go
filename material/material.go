@@ -19,3 +19,7 @@ type Material struct {
 func NewMaterial() Material {
 	return Material{MaterialType: FlatColor, Color: color.White}
 }
+
+func ColorMaterial(color color.Color) Material {
+	return Material{MaterialType: FlatColor, Color: color}
+}
