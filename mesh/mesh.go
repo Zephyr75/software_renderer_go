@@ -51,12 +51,10 @@ func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 
 
 	for i := range triangles {
-		// normal := triangles[i].Normal()
-		// if normal.Z < 0 {
-		// 	triangles[i].Draw(img)
-		// }
-		
-		triangles[i].Draw(img)
+		normal := triangles[i].Normal()
+		if normal.Z < 0 {
+			triangles[i].Draw(img)
+		}
 	}
 
 }

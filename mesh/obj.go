@@ -11,7 +11,7 @@ import (
 
 //read file suzanne.obj in folder obj
 func ReadObjFile() Mesh {
-	file, err := os.Open("obj/suzanne.obj")
+	file, err := os.Open("obj/suzanneHigh.obj")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,11 +42,13 @@ func ReadObjFile() Mesh {
 			face.B = vertices[v2-1]
 			face.C = vertices[v3-1]
 			triangles = append(triangles, face)
-			fmt.Println(face)
 		}
 
 		// fmt.Println(scanner.Text())
 	}
+
+	
+	fmt.Println("Face count : ", len(triangles))
 
 	if err := scanner.Err(); err != nil {
         log.Fatal(err)

@@ -17,7 +17,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 
 	"fmt"
-	"sync"
+	// "sync"
 	"time"
 )
 
@@ -51,19 +51,23 @@ func main() {
 			Position: geometry.NewVector(0, 0, -100),
 			Rotation: geometry.ZeroVector()}
 		light := render.Light{
-			Position:  geometry.ZeroVector(),
-			Rotation:  geometry.NewVector(0, 0, -800),
-			LightType: render.Directional,
+			Position:  geometry.NewVector(0, 0, 0),
+			Rotation:  geometry.ZeroVector(),
+			LightType: render.Point,
 			Color:     color.RGBA{0, 255, 255, 255},
-			Length:    0,
+			Length:    1000,
 		}
 
 		start := time.Now()
 
-		objects := make([]mesh.Mesh, 20)
+		// objects := make([]mesh.Mesh, 10)
 		cube := mesh.Cube(geometry.NewVector(0, 0, 0), geometry.ZeroVector(), geometry.NewVector(400, 400, 400))
 
-		suzanne := mesh.ReadObjFile()
+		suzanne1 := mesh.ReadObjFile()
+		suzanne2 := mesh.ReadObjFile()
+
+		suzanne1.Translate(geometry.NewVector(200, 0, 0))
+		suzanne2.Translate(geometry.NewVector(-200, 0, 0))
 
 		for {
 
@@ -75,28 +79,26 @@ func main() {
 			// 	}
 			// }
 
-			for i := range objects {
-				objects[i] = suzanne
-			}
+			// for i := range objects {
+			// 	objects[i] = suzanne1
+			// }
 
-			wg := sync.WaitGroup{}
+			// wg := sync.WaitGroup{}
+			// for i := range objects {
+			// 	wg.Add(1)
+			// 	go func(i int) {
+			// 		objects[i].Draw(img, cam, []render.Light{light})
+			// 		wg.Done()
+			// 	}(i)
+			// }
+			// wg.Wait()
 
-			for i := range objects {
-				wg.Add(1)
-				go func(i int) {
-					objects[i].Draw(img, cam, []render.Light{light})
-					wg.Done()
-				}(i)
-
-			}
-
-			wg.Wait()
-
-			// suzanne.Draw(img, cam, []render.Light{light})
+			suzanne1.Draw(img, cam, []render.Light{light})
+			suzanne2.Draw(img, cam, []render.Light{light})
 
 			// suzanne.Translate(geometry.NewVector(0, 0, -0.1))
 			
-			suzanne.Rotate(geometry.NewVector(0, 0.01, 0))
+			// suzanne1.Rotate(geometry.NewVector(0, 0.01, 0))
 
 			cube.Translate(geometry.NewVector(0, 0, 1))
 			cube.Rotate(geometry.NewVector(0, 0.01, 0))

@@ -51,8 +51,17 @@ func (l Light) ApplyLight(v *geometry.Vector3, normal geometry.Vector3) {
 				percentToApply *= -1
 			}
 		case Point:
-			percentToApply = 1
-			//TODO: ambient light
+			direction := l.Position.Sub(*v)
+
+			dim := 1 - direction.Norm() / l.Length
+
+			direction.Normalize()
+
+			percentToApply = normal.Dot(direction) * dim
+
+			if percentToApply < 0 {
+				percentToApply *= -1
+			}
 	}
 
 	rLight, gLight, bLight, _ := l.Color.RGBA()
