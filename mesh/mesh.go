@@ -60,9 +60,11 @@ func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 }
 
 func (m *Mesh) Rotate(rotation geometry.Vector3) {
-	m.Translate(m.Position.Neg())
+	// m.Translate(m.Position.Neg())
+	
+	m.translateNoAssign(m.Position.Neg())
 	m.rotateOrigin(rotation)
-	m.Translate(m.Position)
+	m.translateNoAssign(m.Position)
 	m.Rotation.AddAssign(rotation)
 }
 
@@ -72,16 +74,19 @@ func (m *Mesh) rotateOrigin(rotation geometry.Vector3) {
 		m.Triangles[i].B.Rotate(rotation)
 		m.Triangles[i].C.Rotate(rotation)
 	}
-	m.Position.AddAssign(rotation)
 }
 
 func (m *Mesh) Translate(position geometry.Vector3) {
+	m.translateNoAssign(position)
+	m.Position.AddAssign(position)
+}
+
+func (m *Mesh) translateNoAssign(position geometry.Vector3) {
 	for i := range m.Triangles {
 		m.Triangles[i].A.AddAssign(position)
 		m.Triangles[i].B.AddAssign(position)
 		m.Triangles[i].C.AddAssign(position)
 	}
-	m.Position.AddAssign(position)
 }
 
 /*

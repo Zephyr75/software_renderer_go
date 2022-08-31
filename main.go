@@ -51,7 +51,7 @@ func main() {
 			Position: geometry.NewVector(0, 0, -100),
 			Rotation: geometry.ZeroVector()}
 		light := render.Light{
-			Position:  geometry.NewVector(0, 0, 0),
+			Position:  geometry.NewVector(0, 0, -100),
 			Rotation:  geometry.ZeroVector(),
 			LightType: render.Point,
 			Color:     color.RGBA{0, 255, 255, 255},
@@ -93,12 +93,13 @@ func main() {
 			// }
 			// wg.Wait()
 
-			suzanne1.Draw(img, cam, []render.Light{light})
 			suzanne2.Draw(img, cam, []render.Light{light})
+			suzanne1.Draw(img, cam, []render.Light{light})
 
 			// suzanne.Translate(geometry.NewVector(0, 0, -0.1))
 			
-			// suzanne1.Rotate(geometry.NewVector(0, 0.01, 0))
+			suzanne1.Rotate(geometry.NewVector(0, 0.03, 0))
+			suzanne1.Translate(geometry.NewVector(1, 0, 0))
 
 			cube.Translate(geometry.NewVector(0, 0, 1))
 			cube.Rotate(geometry.NewVector(0, 0.01, 0))

@@ -11,7 +11,7 @@ import (
 
 //read file suzanne.obj in folder obj
 func ReadObjFile() Mesh {
-	file, err := os.Open("obj/suzanneHigh.obj")
+	file, err := os.Open("obj/suzanne.obj")
 	if err != nil {
 		log.Fatal(err)
 	}
