@@ -28,9 +28,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Joystick Name: %s", js.Name())
-	fmt.Printf("   Axis Count: %d", js.AxisCount())
-	fmt.Printf(" Button Count: %d", js.ButtonCount())
 
 	// text1 := canvas.NewText("1", color.White)
 	// textFps := canvas.NewText("2", color.White)
@@ -99,22 +96,36 @@ func main() {
 			// 	}
 			// }
 
-
-
 			state, err := js.Read()
 			if err != nil {
 				panic(err)
 			}
 
-			fmt.Println("Axis Data: %v", state.AxisData)
-			fmt.Println("Button Data: %v", state.Buttons)
+			// fmt.Println("Axis Data: %v", state.AxisData)
+			// fmt.Println("Button Data: %v", state.Buttons)
+
+			// a := (state.Buttons & 1) > 0
+			// b := (state.Buttons & 2) > 0
+			// x := (state.Buttons & 4) > 0
+			// y := (state.Buttons & 8) > 0
+			lb := (state.Buttons & 16) > 0
+			rb := (state.Buttons & 32) > 0
+			// fmt.Println("a:", a, "b:", b, "x:", x, "y:", y, "lb:", lb, "rb:", rb)
+
+			lsHoriz := float64(state.AxisData[0] / 32767)
+			lsVert := float64(state.AxisData[1] / 32767)
+			rsVert := float64(state.AxisData[3] / 32767)
+			// rsHoriz := float64(state.AxisData[4] / 32767)
+			// crossHoriz := float64(state.AxisData[5] / 32767)
+			// crossVert := float64(state.AxisData[6] / 32767)
+			// trigger := float64(state.AxisData[2] / 32641)
+			// fmt.Println("lsHoriz:", lsHoriz, "lsVert:", lsVert, "rsHoriz:", rsHoriz, "rsVert:", rsVert, "crossHoriz:", crossHoriz, "crossVert:", crossVert, "trigger:", trigger)
+
 			js.Close()
 
-			
-
 			wg := sync.WaitGroup{}
-			wg.Add(2)
-			for i := 0; i < 1; i++ {
+			wg.Add(6)
+			for i := 0; i < 3; i++ {
 				go func() {
 					ground.Draw(img, zBuffer, cam, []render.Light{pointLight, ambientLight})
 					wg.Done()
@@ -130,7 +141,13 @@ func main() {
 				zBuffer[i] = -1
 			}
 
-			// suzanne.Translate(geometry.NewVector(1, 0, 0))
+			suzanne.Translate(geometry.NewVector(float64(lsHoriz), float64(lsVert), float64(-rsVert)))
+			if lb {
+				suzanne.Rotate(geometry.NewVector(0, -0.1, 0))
+			}
+			if rb {
+				suzanne.Rotate(geometry.NewVector(0, 0.1, 0))
+			}
 
 			viewport.Image = img
 			viewport.Refresh()
@@ -140,11 +157,7 @@ func main() {
 				t = 1
 			}
 
-
-
-			//right.Text = fmt.Sprint("fps : ", 1000/t)
-			
-			right.Text = fmt.Sprint("Inspector")
+			right.Text = fmt.Sprint("fps : ", 1000/t)
 			right.Refresh()
 
 			start = time.Now()
