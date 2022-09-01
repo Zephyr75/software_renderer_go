@@ -48,7 +48,7 @@ func (l Light) ApplyLight(v *geometry.Vector3, normal geometry.Vector3) {
 			percentToApply = normal.Dot(l.Rotation)
 			
 			if percentToApply < 0 {
-				percentToApply *= -1
+				percentToApply = 0
 			}
 		case Point:
 			direction := l.Position.Sub(*v)
@@ -60,7 +60,7 @@ func (l Light) ApplyLight(v *geometry.Vector3, normal geometry.Vector3) {
 			percentToApply = normal.Dot(direction) * dim
 
 			if percentToApply < 0 {
-				percentToApply *= -1
+				percentToApply = 0
 			}
 	}
 

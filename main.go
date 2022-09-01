@@ -3,7 +3,6 @@ package main
 import (
 	"image"
 	"image/color"
-	"math"
 
 	"overdrive/geometry"
 	"overdrive/material"
@@ -36,7 +35,7 @@ func main() {
 	zBuffer := make([]float32, utilities.RESOLUTION_X*utilities.RESOLUTION_Y)
 
 	for i := 0; i < len(zBuffer); i++ {
-		zBuffer[i] = math.MaxFloat32
+		zBuffer[i] = -1
 	}
 
 	viewport := canvas.NewImageFromImage(img)
@@ -101,7 +100,7 @@ func main() {
 			wg.Wait()
 
 			for i := 0; i < len(zBuffer); i++ {
-				zBuffer[i] = math.MaxFloat32
+				zBuffer[i] = -1
 			}
 
 			suzanne.Rotate(geometry.NewVector(0, 0.01, 0))

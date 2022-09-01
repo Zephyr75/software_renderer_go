@@ -10,9 +10,9 @@ import (
 )
 
 type Triangle struct {
-	A Vector3
-	B Vector3
-	C Vector3
+	A        Vector3
+	B        Vector3
+	C        Vector3
 	Material material.Material
 }
 
@@ -60,6 +60,25 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 
 	wg := sync.WaitGroup{}
 
+	
+	rA, gA, bA, _ := t.A.LightAmount.RGBA()
+	rB, gB, bB, _ := t.B.LightAmount.RGBA()
+	rC, gC, bC, _ := t.C.LightAmount.RGBA()
+	rAf := float32(rA) / 16842495
+	gAf := float32(gA) / 16842495
+	bAf := float32(bA) / 16842495
+	rBf := float32(rB) / 16842495
+	gBf := float32(gB) / 16842495
+	bBf := float32(bB) / 16842495
+	rCf := float32(rC) / 16842495
+	gCf := float32(gC) / 16842495
+	bCf := float32(bC) / 16842495
+	
+	rT, gT, bT, _ := t.Material.Color.RGBA()
+	distA := t.A.Distance(ZeroVector())
+	distB := t.B.Distance(ZeroVector())
+	distC := t.C.Distance(ZeroVector())
+
 	for y := top; y < bottom; y++ {
 
 		wg.Add(1)
@@ -89,72 +108,41 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 				}
 			}
 
-			//fmt.Println("y:", y, "min:", min, "max:", max)
-
-			// image.Set(min, y, color.White)
-			// image.Set(max, y, color.White)
-
 			for x := min; x < max; x++ {
-				current := Point{x, y}
 
-				num1 := float32((p1.Y-p2.Y)*(current.X-p2.X) + (p2.X-p1.X)*(current.Y-p2.Y))
-				num2 := float32((p2.Y-p0.Y)*(current.X-p2.X) + (p0.X-p2.X)*(current.Y-p2.Y))
+				num1 := (p1.Y-p2.Y) * (x-p2.X) + (p2.X-p1.X) * (y-p2.Y)
+				num2 := (p2.Y-p0.Y) * (x-p2.X) + (p0.X-p2.X) * (y-p2.Y)
 
-				denum1 := float32((p1.Y-p2.Y)*(p0.X-p2.X) + (p2.X-p1.X)*(p0.Y-p2.Y))
+				denum1 := (p1.Y-p2.Y) * (p0.X-p2.X) + (p2.X-p1.X) * (p0.Y-p2.Y)
 				if denum1 == 0 {
 					denum1 = 1
 				}
-				denum2 := float32((p1.Y-p2.Y)*(p0.X-p2.X) + (p2.X-p1.X)*(p0.Y-p2.Y))
+				denum2 := (p1.Y-p2.Y) * (p0.X-p2.X) + (p2.X-p1.X) * (p0.Y-p2.Y)
 				if denum2 == 0 {
 					denum2 = 1
 				}
 
-				weight0 := num1 / denum1
-
-				weight1 := num2 / denum2
-
-				// fmt.Println("num1:", num1, "num2:", num2 ,"div1:", denum1, "div2:", denum2, "weight0:", weight0, "weight1:", weight1)
-
+				weight0 := float32(num1 / denum1)
+				weight1 := float32(num2 / denum2)
 				weight2 := 1 - weight0 - weight1
 
-				rA, gA, bA, _ := t.A.LightAmount.RGBA()
-				rB, gB, bB, _ := t.B.LightAmount.RGBA()
-				rC, gC, bC, _ := t.C.LightAmount.RGBA()
 
-				r := float32(weight0) * float32(rA) + float32(weight1)*float32(rB) + float32(weight2)*float32(rC)
-				g := float32(weight0) * float32(gA) + float32(weight1)*float32(gB) + float32(weight2)*float32(gC)
-				b := float32(weight0) * float32(bA) + float32(weight1)*float32(bB) + float32(weight2)*float32(bC)
-				r = r / 257
-				g = g / 257
-				b = b / 257
+				r := weight0 * rAf + weight1 * rBf + weight2 * rCf
+				g := weight0 * gAf + weight1 * gBf + weight2 * gCf
+				b := weight0 * bAf + weight1 * bBf + weight2 * bCf
 
-				tR, tG, tB, _ := t.Material.Color.RGBA() 
-				tR /= 257 * 255
-				tG /= 257 * 255
-				tB /= 257 * 255
 
-				z := weight0 * t.A.Distance(ZeroVector()) + weight1 * t.B.Distance(ZeroVector()) + weight2 * t.C.Distance(ZeroVector())
-
-				// fmt.Println("y: ", y, "x: ", x)
-
+				z := weight0 * distA + weight1 * distB + weight2 * distC
 				if x >= 0 && x < utilities.RESOLUTION_X && y >= 0 && y < utilities.RESOLUTION_Y {
-					// fmt.Println("z: ", z, "zBuffer[y * utilities.RESOLUTION_X + x]: ", zBuffer[y * utilities.RESOLUTION_X + x])
-					if z < zBuffer[y * utilities.RESOLUTION_X + x] {
-						zBuffer[y * utilities.RESOLUTION_X + x] = z
-						img.Set(x, y, color.RGBA{uint8(r * float32(tR)), uint8(g * float32(tG)), uint8(b * float32(tB)), 255})
-						// fmt.Println("done")
+					if z < zBuffer[y*utilities.RESOLUTION_X+x] || zBuffer[y*utilities.RESOLUTION_X+x] < 0 {
+						zBuffer[y*utilities.RESOLUTION_X+x] = z
+						img.Set(x, y, color.RGBA{
+							uint8(r * float32(rT)),
+							uint8(g * float32(gT)),
+							uint8(b * float32(bT)), 255})
 					}
-				} 
-				// fmt.Println(z)
-				
-
-				// img.Set(x, y, color.RGBA{uint8(r * float32(tR)), uint8(g * float32(tG)), uint8(b * float32(tB)), 255})
+				}
 			}
-
-			// drawLine(int32(min), int32(y), int32(max), int32(y), color.RGBA{uint8(r), uint8(g), uint8(b), 255}, img)
-
-			// min = max
-			// max = min
 			wg.Done()
 		}(y)
 	}

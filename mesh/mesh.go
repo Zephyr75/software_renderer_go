@@ -5,8 +5,10 @@ import (
 	"image"
 	"overdrive/geometry"
 	"overdrive/render"
+
 	// "sort"
 	"sync"
+
 )
 
 type Mesh struct {
@@ -21,7 +23,6 @@ func (m Mesh) Draw(img *image.RGBA, zBuffer []float32, cam render.Camera, lights
 	for i := range m.Triangles {
 		wg.Add(1)
 		go func(t geometry.Triangle) {
-
 			(t.A).ResetLightAmount()
 			(t.B).ResetLightAmount()
 			(t.C).ResetLightAmount()
@@ -31,7 +32,6 @@ func (m Mesh) Draw(img *image.RGBA, zBuffer []float32, cam render.Camera, lights
 			t.A.Rotate(cam.Rotation.Neg())
 			t.B.Rotate(cam.Rotation.Neg())
 			t.C.Rotate(cam.Rotation.Neg())
-			
 			normal := t.Normal()
 			for _, l := range lights {
 				l.ApplyLight(&(t.A), normal)
