@@ -18,7 +18,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 
 	"fmt"
-	// "sync"
+	"sync"
 	"time"
 )
 
@@ -31,6 +31,7 @@ func main() {
 	myCanvas := myWindow.Canvas()
 
 	img := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
+
 	viewport := canvas.NewImageFromImage(img)
 
 	// grid := container.New(layout.NewGridLayout(2), viewport, textFps, content)
@@ -66,7 +67,6 @@ func main() {
 		suzanne := mesh.ReadObjFile("obj/suzanne.obj", material.ColorMaterial(color.RGBA{0, 255, 255, 255}))
 		ground := mesh.ReadObjFile("obj/ground.obj", material.ColorMaterial(color.RGBA{255, 255, 0, 255}))
 
-
 		for {
 
 			img = image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
@@ -91,13 +91,32 @@ func main() {
 			// }
 			// wg.Wait()
 
-			
-			ground.Draw(img, cam, []render.Light{light})
-			suzanne.Draw(img, cam, []render.Light{light})
+			// wg := sync.WaitGroup{}
+			// for i := range objects {
+			// 	wg.Add(1)
+			// 	go func(i int) {
+			// 		objects[i].Draw(img, cam, []render.Light{light})
+			// 		wg.Done()
+			// 	}(i)
+			// }
+			// wg.Wait()
+
+			wg := sync.WaitGroup{}
+			wg.Add(2)
+			go func() {
+				ground.Draw(img, cam, []render.Light{light})
+				wg.Done()
+			}()
+			go func() {
+				suzanne.Draw(img, cam, []render.Light{light})
+				wg.Done()
+			}()
+			wg.Wait()
+
+			// ground.Draw(img, cam, []render.Light{light})
+			// suzanne.Draw(img, cam, []render.Light{light})
 
 			suzanne.Rotate(geometry.NewVector(0, 0.01, 0))
-
-			
 
 			viewport.Image = img
 			viewport.Refresh()
@@ -116,9 +135,8 @@ func main() {
 	}()
 
 	myWindow.Resize(fyne.NewSize(utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
+	// myWindow.SetFixedSize(true)
 	myWindow.ShowAndRun()
 }
 
-
-
-			//TODO Aberty666
+//TODO Aberty666
