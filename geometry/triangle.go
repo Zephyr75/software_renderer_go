@@ -1,10 +1,10 @@
 package geometry
 
 import (
-	// "fmt"
 	"image"
 	"image/color"
 	"overdrive/material"
+	"overdrive/utilities"
 
 	"sync"
 )
@@ -34,7 +34,7 @@ func (t Triangle) Average() Vector3 {
 	return t.A.Add(t.B).Add(t.C).Div(3)
 }
 
-func (t *Triangle) Draw(img *image.RGBA) {
+func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 
 	// fmt.Println(t.Material.Color.RGBA())
 
@@ -135,8 +135,22 @@ func (t *Triangle) Draw(img *image.RGBA) {
 				tG /= 257 * 255
 				tB /= 257 * 255
 
-				img.Set(x, y, color.RGBA{uint8(r * float32(tR)), uint8(g * float32(tG)), uint8(b * float32(tB)), 255})
-				// img.Set(x, y, color.RGBA{uint8(255), uint8(255), uint8(255), 255})
+				z := weight0 * t.A.Distance(ZeroVector()) + weight1 * t.B.Distance(ZeroVector()) + weight2 * t.C.Distance(ZeroVector())
+
+				// fmt.Println("y: ", y, "x: ", x)
+
+				if x >= 0 && x < utilities.RESOLUTION_X && y >= 0 && y < utilities.RESOLUTION_Y {
+					// fmt.Println("z: ", z, "zBuffer[y * utilities.RESOLUTION_X + x]: ", zBuffer[y * utilities.RESOLUTION_X + x])
+					if z < zBuffer[y * utilities.RESOLUTION_X + x] {
+						zBuffer[y * utilities.RESOLUTION_X + x] = z
+						img.Set(x, y, color.RGBA{uint8(r * float32(tR)), uint8(g * float32(tG)), uint8(b * float32(tB)), 255})
+						// fmt.Println("done")
+					}
+				} 
+				// fmt.Println(z)
+				
+
+				// img.Set(x, y, color.RGBA{uint8(r * float32(tR)), uint8(g * float32(tG)), uint8(b * float32(tB)), 255})
 			}
 
 			// drawLine(int32(min), int32(y), int32(max), int32(y), color.RGBA{uint8(r), uint8(g), uint8(b), 255}, img)

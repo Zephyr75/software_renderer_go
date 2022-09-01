@@ -5,7 +5,7 @@ import (
 	"image"
 	"overdrive/geometry"
 	"overdrive/render"
-	"sort"
+	// "sort"
 )
 
 type Mesh struct {
@@ -14,7 +14,7 @@ type Mesh struct {
 	Rotation  geometry.Vector3
 }
 
-func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
+func (m Mesh) Draw(img *image.RGBA, zBuffer []float32, cam render.Camera, lights []render.Light) {
 
 	triangles := make([]geometry.Triangle, len(m.Triangles))
 
@@ -44,19 +44,19 @@ func (m Mesh) Draw(img *image.RGBA, cam render.Camera, lights []render.Light) {
 		}
 	}
 
-	sort.SliceStable(triangles, func(i, j int) bool {
-		avgI := triangles[i].Average()
-		avgJ := triangles[j].Average()
-		distI := avgI.Distance(cam.Position)
-		distJ := avgJ.Distance(cam.Position)
-		return distI > distJ
-	})
+	// sort.SliceStable(triangles, func(i, j int) bool {
+	// 	avgI := triangles[i].Average()
+	// 	avgJ := triangles[j].Average()
+	// 	distI := avgI.Distance(cam.Position)
+	// 	distJ := avgJ.Distance(cam.Position)
+	// 	return distI > distJ
+	// })
 
 
 	for i := range triangles {
 		normal := triangles[i].Normal()
 		if normal.Z < 0 {
-			triangles[i].Draw(img)
+			triangles[i].Draw(img, zBuffer)
 		}
 		
 	}

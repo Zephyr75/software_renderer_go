@@ -3,6 +3,7 @@ package main
 import (
 	"image"
 	"image/color"
+	"math"
 
 	"overdrive/geometry"
 	"overdrive/material"
@@ -31,6 +32,12 @@ func main() {
 	myCanvas := myWindow.Canvas()
 
 	img := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
+
+	zBuffer := make([]float32, utilities.RESOLUTION_X*utilities.RESOLUTION_Y)
+
+	for i := 0; i < len(zBuffer); i++ {
+		zBuffer[i] = math.MaxFloat32
+	}
 
 	viewport := canvas.NewImageFromImage(img)
 
@@ -71,50 +78,29 @@ func main() {
 
 			img = image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
 
-			for x := 0; x < utilities.RESOLUTION_X; x++ {
-				for y := 0; y < utilities.RESOLUTION_Y; y++ {
-					img.Set(x, y, color.RGBA{107, 211, 232, 255})
-				}
-			}
-
-			// for i := range objects {
-			// 	objects[i] = suzanne1
+			// for x := 0; x < utilities.RESOLUTION_X; x++ {
+			// 	for y := 0; y < utilities.RESOLUTION_Y; y++ {
+			// 		img.Set(x, y, color.RGBA{107, 211, 232, 255})
+			// 	}
 			// }
 
-			// wg := sync.WaitGroup{}
-			// for i := range objects {
-			// 	wg.Add(1)
-			// 	go func(i int) {
-			// 		objects[i].Draw(img, cam, []render.Light{light})
-			// 		wg.Done()
-			// 	}(i)
-			// }
-			// wg.Wait()
-
-			// wg := sync.WaitGroup{}
-			// for i := range objects {
-			// 	wg.Add(1)
-			// 	go func(i int) {
-			// 		objects[i].Draw(img, cam, []render.Light{light})
-			// 		wg.Done()
-			// 	}(i)
-			// }
-			// wg.Wait()
+			
 
 			wg := sync.WaitGroup{}
 			wg.Add(2)
 			go func() {
-				ground.Draw(img, cam, []render.Light{light})
+				ground.Draw(img, zBuffer, cam, []render.Light{light})
 				wg.Done()
 			}()
 			go func() {
-				suzanne.Draw(img, cam, []render.Light{light})
+				suzanne.Draw(img, zBuffer, cam, []render.Light{light})
 				wg.Done()
 			}()
 			wg.Wait()
 
-			// ground.Draw(img, cam, []render.Light{light})
-			// suzanne.Draw(img, cam, []render.Light{light})
+			for i := 0; i < len(zBuffer); i++ {
+				zBuffer[i] = math.MaxFloat32
+			}
 
 			suzanne.Rotate(geometry.NewVector(0, 0.01, 0))
 
