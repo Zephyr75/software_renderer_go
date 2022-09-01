@@ -58,20 +58,27 @@ func main() {
 		cam := render.Camera{
 			Position: geometry.NewVector(0, 0, -100),
 			Rotation: geometry.NewVector(100, 0, 0)}
-		light := render.Light{
+		pointLight := render.Light{
 			Position:  geometry.NewVector(100, 200, 0),
 			Rotation:  geometry.ZeroVector(),
 			LightType: render.Point,
-			Color:     color.RGBA{0, 255, 255, 255},
-			Length:    5000,
+			Color:     color.RGBA{255, 255, 255, 255},
+			Length:    50000,
+		}
+		ambientLight := render.Light{
+			Position:  geometry.ZeroVector(),
+			Rotation:  geometry.ZeroVector(),
+			LightType: render.Ambient,
+			Color:     color.RGBA{100, 100, 100, 255},
+			Length:    50000,
 		}
 
 		start := time.Now()
 
 		// objects := make([]mesh.Mesh, 10)
 
-		suzanne := mesh.ReadObjFile("obj/suzanneHigh.obj", material.ColorMaterial(color.RGBA{0, 255, 255, 255}))
-		ground := mesh.ReadObjFile("obj/ground.obj", material.ColorMaterial(color.RGBA{255, 255, 0, 255}))
+		suzanne := mesh.ReadObjFile("obj/suzanneHigh.obj", material.ColorMaterial(color.RGBA{55, 122, 223, 255}))
+		ground := mesh.ReadObjFile("obj/ground.obj", material.ColorMaterial(color.RGBA{102, 178, 97, 255}))
 
 		for {
 
@@ -86,14 +93,14 @@ func main() {
 			
 
 			wg := sync.WaitGroup{}
-			wg.Add(6)
-			for i := 0; i < 3; i++ {
+			wg.Add(2)
+			for i := 0; i < 1; i++ {
 				go func() {
-					ground.Draw(img, zBuffer, cam, []render.Light{light})
+					ground.Draw(img, zBuffer, cam, []render.Light{pointLight, ambientLight})
 					wg.Done()
 				}()
 				go func() {
-					suzanne.Draw(img, zBuffer, cam, []render.Light{light})
+					suzanne.Draw(img, zBuffer, cam, []render.Light{pointLight, ambientLight})
 					wg.Done()
 				}()
 			}
