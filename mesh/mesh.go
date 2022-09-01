@@ -6,6 +6,7 @@ import (
 	"overdrive/geometry"
 	"overdrive/render"
 	// "sort"
+	"sync"
 )
 
 type Mesh struct {
@@ -16,50 +17,34 @@ type Mesh struct {
 
 func (m Mesh) Draw(img *image.RGBA, zBuffer []float32, cam render.Camera, lights []render.Light) {
 
-	triangles := make([]geometry.Triangle, len(m.Triangles))
+	wg := sync.WaitGroup{}
+	for i := range m.Triangles {
+		wg.Add(1)
+		go func(t geometry.Triangle) {
 
-	copy(triangles, m.Triangles[:])
-
-	for i := range triangles {
-		(triangles[i].A).ResetLightAmount()
-		(triangles[i].B).ResetLightAmount()
-		(triangles[i].C).ResetLightAmount()
+			(t.A).ResetLightAmount()
+			(t.B).ResetLightAmount()
+			(t.C).ResetLightAmount()
+			t.A.AddAssign(cam.Position.Neg())
+			t.B.AddAssign(cam.Position.Neg())
+			t.C.AddAssign(cam.Position.Neg())
+			t.A.Rotate(cam.Rotation.Neg())
+			t.B.Rotate(cam.Rotation.Neg())
+			t.C.Rotate(cam.Rotation.Neg())
+			
+			normal := t.Normal()
+			for _, l := range lights {
+				l.ApplyLight(&(t.A), normal)
+				l.ApplyLight(&(t.B), normal)
+				l.ApplyLight(&(t.C), normal)
+			}
+			if normal.Z < 0 {
+				t.Draw(img, zBuffer)
+			}
+			wg.Done()
+		}(m.Triangles[i])
 	}
-
-	for i := range triangles {
-		triangles[i].A.AddAssign(cam.Position.Neg())
-		triangles[i].B.AddAssign(cam.Position.Neg())
-		triangles[i].C.AddAssign(cam.Position.Neg())
-		triangles[i].A.Rotate(cam.Rotation.Neg())
-		triangles[i].B.Rotate(cam.Rotation.Neg())
-		triangles[i].C.Rotate(cam.Rotation.Neg())
-	}
-
-	for i := range triangles {
-		normal := triangles[i].Normal()
-		for _, l := range lights {
-			l.ApplyLight(&(triangles[i].A), normal)
-			l.ApplyLight(&(triangles[i].B), normal)
-			l.ApplyLight(&(triangles[i].C), normal)
-		}
-	}
-
-	// sort.SliceStable(triangles, func(i, j int) bool {
-	// 	avgI := triangles[i].Average()
-	// 	avgJ := triangles[j].Average()
-	// 	distI := avgI.Distance(cam.Position)
-	// 	distJ := avgJ.Distance(cam.Position)
-	// 	return distI > distJ
-	// })
-
-
-	for i := range triangles {
-		normal := triangles[i].Normal()
-		if normal.Z < 0 {
-			triangles[i].Draw(img, zBuffer)
-		}
-		
-	}
+	wg.Wait()
 
 }
 

@@ -22,11 +22,9 @@ func NewTriangle(a, b, c Vector3) Triangle {
 
 func (t Triangle) Normal() Vector3 {
 	v1 := t.B.Sub(t.A)
-	v1_norm := v1.Norm()
-	v1.DivAssign(v1_norm)
+	v1.Normalize()
 	v2 := t.C.Sub(t.A)
-	v2_norm := v2.Norm()
-	v2.DivAssign(v2_norm)
+	v2.Normalize()
 	return v1.Cross(v2)
 }
 

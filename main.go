@@ -87,15 +87,17 @@ func main() {
 			
 
 			wg := sync.WaitGroup{}
-			wg.Add(2)
-			go func() {
-				ground.Draw(img, zBuffer, cam, []render.Light{light})
-				wg.Done()
-			}()
-			go func() {
-				suzanne.Draw(img, zBuffer, cam, []render.Light{light})
-				wg.Done()
-			}()
+			wg.Add(10)
+			for i := 0; i < 5; i++ {
+				go func() {
+					ground.Draw(img, zBuffer, cam, []render.Light{light})
+					wg.Done()
+				}()
+				go func() {
+					suzanne.Draw(img, zBuffer, cam, []render.Light{light})
+					wg.Done()
+				}()
+			}
 			wg.Wait()
 
 			for i := 0; i < len(zBuffer); i++ {

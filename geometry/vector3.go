@@ -23,9 +23,7 @@ func (v Vector3) Norm() float64 {
 
 func (v *Vector3) Normalize() {
 	norm := v.Norm()
-	v.X /= norm
-	v.Y /= norm
-	v.Z /= norm
+	v.DivAssign(norm)
 }
 
 func (v Vector3) Cross(v2 Vector3) Vector3 {
