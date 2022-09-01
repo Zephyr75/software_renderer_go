@@ -61,20 +61,21 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 	wg := sync.WaitGroup{}
 
 	
-	rA, gA, bA, _ := t.A.LightAmount.RGBA()
-	rB, gB, bB, _ := t.B.LightAmount.RGBA()
-	rC, gC, bC, _ := t.C.LightAmount.RGBA()
-	rAf := float32(rA) / 16842495
-	gAf := float32(gA) / 16842495
-	bAf := float32(bA) / 16842495
-	rBf := float32(rB) / 16842495
-	gBf := float32(gB) / 16842495
-	bBf := float32(bB) / 16842495
-	rCf := float32(rC) / 16842495
-	gCf := float32(gC) / 16842495
-	bCf := float32(bC) / 16842495
-	
 	rT, gT, bT, _ := t.Material.Color.RGBA()
+	
+	rAi, gAi, bAi, _ := t.A.LightAmount.RGBA()
+	rBi, gBi, bBi, _ := t.B.LightAmount.RGBA()
+	rCi, gCi, bCi, _ := t.C.LightAmount.RGBA()
+	rA := float32(rAi * rT) / 16842495
+	gA := float32(gAi * gT) / 16842495
+	bA := float32(bAi * bT) / 16842495
+	rB := float32(rBi * rT) / 16842495
+	gB := float32(gBi * gT) / 16842495
+	bB := float32(bBi * bT) / 16842495
+	rC := float32(rCi * rT) / 16842495
+	gC := float32(gCi * gT) / 16842495
+	bC := float32(bCi * bT) / 16842495
+	
 	distA := t.A.Distance(ZeroVector())
 	distB := t.B.Distance(ZeroVector())
 	distC := t.C.Distance(ZeroVector())
@@ -89,23 +90,13 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 			if y < mid {
 				a := f(p0, p1, y)
 				b := f(p0, p2, y)
-				if a < b {
-					min = a
-					max = b
-				} else {
-					min = b
-					max = a
-				}
+				min = utilities.Min(a, b)
+				max = utilities.Max(a, b)
 			} else {
 				a := f(p1, p2, y)
 				b := f(p0, p2, y)
-				if a < b {
-					min = a
-					max = b
-				} else {
-					min = b
-					max = a
-				}
+				min = utilities.Min(a, b)
+				max = utilities.Max(a, b)
 			}
 
 			for x := min; x < max; x++ {
@@ -113,33 +104,29 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 				num1 := (p1.Y-p2.Y) * (x-p2.X) + (p2.X-p1.X) * (y-p2.Y)
 				num2 := (p2.Y-p0.Y) * (x-p2.X) + (p0.X-p2.X) * (y-p2.Y)
 
-				denum1 := (p1.Y-p2.Y) * (p0.X-p2.X) + (p2.X-p1.X) * (p0.Y-p2.Y)
-				if denum1 == 0 {
-					denum1 = 1
+				denom1 := (p1.Y-p2.Y) * (p0.X-p2.X) + (p2.X-p1.X) * (p0.Y-p2.Y)
+				if denom1 == 0 {
+					denom1 = 1
 				}
-				denum2 := (p1.Y-p2.Y) * (p0.X-p2.X) + (p2.X-p1.X) * (p0.Y-p2.Y)
-				if denum2 == 0 {
-					denum2 = 1
+				denom2 := (p1.Y-p2.Y) * (p0.X-p2.X) + (p2.X-p1.X) * (p0.Y-p2.Y)
+				if denom2 == 0 {
+					denom2 = 1
 				}
 
-				weight0 := float32(num1 / denum1)
-				weight1 := float32(num2 / denum2)
+				weight0 := float32(num1 / denom1)
+				weight1 := float32(num2 / denom2)
 				weight2 := 1 - weight0 - weight1
 
 
-				r := weight0 * rAf + weight1 * rBf + weight2 * rCf
-				g := weight0 * gAf + weight1 * gBf + weight2 * gCf
-				b := weight0 * bAf + weight1 * bBf + weight2 * bCf
-
+				r := weight0 * rA + weight1 * rB + weight2 * rC
+				g := weight0 * gA + weight1 * gB + weight2 * gC
+				b := weight0 * bA + weight1 * bB + weight2 * bC
 
 				z := weight0 * distA + weight1 * distB + weight2 * distC
 				if x >= 0 && x < utilities.RESOLUTION_X && y >= 0 && y < utilities.RESOLUTION_Y {
 					if z < zBuffer[y*utilities.RESOLUTION_X+x] || zBuffer[y*utilities.RESOLUTION_X+x] < 0 {
 						zBuffer[y*utilities.RESOLUTION_X+x] = z
-						img.Set(x, y, color.RGBA{
-							uint8(r * float32(rT)),
-							uint8(g * float32(gT)),
-							uint8(b * float32(bT)), 255})
+						img.Set(x, y, color.RGBA{uint8(r), uint8(g), uint8(b), 255})
 					}
 				}
 			}

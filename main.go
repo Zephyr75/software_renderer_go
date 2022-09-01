@@ -70,7 +70,7 @@ func main() {
 
 		// objects := make([]mesh.Mesh, 10)
 
-		suzanne := mesh.ReadObjFile("obj/suzanne.obj", material.ColorMaterial(color.RGBA{0, 255, 255, 255}))
+		suzanne := mesh.ReadObjFile("obj/suzanneHigh.obj", material.ColorMaterial(color.RGBA{0, 255, 255, 255}))
 		ground := mesh.ReadObjFile("obj/ground.obj", material.ColorMaterial(color.RGBA{255, 255, 0, 255}))
 
 		for {
@@ -86,8 +86,8 @@ func main() {
 			
 
 			wg := sync.WaitGroup{}
-			wg.Add(10)
-			for i := 0; i < 5; i++ {
+			wg.Add(6)
+			for i := 0; i < 3; i++ {
 				go func() {
 					ground.Draw(img, zBuffer, cam, []render.Light{light})
 					wg.Done()
@@ -103,7 +103,8 @@ func main() {
 				zBuffer[i] = -1
 			}
 
-			suzanne.Rotate(geometry.NewVector(0, 0.01, 0))
+			suzanne.Rotate(geometry.NewVector(0, 0.03, 0))
+			// suzanne.Translate(geometry.NewVector(1, 0, 0))
 
 			viewport.Image = img
 			viewport.Refresh()
