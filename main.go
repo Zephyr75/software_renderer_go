@@ -16,7 +16,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-	"github.com/orsinium-labs/gamepad"
+	"github.com/0xcafed00d/joystick"
 
 	"fmt"
 	"sync"
@@ -24,7 +24,13 @@ import (
 )
 
 func main() {
-	gamepad, _ := gamepad.NewGamepad(0)
+	js, err := joystick.Open(0)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Joystick Name: %s", js.Name())
+	fmt.Printf("   Axis Count: %d", js.AxisCount())
+	fmt.Printf(" Button Count: %d", js.ButtonCount())
 
 	// text1 := canvas.NewText("1", color.White)
 	// textFps := canvas.NewText("2", color.White)
@@ -93,32 +99,16 @@ func main() {
 			// 	}
 			// }
 
-			state, _ := gamepad.State()
-
-			x := state.RS().X
-			y := state.RS().Y
 
 
-			
-			fmt.Println(x, y)
-			if state.X() {
-				suzanne.Translate(geometry.NewVector(-1, 0, 0))
+			state, err := js.Read()
+			if err != nil {
+				panic(err)
 			}
-			if state.B() {
-				suzanne.Translate(geometry.NewVector(1, 0, 0))
-			}
-			if state.Y() {
-				suzanne.Translate(geometry.NewVector(0, 0, 1))
-			}
-			if state.A() {
-				suzanne.Translate(geometry.NewVector(0, 0, -1))
-			}
-			if state.LB() {
-				suzanne.Rotate(geometry.NewVector(0, -0.02, 0))
-			}
-			if state.RB() {
-				suzanne.Rotate(geometry.NewVector(0, 0.02, 0))
-			}
+
+			fmt.Println("Axis Data: %v", state.AxisData)
+			fmt.Println("Button Data: %v", state.Buttons)
+			js.Close()
 
 			
 
