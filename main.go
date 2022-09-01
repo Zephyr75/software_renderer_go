@@ -16,6 +16,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
+	"github.com/orsinium-labs/gamepad"
 
 	"fmt"
 	"sync"
@@ -23,6 +24,8 @@ import (
 )
 
 func main() {
+	gamepad, _ := gamepad.NewGamepad(0)
+
 	// text1 := canvas.NewText("1", color.White)
 	// textFps := canvas.NewText("2", color.White)
 
@@ -77,7 +80,7 @@ func main() {
 
 		// objects := make([]mesh.Mesh, 10)
 
-		suzanne := mesh.ReadObjFile("obj/suzanneHigh.obj", material.ColorMaterial(color.RGBA{55, 122, 223, 255}))
+		suzanne := mesh.ReadObjFile("obj/suzanne.obj", material.ColorMaterial(color.RGBA{55, 122, 223, 255}))
 		ground := mesh.ReadObjFile("obj/ground.obj", material.ColorMaterial(color.RGBA{102, 178, 97, 255}))
 
 		for {
@@ -89,6 +92,33 @@ func main() {
 			// 		img.Set(x, y, color.RGBA{107, 211, 232, 255})
 			// 	}
 			// }
+
+			state, _ := gamepad.State()
+
+			x := state.RS().X
+			y := state.RS().Y
+
+
+			
+			fmt.Println(x, y)
+			if state.X() {
+				suzanne.Translate(geometry.NewVector(-1, 0, 0))
+			}
+			if state.B() {
+				suzanne.Translate(geometry.NewVector(1, 0, 0))
+			}
+			if state.Y() {
+				suzanne.Translate(geometry.NewVector(0, 0, 1))
+			}
+			if state.A() {
+				suzanne.Translate(geometry.NewVector(0, 0, -1))
+			}
+			if state.LB() {
+				suzanne.Rotate(geometry.NewVector(0, -0.02, 0))
+			}
+			if state.RB() {
+				suzanne.Rotate(geometry.NewVector(0, 0.02, 0))
+			}
 
 			
 
@@ -110,7 +140,6 @@ func main() {
 				zBuffer[i] = -1
 			}
 
-			suzanne.Rotate(geometry.NewVector(0, 0.03, 0))
 			// suzanne.Translate(geometry.NewVector(1, 0, 0))
 
 			viewport.Image = img
@@ -121,7 +150,11 @@ func main() {
 				t = 1
 			}
 
-			right.Text = fmt.Sprint("fps : ", 1000/t)
+
+
+			//right.Text = fmt.Sprint("fps : ", 1000/t)
+			
+			right.Text = fmt.Sprint("Inspector")
 			right.Refresh()
 
 			start = time.Now()
