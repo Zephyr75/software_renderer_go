@@ -1,0 +1,6 @@
+- [ ] Collision system
+- [ ] Shadows
+- [ ] Interactive viewport
+- [ ] Textures
+- [ ] Folder structure design
+- [ ] Folder structure implementation
