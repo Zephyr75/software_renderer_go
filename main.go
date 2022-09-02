@@ -114,8 +114,8 @@ func main() {
 
 			lsHoriz := float64(state.AxisData[0] / 32767)
 			lsVert := float64(state.AxisData[1] / 32767)
-			rsVert := float64(state.AxisData[3] / 32767)
-			// rsHoriz := float64(state.AxisData[4] / 32767)
+			// rsVert := float64(state.AxisData[3] / 32767)
+			rsHoriz := float64(state.AxisData[4] / 32767)
 			// crossHoriz := float64(state.AxisData[5] / 32767)
 			// crossVert := float64(state.AxisData[6] / 32767)
 			// trigger := float64(state.AxisData[2] / 32641)
@@ -141,13 +141,17 @@ func main() {
 				zBuffer[i] = -1
 			}
 
-			suzanne.Translate(geometry.NewVector(float64(lsHoriz), float64(lsVert), float64(-rsVert)))
+			speed := 2
+			cam.Position.AddAssign(geometry.NewVector(float64(speed) * float64(lsHoriz), 0, float64(speed) * float64(-lsVert)))
 			if lb {
-				suzanne.Rotate(geometry.NewVector(0, -0.1, 0))
+				// suzanne.Rotate(geometry.NewVector(0, -0.1, 0))
+				cam.Position.AddAssign(geometry.NewVector(0, float64(speed), 0))
 			}
 			if rb {
-				suzanne.Rotate(geometry.NewVector(0, 0.1, 0))
+				cam.Position.AddAssign(geometry.NewVector(0, float64(-speed), 0))
+				// suzanne.Rotate(geometry.NewVector(0, 0.1, 0))
 			}
+			cam.Rotation.AddAssign(geometry.NewVector(0, 0.01 * float64(rsHoriz), 0))
 
 			viewport.Image = img
 			viewport.Refresh()

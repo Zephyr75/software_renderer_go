@@ -26,18 +26,19 @@ func (m Mesh) Draw(img *image.RGBA, zBuffer []float32, cam render.Camera, lights
 			(t.A).ResetLightAmount()
 			(t.B).ResetLightAmount()
 			(t.C).ResetLightAmount()
-			t.A.AddAssign(cam.Position.Neg())
-			t.B.AddAssign(cam.Position.Neg())
-			t.C.AddAssign(cam.Position.Neg())
-			t.A.Rotate(cam.Rotation.Neg())
-			t.B.Rotate(cam.Rotation.Neg())
-			t.C.Rotate(cam.Rotation.Neg())
 			normal := t.Normal()
 			for _, l := range lights {
 				l.ApplyLight(&(t.A), normal)
 				l.ApplyLight(&(t.B), normal)
 				l.ApplyLight(&(t.C), normal)
 			}
+			t.A.AddAssign(cam.Position.Neg())
+			t.B.AddAssign(cam.Position.Neg())
+			t.C.AddAssign(cam.Position.Neg())
+			t.A.Rotate(cam.Rotation.Neg())
+			t.B.Rotate(cam.Rotation.Neg())
+			t.C.Rotate(cam.Rotation.Neg())
+			normal = t.Normal()
 			if normal.Z < 0 {
 				t.Draw(img, zBuffer)
 			}
