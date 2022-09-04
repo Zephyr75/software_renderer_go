@@ -4,7 +4,7 @@ import (
 	"image"
 	"image/color"
 
-	geometry "overdrive/src/geometry"
+	"overdrive/src/geometry"
 	"overdrive/src/material"
 	"overdrive/src/mesh"
 	"overdrive/src/render"
@@ -36,7 +36,6 @@ func main() {
 
 	img := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
 
-
 	//Depth buffer implemented on the z-axis
 	zBuffer := make([]float32, utilities.RESOLUTION_X*utilities.RESOLUTION_Y)
 
@@ -45,7 +44,6 @@ func main() {
 	}
 
 	viewport := canvas.NewImageFromImage(img)
-
 
 	bottom := widget.NewButton("Assets browser", func() {
 		fmt.Println("tapped")
@@ -62,7 +60,7 @@ func main() {
 			Position: geometry.NewVector(0, 0, -100),
 			Rotation: geometry.NewVector(100, 0, 0)}
 		pointLight := render.Light{
-			Position:  geometry.NewVector(100, 200, 0),
+			Position:  geometry.NewVector(200, 200, -300),
 			Rotation:  geometry.ZeroVector(),
 			LightType: render.Point,
 			Color:     color.RGBA{255, 255, 255, 255},
@@ -80,7 +78,7 @@ func main() {
 
 		// objects := make([]mesh.Mesh, 10)
 
-		suzanne := mesh.ReadObjFile("models/suzanne.obj", material.ColorMaterial(color.RGBA{55, 122, 223, 255}))
+		suzanne := mesh.ReadObjFile("models/cubeRetro.obj", material.ColorMaterial(color.RGBA{55, 122, 223, 255}))
 		// ground := mesh.ReadObjFile("models/terrain.obj", material.ColorMaterial(color.RGBA{102, 178, 97, 255}))
 
 		for {
@@ -120,7 +118,6 @@ func main() {
 
 			js.Close()
 
-			
 			// ground.Draw(img, zBuffer, cam, []render.Light{ambientLight})
 			suzanne.Draw(img, zBuffer, cam, []render.Light{ambientLight, pointLight})
 
@@ -138,7 +135,6 @@ func main() {
 			}
 			cam.Rotation.AddAssign(geometry.NewVector(0, 0.01*float64(rsHoriz), 0))
 
-
 			//Double buffering
 			viewport.Image = img
 			viewport.Refresh()
@@ -147,7 +143,7 @@ func main() {
 			if t == 0 {
 				t = 1
 			}
-			
+
 			right.Text = fmt.Sprint("fps : ", 1000/t)
 			right.Refresh()
 

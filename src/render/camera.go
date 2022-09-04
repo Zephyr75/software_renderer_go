@@ -1,10 +1,8 @@
 package render
 
-
 import (
 	"overdrive/src/geometry"
 )
-
 
 type Camera struct {
 	Position geometry.Vector3

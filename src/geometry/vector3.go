@@ -10,11 +10,10 @@ import (
  * Generic 3-dimensional vector for all math operations
  */
 type Vector3 struct {
-	X, Y, Z float64
+	X, Y, Z     float64     // Coordinates in 3D space
+	U, V        int16       // Texture coordinates
 	LightAmount color.Color //Light pass
 }
-
-
 
 func (v *Vector3) ResetLightAmount() {
 	v.LightAmount = color.Black
@@ -34,7 +33,7 @@ func (v Vector3) Cross(v2 Vector3) Vector3 {
 		v.Y*v2.Z - v.Z*v2.Y,
 		v.Z*v2.X - v.X*v2.Z,
 		v.X*v2.Y - v.Y*v2.X,
-		color.Black,
+		0, 0, color.Black,
 	}
 }
 
@@ -88,11 +87,15 @@ func (v Vector3) Distance(v2 Vector3) float32 {
 */
 
 func ZeroVector() Vector3 {
-	return Vector3{0, 0, 0, color.Black}
+	return Vector3{0, 0, 0, 0, 0, color.Black}
 }
 
 func NewVector(x, y, z float64) Vector3 {
-	return Vector3{x, y, z, color.Black}
+	return Vector3{x, y, z,0, 0, color.Black}
+}
+
+func TextureVector(x, y, z float64, u, v int16) Vector3 {
+	return Vector3{x, y, z, u, v, color.Black}
 }
 
 /*
@@ -108,7 +111,7 @@ func (v Vector3) Add(v2 Vector3) Vector3 {
 		v.X + v2.X,
 		v.Y + v2.Y,
 		v.Z + v2.Z,
-		color.Black,
+		0, 0, color.Black,
 	}
 }
 
@@ -123,7 +126,7 @@ func (v Vector3) Sub(v2 Vector3) Vector3 {
 		v.X - v2.X,
 		v.Y - v2.Y,
 		v.Z - v2.Z,
-		color.Black,
+		0, 0, color.Black,
 	}
 }
 
@@ -138,7 +141,7 @@ func (v Vector3) Mul(x float64) Vector3 {
 		v.X * x,
 		v.Y * x,
 		v.Z * x,
-		color.Black,
+		0, 0, color.Black,
 	}
 }
 
@@ -153,7 +156,7 @@ func (v Vector3) Div(x float64) Vector3 {
 		v.X / x,
 		v.Y / x,
 		v.Z / x,
-		color.Black,
+		0, 0, color.Black,
 	}
 }
 
@@ -168,7 +171,7 @@ func (v Vector3) Neg() Vector3 {
 		-v.X,
 		-v.Y,
 		-v.Z,
-		color.Black,
+		0, 0, color.Black,
 	}
 }
 

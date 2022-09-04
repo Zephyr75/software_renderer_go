@@ -10,7 +10,7 @@ import (
 	"overdrive/src/material"
 )
 
-//Creates a mesh from a .obj file with the given name and assigns it a given material
+// Creates a mesh from a .obj file with the given name and assigns it a given material
 func ReadObjFile(name string, mtl material.Material) Mesh {
 	file, err := os.Open(name)
 	if err != nil {
@@ -44,7 +44,7 @@ func ReadObjFile(name string, mtl material.Material) Mesh {
 		// fmt.Println(scanner.Text())
 	}
 	if err := scanner.Err(); err != nil {
-        log.Fatal(err)
-    }
+		log.Fatal(err)
+	}
 	return NewMesh(triangles, geometry.ZeroVector(), geometry.ZeroVector())
 }

@@ -1,6 +1,7 @@
 package material
 
 import (
+	"image"
 	"image/color"
 )
 
@@ -14,12 +15,17 @@ const (
 type Material struct {
 	MaterialType MaterialType
 	Color        color.Color
+	Image        image.Image
 }
 
 func NewMaterial() Material {
-	return Material{MaterialType: FlatColor, Color: color.White}
+	return Material{MaterialType: FlatColor, Color: color.White, Image: nil}
 }
 
 func ColorMaterial(color color.Color) Material {
-	return Material{MaterialType: FlatColor, Color: color}
+	return Material{MaterialType: FlatColor, Color: color, Image: nil}
+}
+
+func TextureMaterial(image image.Image) Material {
+	return Material{MaterialType: Texture, Color: color.White, Image: image}
 }

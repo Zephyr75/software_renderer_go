@@ -8,7 +8,6 @@ import (
 
 	// "sort"
 	"sync"
-
 )
 
 type Mesh struct {
@@ -63,7 +62,7 @@ func (m Mesh) Draw(img *image.RGBA, zBuffer []float32, cam render.Camera, lights
 
 func (m *Mesh) Rotate(rotation geometry.Vector3) {
 	// m.Translate(m.Position.Neg())
-	
+
 	m.translateNoAssign(m.Position.Neg())
 	m.rotateOrigin(rotation)
 	m.translateNoAssign(m.Position)
@@ -80,7 +79,6 @@ func (m *Mesh) rotateOrigin(rotation geometry.Vector3) {
 		m.Triangles[i].C.Rotate(rotation)
 	}
 }
-
 
 func (m *Mesh) Translate(position geometry.Vector3) {
 	m.translateNoAssign(position)
@@ -135,7 +133,6 @@ func Cube(position geometry.Vector3, rotation geometry.Vector3, size geometry.Ve
 	result.Rotate(rotation)
 	return result
 }
-
 
 /**
  * Creates a mesh from a list of triangles
