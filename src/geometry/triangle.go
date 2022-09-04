@@ -135,9 +135,6 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 					if z < zBuffer[y*utilities.RESOLUTION_X+x] || zBuffer[y*utilities.RESOLUTION_X+x] < 0 {
 						zBuffer[y*utilities.RESOLUTION_X+x] = z
 						
-						fmt.Println(weight0, weight1, weight2)
-						fmt.Println("-----------------")
-
 						if t.Material.MaterialType == material.Texture {
 							u := weight0*v0.U + weight1*v1.U + weight2*v2.U
 							v := weight0*v0.V + weight1*v1.V + weight2*v2.V
