@@ -9,7 +9,7 @@ import (
 func GetImageFromFilePath(filePath string) Material {
 	f, err := os.Open(filePath)
 	if err != nil {
-		return NewMaterial()
+		return WhiteMaterial()
 	}
 	defer f.Close()
 	image, _, err := image.Decode(f)

@@ -10,14 +10,13 @@ import (
 )
 
 type Triangle struct {
-	A        Vector3
-	B        Vector3
-	C        Vector3
-	Material material.Material
+	A Vector3
+	B Vector3
+	C Vector3
 }
 
 func NewTriangle(a, b, c Vector3) Triangle {
-	return Triangle{a, b, c, material.NewMaterial()}
+	return Triangle{a, b, c}
 }
 
 func (t Triangle) Normal() Vector3 {
@@ -32,7 +31,7 @@ func (t Triangle) Average() Vector3 {
 	return t.A.Add(t.B).Add(t.C).Div(3)
 }
 
-func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
+func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32, mtl material.Material) {
 
 	//TODO : fix weights not corresponding to the right vertex
 
@@ -59,13 +58,13 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 
 	wg := sync.WaitGroup{}
 
-	rT, gT, bT, _ := t.Material.Color.RGBA()
-	
+	rT, gT, bT, _ := mtl.Color.RGBA()
+
 	var width, height float32
 
-	if t.Material.MaterialType == material.Texture {
-		width = float32(t.Material.Image.Bounds().Max.X)
-		height = float32(t.Material.Image.Bounds().Max.Y)
+	if mtl.MaterialType == material.Texture {
+		width = float32(mtl.Image.Bounds().Max.X)
+		height = float32(mtl.Image.Bounds().Max.Y)
 	}
 
 	r0i, g0i, b0i, _ := v0.LightAmount.RGBA()
@@ -121,7 +120,7 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 				weight0 := float32(num1) / float32(denom1)
 				weight1 := float32(num2) / float32(denom2)
 				weight2 := 1 - weight0 - weight1
-				
+
 				// fmt.Println(num1, denom1, num2, denom2)
 				// fmt.Println(weight0, weight1, weight2)
 				// fmt.Println("-----------------")
@@ -134,18 +133,18 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 				if x >= 0 && x < utilities.RESOLUTION_X && y >= 0 && y < utilities.RESOLUTION_Y {
 					if z < zBuffer[y*utilities.RESOLUTION_X+x] || zBuffer[y*utilities.RESOLUTION_X+x] < 0 {
 						zBuffer[y*utilities.RESOLUTION_X+x] = z
-						
-						if t.Material.MaterialType == material.Texture {
+
+						if mtl.MaterialType == material.Texture {
 							u := weight0*v0.U + weight1*v1.U + weight2*v2.U
 							v := weight0*v0.V + weight1*v1.V + weight2*v2.V
 							u *= width
 							v *= height
-							rT, gT, bT, _ = t.Material.Image.At(int(u), int(v)).RGBA()
-						} 
+							rT, gT, bT, _ = mtl.Image.At(int(u), int(v)).RGBA()
+						}
 						img.Set(x, y, color.RGBA{
-							uint8(r * float32(rT)), 
-							uint8(g * float32(gT)), 
-							uint8(b * float32(bT)), 
+							uint8(r * float32(rT)),
+							uint8(g * float32(gT)),
+							uint8(b * float32(bT)),
 							255})
 					}
 				}

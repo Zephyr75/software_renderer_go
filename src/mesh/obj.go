@@ -55,7 +55,6 @@ func ReadObjFile(name string, mtl material.Material) Mesh {
 			face.A = vertices[v1-1]
 			face.B = vertices[v2-1]
 			face.C = vertices[v3-1]
-			face.Material = mtl
 			triangles = append(triangles, face)
 			// fmt.Println(coordinatesX[t1-1], coordinatesY[t1-1])
 			// fmt.Println(face.A.U, face.A.V)
@@ -67,5 +66,5 @@ func ReadObjFile(name string, mtl material.Material) Mesh {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	return NewMesh(triangles, geometry.ZeroVector(), geometry.ZeroVector())
+	return NewMesh(triangles, geometry.ZeroVector(), geometry.ZeroVector(), mtl)
 }

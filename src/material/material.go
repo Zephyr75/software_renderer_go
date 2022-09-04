@@ -18,7 +18,7 @@ type Material struct {
 	Image        image.Image
 }
 
-func NewMaterial() Material {
+func WhiteMaterial() Material {
 	return Material{MaterialType: FlatColor, Color: color.White, Image: nil}
 }
 

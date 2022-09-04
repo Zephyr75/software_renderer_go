@@ -93,11 +93,11 @@ func main() {
 
 			img = image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
 
-			// for x := 0; x < utilities.RESOLUTION_X; x++ {
-			// 	for y := 0; y < utilities.RESOLUTION_Y; y++ {
-			// 		img.Set(x, y, color.RGBA{107, 211, 232, 255})
-			// 	}
-			// }
+			for x := 0; x < utilities.RESOLUTION_X; x++ {
+				for y := 0; y < utilities.RESOLUTION_Y; y++ {
+					img.Set(x, y, color.RGBA{107, 211, 232, 255})
+				}
+			}
 
 			state, err := js.Read()
 			if err != nil {
