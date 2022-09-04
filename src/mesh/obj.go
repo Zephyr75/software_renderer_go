@@ -20,8 +20,8 @@ func ReadObjFile(name string, mtl material.Material) Mesh {
 	scanner := bufio.NewScanner(file)
 
 	var vertices []geometry.Vector3
-	var coordinatesX []float64
-	var coordinatesY []float64
+	var coordinatesX []float32
+	var coordinatesY []float32
 	var triangles []geometry.Triangle
 
 	for scanner.Scan() {
@@ -34,8 +34,8 @@ func ReadObjFile(name string, mtl material.Material) Mesh {
 		}
 		// Add texture coordinates to the list
 		if scanner.Text()[0] == 'v' && scanner.Text()[1] == 't' {
-			var x, y float64
-			fmt.Sscanf(scanner.Text(), "v %f %f", &x, &y)
+			var x, y float32
+			fmt.Sscanf(scanner.Text(), "vt %f %f", &x, &y)
 			coordinatesX = append(coordinatesX, x)
 			coordinatesY = append(coordinatesY, y)
 		}
@@ -51,12 +51,15 @@ func ReadObjFile(name string, mtl material.Material) Mesh {
 			vertices[v2-1].V = coordinatesY[t3-1]
 			vertices[v3-1].U = coordinatesX[t5-1]
 			vertices[v3-1].V = coordinatesY[t5-1]
-			
+
 			face.A = vertices[v1-1]
 			face.B = vertices[v2-1]
 			face.C = vertices[v3-1]
 			face.Material = mtl
 			triangles = append(triangles, face)
+			// fmt.Println(coordinatesX[t1-1], coordinatesY[t1-1])
+			// fmt.Println(face.A.U, face.A.V)
+			// fmt.Println("----------------")
 		}
 
 		// fmt.Println(scanner.Text())
