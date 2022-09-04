@@ -2,7 +2,7 @@ package render
 
 
 import (
-	"overdrive/geometry"
+	"overdrive/src/geometry"
 )
 
 

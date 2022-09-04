@@ -3,7 +3,7 @@ package geometry
 import (
 	"image/color"
 	"math"
-	"overdrive/utilities"
+	"overdrive/src/utilities"
 )
 
 /**

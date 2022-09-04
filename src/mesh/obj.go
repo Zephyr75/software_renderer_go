@@ -6,8 +6,8 @@ import (
 	"image/color"
 	"log"
 	"os"
-	"overdrive/geometry"
-	"overdrive/material"
+	"overdrive/src/geometry"
+	"overdrive/src/material"
 )
 
 //Creates a mesh from a .obj file with the given name and assigns it a given material

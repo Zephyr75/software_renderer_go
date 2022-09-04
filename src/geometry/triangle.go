@@ -3,8 +3,8 @@ package geometry
 import (
 	"image"
 	"image/color"
-	"overdrive/material"
-	"overdrive/utilities"
+	"overdrive/src/material"
+	"overdrive/src/utilities"
 
 	"sync"
 )

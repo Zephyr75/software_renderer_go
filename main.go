@@ -4,11 +4,11 @@ import (
 	"image"
 	"image/color"
 
-	"overdrive/geometry"
-	"overdrive/material"
-	"overdrive/mesh"
-	"overdrive/render"
-	"overdrive/utilities"
+	geometry "overdrive/src/geometry"
+	"overdrive/src/material"
+	"overdrive/src/mesh"
+	"overdrive/src/render"
+	"overdrive/src/utilities"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"

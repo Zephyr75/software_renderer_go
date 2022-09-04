@@ -3,8 +3,8 @@ package mesh
 import (
 	// "fmt"
 	"image"
-	"overdrive/geometry"
-	"overdrive/render"
+	"overdrive/src/geometry"
+	"overdrive/src/render"
 
 	// "sort"
 	"sync"

@@ -3,7 +3,7 @@ package render
 
 import (
 	"image/color"
-	"overdrive/geometry"
+	"overdrive/src/geometry"
 )
 
 //Enum for light types
