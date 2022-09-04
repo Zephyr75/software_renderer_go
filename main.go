@@ -78,7 +78,7 @@ func main() {
 
 		// objects := make([]mesh.Mesh, 10)
 
-		suzanne := mesh.ReadObjFile("models/cubeRetro.obj", material.ColorMaterial(color.RGBA{55, 122, 223, 255}))
+		suzanne := mesh.ReadObjFile("models/cubeRetro.obj", material.GetImageFromFilePath("images/retro.jpg"))
 		// ground := mesh.ReadObjFile("models/terrain.obj", material.ColorMaterial(color.RGBA{102, 178, 97, 255}))
 
 		for {

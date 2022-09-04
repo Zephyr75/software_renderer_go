@@ -11,7 +11,7 @@ import (
  */
 type Vector3 struct {
 	X, Y, Z     float64     // Coordinates in 3D space
-	U, V        int16       // Texture coordinates
+	U, V        float64       // Texture coordinates
 	LightAmount color.Color //Light pass
 }
 
@@ -94,7 +94,7 @@ func NewVector(x, y, z float64) Vector3 {
 	return Vector3{x, y, z,0, 0, color.Black}
 }
 
-func TextureVector(x, y, z float64, u, v int16) Vector3 {
+func TextureVector(x, y, z float64, u, v float64) Vector3 {
 	return Vector3{x, y, z, u, v, color.Black}
 }
 
