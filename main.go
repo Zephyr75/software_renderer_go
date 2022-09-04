@@ -60,7 +60,7 @@ func main() {
 			Position: geometry.NewVector(0, 0, -100),
 			Rotation: geometry.NewVector(100, 0, 0)}
 		pointLight := render.Light{
-			Position:  geometry.NewVector(200, 200, -300),
+			Position:  geometry.NewVector(0, -1000, -500),
 			Rotation:  geometry.ZeroVector(),
 			LightType: render.Point,
 			Color:     color.RGBA{255, 255, 255, 255},
@@ -82,6 +82,9 @@ func main() {
 		suzanne := mesh.ReadObjFile("models/suzanne.obj", material.ColorMaterial(color.RGBA{255, 0, 0, 255}))
 		// suzanne := mesh.ReadObjFile("models/suzanne.obj", material.GetImageFromFilePath("images/suzanne.png"))
 
+		ground := mesh.ReadObjFile("models/terrain.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
+
+		ground.Translate(geometry.NewVector(0, 100, 0))
 
 
 		// ground := mesh.ReadObjFile("models/terrain.obj", material.ColorMaterial(color.RGBA{102, 178, 97, 255}))
@@ -125,6 +128,7 @@ func main() {
 
 			// ground.Draw(img, zBuffer, cam, []render.Light{ambientLight})
 			suzanne.Draw(img, zBuffer, cam, []render.Light{ambientLight, pointLight})
+			ground.Draw(img, zBuffer, cam, []render.Light{ambientLight, pointLight})
 
 			for i := 0; i < len(zBuffer); i++ {
 				zBuffer[i] = -1
