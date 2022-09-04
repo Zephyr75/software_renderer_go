@@ -36,6 +36,8 @@ func main() {
 
 	img := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
 
+
+	//Depth buffer implemented on the z-axis
 	zBuffer := make([]float32, utilities.RESOLUTION_X*utilities.RESOLUTION_Y)
 
 	for i := 0; i < len(zBuffer); i++ {
@@ -78,8 +80,8 @@ func main() {
 
 		// objects := make([]mesh.Mesh, 10)
 
-		suzanne := mesh.ReadObjFile("obj/suzanne.obj", material.ColorMaterial(color.RGBA{55, 122, 223, 255}))
-		// ground := mesh.ReadObjFile("obj/terrain.obj", material.ColorMaterial(color.RGBA{102, 178, 97, 255}))
+		suzanne := mesh.ReadObjFile("models/suzanne.obj", material.ColorMaterial(color.RGBA{55, 122, 223, 255}))
+		// ground := mesh.ReadObjFile("models/terrain.obj", material.ColorMaterial(color.RGBA{102, 178, 97, 255}))
 
 		for {
 
@@ -122,20 +124,6 @@ func main() {
 			// ground.Draw(img, zBuffer, cam, []render.Light{ambientLight})
 			suzanne.Draw(img, zBuffer, cam, []render.Light{ambientLight, pointLight})
 
-			// wg := sync.WaitGroup{}
-			// wg.Add(2)
-			// for i := 0; i < 1; i++ {
-			// 	go func() {
-			// 		ground.Draw(img, zBuffer, cam, []render.Light{pointLight, ambientLight})
-			// 		wg.Done()
-			// 	}()
-			// 	go func() {
-			// 		suzanne.Draw(img, zBuffer, cam, []render.Light{pointLight, ambientLight})
-			// 		wg.Done()
-			// 	}()
-			// }
-			// wg.Wait()
-
 			for i := 0; i < len(zBuffer); i++ {
 				zBuffer[i] = -1
 			}
@@ -143,15 +131,15 @@ func main() {
 			speed := 2
 			cam.Position.AddAssign(geometry.NewVector(float64(speed)*float64(lsHoriz), 0, float64(speed)*float64(-lsVert)))
 			if lb {
-				// suzanne.Rotate(geometry.NewVector(0, -0.1, 0))
 				cam.Position.AddAssign(geometry.NewVector(0, float64(speed), 0))
 			}
 			if rb {
 				cam.Position.AddAssign(geometry.NewVector(0, float64(-speed), 0))
-				// suzanne.Rotate(geometry.NewVector(0, 0.1, 0))
 			}
 			cam.Rotation.AddAssign(geometry.NewVector(0, 0.01*float64(rsHoriz), 0))
 
+
+			//Double buffering
 			viewport.Image = img
 			viewport.Refresh()
 
@@ -159,18 +147,14 @@ func main() {
 			if t == 0 {
 				t = 1
 			}
-			fmt.Println("fps:", 1000/t)
+			
 			right.Text = fmt.Sprint("fps : ", 1000/t)
 			right.Refresh()
 
 			start = time.Now()
-			// break
 		}
 	}()
 
 	myWindow.Resize(fyne.NewSize(utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
-	// myWindow.SetFixedSize(true)
 	myWindow.ShowAndRun()
 }
-
-//TODO Aberty666

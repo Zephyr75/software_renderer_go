@@ -10,22 +10,17 @@ import (
 	"overdrive/material"
 )
 
-//read file suzanne.obj in folder obj
+//Creates a mesh from a .obj file with the given name and assigns it a given material
 func ReadObjFile(name string, mtl material.Material) Mesh {
 	file, err := os.Open(name)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
-
-
-
 	scanner := bufio.NewScanner(file)
 
 	var vertices []geometry.Vector3
-	
 	var triangles []geometry.Triangle
-
 
 	for scanner.Scan() {
 		if scanner.Text()[0] == 'v' && scanner.Text()[1] == ' ' {
@@ -48,14 +43,8 @@ func ReadObjFile(name string, mtl material.Material) Mesh {
 
 		// fmt.Println(scanner.Text())
 	}
-
-	
-	fmt.Println("Face count : ", len(triangles))
-
 	if err := scanner.Err(); err != nil {
         log.Fatal(err)
     }
-
 	return NewMesh(triangles, geometry.ZeroVector(), geometry.ZeroVector())
-	
 }

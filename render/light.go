@@ -4,17 +4,17 @@ package render
 import (
 	"image/color"
 	"overdrive/geometry"
-	// "fmt"
 )
 
+//Enum for light types
 type LightType byte
-
 const (
 	Directional LightType = 0
 	Point LightType = 1
 	Ambient LightType = 2
 )
 
+//Light component in the scene of given type and color
 type Light struct {
 	Position geometry.Vector3
 	Rotation geometry.Vector3
@@ -46,22 +46,14 @@ func (l Light) ApplyLight(v *geometry.Vector3, normal geometry.Vector3) {
 		case Directional:
 			l.Rotation.Normalize()
 			percentToApply = normal.Dot(l.Rotation)
-			
-			if percentToApply < 0 {
-				percentToApply = 0
-			}
 		case Point:
 			direction := l.Position.Sub(*v)
-
 			dim := 1 - direction.Norm() / l.Length
-
 			direction.Normalize()
-
 			percentToApply = normal.Dot(direction) * dim
-
-			if percentToApply < 0 {
-				percentToApply = 0
-			}
+	}
+	if percentToApply < 0 {
+		percentToApply = 0
 	}
 
 	rLight, gLight, bLight, _ := l.Color.RGBA()
@@ -73,12 +65,6 @@ func (l Light) ApplyLight(v *geometry.Vector3, normal geometry.Vector3) {
 	gVertex := gInit + uint32(float64(gAdd) * percentToApply *  float64(gLight) / 255)
 	bVertex := bInit + uint32(float64(bAdd) * percentToApply *  float64(bLight) / 255)
 
-	// fmt.Println("---------------------light computation---------------------")
-	// fmt.Println("percentToApply: ", percentToApply)
-	// fmt.Println("rVertex: ", rVertex)
-	// fmt.Println("gVertex: ", gVertex)
-	// fmt.Println("bVertex: ", bVertex)
-
 	if rVertex > 255 {
 		rVertex = 255
 	}
@@ -89,11 +75,9 @@ func (l Light) ApplyLight(v *geometry.Vector3, normal geometry.Vector3) {
 		bVertex = 255
 	}
 
-
 	v.LightAmount = color.RGBA{
 		uint8(rVertex),
 		uint8(gVertex),
 		uint8(bVertex),
 		255}
-
 }

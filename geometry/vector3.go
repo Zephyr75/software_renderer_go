@@ -6,12 +6,15 @@ import (
 	"overdrive/utilities"
 )
 
+/**
+ * Generic 3-dimensional vector for all math operations
+ */
 type Vector3 struct {
-	X           float64
-	Y           float64
-	Z           float64
-	LightAmount color.Color
+	X, Y, Z float64
+	LightAmount color.Color //Light pass
 }
+
+
 
 func (v *Vector3) ResetLightAmount() {
 	v.LightAmount = color.Black

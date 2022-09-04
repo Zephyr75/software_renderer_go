@@ -1,10 +1,11 @@
 - [ ] Fix camera : translate > rotate > translate
 - [ ] Clean up
 - [ ] Shadows
-- [ ] Textures
+- [ ] Textures : convert png/jpg to bitmap image
 - [ ] Layout design
 - [ ] Collision system
 - [ ] Interactive viewport
+- [ ] Anti-aliasing
 
 ---
 
@@ -15,6 +16,12 @@
 - If equal, apply light
 - If not, only apply other light sources
 
-<!--->
-    Very costly for multiple lights !
+        Very costly for multiple lights ! 
 
+
+## Textures
+
+- Convert png/jpg to bitmap image from the **image** package
+- Apply formula to get x value from vertices
+- Apply formula to get y value from vertices
+- Fix warp by adding a value of 1 going through perspective by which you divide the resulting x and y
