@@ -34,10 +34,7 @@ func (t Triangle) Average() Vector3 {
 
 func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 
-	// fmt.Println(t.Material.Color.RGBA())
-
-	// fmt.Println("2")
-	// fmt.Println(t.A.LightAmount.RGBA())
+	//TODO : fix weights not corresponding to the right vertex
 
 	vertices := []Vector3{t.A, t.B, t.C}
 
@@ -51,11 +48,13 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 		for j := 0; j < 2; j++ {
 			if points[j].Y > points[j+1].Y {
 				points[j], points[j+1] = points[j+1], points[j]
+				vertices[j], vertices[j+1] = vertices[j+1], vertices[j]
 			}
 		}
 	}
 
 	var p0, p1, p2 = points[0], points[1], points[2]
+	var v0, v1, v2 = vertices[0], vertices[1], vertices[2]
 	var top, mid, bottom = p0.Y, p1.Y, p2.Y
 
 	wg := sync.WaitGroup{}
@@ -69,22 +68,22 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 		height = float32(t.Material.Image.Bounds().Max.Y)
 	}
 
-	rAi, gAi, bAi, _ := t.A.LightAmount.RGBA()
-	rBi, gBi, bBi, _ := t.B.LightAmount.RGBA()
-	rCi, gCi, bCi, _ := t.C.LightAmount.RGBA()
-	rA := float32(rAi) / 16842495
-	gA := float32(gAi) / 16842495
-	bA := float32(bAi) / 16842495
-	rB := float32(rBi) / 16842495
-	gB := float32(gBi) / 16842495
-	bB := float32(bBi) / 16842495
-	rC := float32(rCi) / 16842495
-	gC := float32(gCi) / 16842495
-	bC := float32(bCi) / 16842495
+	r0i, g0i, b0i, _ := v0.LightAmount.RGBA()
+	r1i, g1i, b1i, _ := v1.LightAmount.RGBA()
+	r2i, g2i, b2i, _ := v2.LightAmount.RGBA()
+	r0 := float32(r0i) / 16842495
+	g0 := float32(g0i) / 16842495
+	b0 := float32(b0i) / 16842495
+	r1 := float32(r1i) / 16842495
+	g1 := float32(g1i) / 16842495
+	b1 := float32(b1i) / 16842495
+	r2 := float32(r2i) / 16842495
+	g2 := float32(g2i) / 16842495
+	b2 := float32(b2i) / 16842495
 
-	distA := t.A.Distance(ZeroVector())
-	distB := t.B.Distance(ZeroVector())
-	distC := t.C.Distance(ZeroVector())
+	dist0 := v0.Distance(ZeroVector())
+	dist1 := v1.Distance(ZeroVector())
+	dist2 := v2.Distance(ZeroVector())
 
 	for y := top; y < bottom; y++ {
 
@@ -127,22 +126,23 @@ func (t *Triangle) Draw(img *image.RGBA, zBuffer []float32) {
 				// fmt.Println(weight0, weight1, weight2)
 				// fmt.Println("-----------------")
 
-				r := weight0*rA + weight1*rB + weight2*rC
-				g := weight0*gA + weight1*gB + weight2*gC
-				b := weight0*bA + weight1*bB + weight2*bC
+				r := weight0*r0 + weight1*r1 + weight2*r2
+				g := weight0*g0 + weight1*g1 + weight2*g2
+				b := weight0*b0 + weight1*b1 + weight2*b2
 
-				z := weight0*distA + weight1*distB + weight2*distC
+				z := weight0*dist0 + weight1*dist1 + weight2*dist2
 				if x >= 0 && x < utilities.RESOLUTION_X && y >= 0 && y < utilities.RESOLUTION_Y {
 					if z < zBuffer[y*utilities.RESOLUTION_X+x] || zBuffer[y*utilities.RESOLUTION_X+x] < 0 {
 						zBuffer[y*utilities.RESOLUTION_X+x] = z
+						
+						fmt.Println(weight0, weight1, weight2)
+						fmt.Println("-----------------")
 
 						if t.Material.MaterialType == material.Texture {
-							u := weight0*t.A.U + weight1*t.B.U + weight2*t.C.U
-							v := weight0*t.A.V + weight1*t.B.V + weight2*t.C.V
+							u := weight0*v0.U + weight1*v1.U + weight2*v2.U
+							v := weight0*v0.V + weight1*v1.V + weight2*v2.V
 							u *= width
 							v *= height
-							// fmt.Println(u, v)
-							// fmt.Println("-----------------")
 							rT, gT, bT, _ = t.Material.Image.At(int(u), int(v)).RGBA()
 						} 
 						img.Set(x, y, color.RGBA{

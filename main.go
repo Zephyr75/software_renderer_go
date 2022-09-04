@@ -78,8 +78,9 @@ func main() {
 
 		// objects := make([]mesh.Mesh, 10)
 
-		suzanne := mesh.ReadObjFile("models/cubeRetro.obj", material.GetImageFromFilePath("images/retro.jpg"))
-		// suzanne := mesh.ReadObjFile("models/suzanne.obj", material.ColorMaterial(color.RGBA{255, 0, 0, 255}))
+		// suzanne := mesh.ReadObjFile("models/cubeRetro.obj", material.GetImageFromFilePath("images/retro9.png"))
+		suzanne := mesh.ReadObjFile("models/suzanne.obj", material.ColorMaterial(color.RGBA{255, 0, 0, 255}))
+		// suzanne := mesh.ReadObjFile("models/suzanne.obj", material.GetImageFromFilePath("images/suzanne.png"))
 
 
 
