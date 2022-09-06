@@ -6,6 +6,7 @@ import (
 	"overdrive/src/geometry"
 	"overdrive/src/material"
 	"overdrive/src/render"
+	"overdrive/src/draw"
 
 	// "sort"
 	"sync"
@@ -18,42 +19,45 @@ type Mesh struct {
 	Material  material.Material
 }
 
+func (m Mesh) LightPass(light render.Light) image.Image {
+	var wg sync.WaitGroup
+	wg.Add(len(m.Triangles))
+	for i := range m.Triangles {
+		go func(i int) {
+			if light.LightType != render.Ambient {
+				light.FillBuffer(m.Triangles[i])
+			}
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+	return m.Material.Image
+}
+
+
+
 /**
  * Render pipeline drawing the mesh on screen
  */
-func (m Mesh) Draw(img *image.RGBA, zBuffer []float32, cam render.Camera, lights []render.Light) {
-
+func (m Mesh) Draw(img *image.RGBA, zBuffer []float32, cam render.Camera, lights []*render.Light) {
 	wg := sync.WaitGroup{}
 	for i := range m.Triangles {
 		wg.Add(1)
 		go func(t geometry.Triangle) {
 
-			//Reset light passes
-			(t.A).ResetLightAmount()
-			(t.B).ResetLightAmount()
-			(t.C).ResetLightAmount()
-
-			//Compute light passes using forward rendering
-			normal := t.Normal()
-			for _, l := range lights {
-				l.ApplyLight(&(t.A), normal)
-				l.ApplyLight(&(t.B), normal)
-				l.ApplyLight(&(t.C), normal)
+			//Apply camera transform
+			cam.ApplyCamera(&t)
+			for _, light := range lights {
+				light.Position.AddAssign(cam.Position.Neg())
+				light.Direction.AddAssign(cam.Position.Neg())
 			}
 
-			//Apply camera transform
-			t.A.AddAssign(cam.Position.Neg())
-			t.B.AddAssign(cam.Position.Neg())
-			t.C.AddAssign(cam.Position.Neg())
-			t.A.Rotate(cam.Rotation.Neg())
-			t.B.Rotate(cam.Rotation.Neg())
-			t.C.Rotate(cam.Rotation.Neg())
 
 			//Back-face culling
-			normal = t.Normal()
+			normal := t.Normal()
 			if normal.Z < 0 {
 				//Rasterization
-				t.Draw(img, zBuffer, m.Material)
+				draw.Draw(t, img, zBuffer, m.Material, lights, normal)
 			}
 			wg.Done()
 		}(m.Triangles[i])

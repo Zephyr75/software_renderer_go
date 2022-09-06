@@ -8,7 +8,7 @@ import (
 	"overdrive/src/material"
 	"overdrive/src/mesh"
 	"overdrive/src/render"
-	"overdrive/src/utilities"
+	"overdrive/src/utils"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -20,7 +20,7 @@ import (
 	"github.com/0xcafed00d/joystick"
 
 	"fmt"
-	// "sync"
+	"sync"
 	"time"
 )
 
@@ -34,10 +34,10 @@ func main() {
 	myWindow := myApp.NewWindow("Canvas")
 	myCanvas := myWindow.Canvas()
 
-	img := image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
+	img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
 
 	//Depth buffer implemented on the z-axis
-	zBuffer := make([]float32, utilities.RESOLUTION_X*utilities.RESOLUTION_Y)
+	zBuffer := make([]float32, utils.RESOLUTION_X*utils.RESOLUTION_Y)
 
 	for i := 0; i < len(zBuffer); i++ {
 		zBuffer[i] = -1
@@ -56,56 +56,71 @@ func main() {
 
 	go func() {
 
-		cam := render.Camera{
-			Position: geometry.NewVector(0, 0, -100),
-			Rotation: geometry.NewVector(100, 0, 0)}
-		pointLight := render.Light{
-			Position:  geometry.NewVector(0, -1000, -500),
-			Rotation:  geometry.ZeroVector(),
-			LightType: render.Point,
-			Color:     color.RGBA{255, 255, 255, 255},
-			Length:    50000,
-		}
-		ambientLight := render.Light{
-			Position:  geometry.ZeroVector(),
-			Rotation:  geometry.ZeroVector(),
-			LightType: render.Ambient,
-			Color:     color.RGBA{100, 100, 100, 255},
-			Length:    50000,
-		}
+		camera := render.NewCamera(geometry.NewVector(0, 0, -100), geometry.NewVector(100, 0, 0))
+
+		pointLight := render.PointLight(geometry.NewVector(0, 0, 0), geometry.ZeroVector(), color.RGBA{255, 255, 255, 255}, 5000)
+		ambientLight := render.AmbientLight(color.RGBA{50, 50, 50, 255})
+		lights := []*render.Light{&pointLight, &ambientLight}
 
 		start := time.Now()
 
-		// objects := make([]mesh.Mesh, 10)
+		// suzanne := mesh.ReadObjFile("models/cubeRetro.obj", material.ReadImageFile("images/retro9.png"))
+		suzanne := mesh.ReadObjFile("models/suzanne.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
 
-		// suzanne := mesh.ReadObjFile("models/cubeRetro.obj", material.GetImageFromFilePath("images/retro9.png"))
-		suzanne := mesh.ReadObjFile("models/suzanne.obj", material.ColorMaterial(color.RGBA{255, 0, 0, 255}))
-		// suzanne := mesh.ReadObjFile("models/suzanne.obj", material.GetImageFromFilePath("images/suzanne.png"))
-
-		ground := mesh.ReadObjFile("models/terrain.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
-
-		ground.Translate(geometry.NewVector(0, 100, 0))
-
-
-		// ground := mesh.ReadObjFile("models/terrain.obj", material.ColorMaterial(color.RGBA{102, 178, 97, 255}))
+		// ground := mesh.ReadObjFile("models/terrain.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
+		// ground.Translate(geometry.NewVector(0, 100, 0))
 
 		for {
 
-			img = image.NewRGBA(image.Rect(0, 0, utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
+			img = image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
 
-			for x := 0; x < utilities.RESOLUTION_X; x++ {
-				for y := 0; y < utilities.RESOLUTION_Y; y++ {
+			for x := 0; x < utils.RESOLUTION_X; x++ {
+				for y := 0; y < utils.RESOLUTION_Y; y++ {
 					img.Set(x, y, color.RGBA{107, 211, 232, 255})
 				}
 			}
 
+			// Fill all light buffers
+			var wgLight sync.WaitGroup
+			wgLight.Add(len(lights))
+			for _, light := range lights {
+				go func(light *render.Light) {
+					defer wgLight.Done()
+					for i := 0; i < len(light.ZBuffer); i++ {
+						light.ZBuffer[i] = -1
+					}
+					suzanne.LightPass(*light)
+					// ground.LightPass(light)
+				}(light)
+			}
+			wgLight.Wait()
+
+			suzanne.Draw(img, zBuffer, camera, lights)
+			// ground.Draw(img, zBuffer, camera, lights)
+
+			//Reset camera zBuffer
+			for i := 0; i < len(zBuffer); i++ {
+				zBuffer[i] = -1
+			}
+
+			//Double buffering
+			viewport.Image = img
+			viewport.Refresh()
+
+			//Compute fps count and display it on screen
+			t := time.Since(start).Milliseconds()
+			if t == 0 {
+				t = 1
+			}
+			right.Text = fmt.Sprint("fps : ", 1000/t)
+			right.Refresh()
+			start = time.Now()
+
+			////////////////////////////////////////////////////////////////
 			state, err := js.Read()
 			if err != nil {
 				panic(err)
 			}
-
-			// fmt.Println("Axis Data: %v", state.AxisData)
-			// fmt.Println("Button Data: %v", state.Buttons)
 
 			// a := (state.Buttons & 1) > 0
 			// b := (state.Buttons & 2) > 0
@@ -126,40 +141,18 @@ func main() {
 
 			js.Close()
 
-			// ground.Draw(img, zBuffer, cam, []render.Light{ambientLight})
-			suzanne.Draw(img, zBuffer, cam, []render.Light{ambientLight, pointLight})
-			ground.Draw(img, zBuffer, cam, []render.Light{ambientLight, pointLight})
-
-			for i := 0; i < len(zBuffer); i++ {
-				zBuffer[i] = -1
-			}
-
-			speed := 2
-			cam.Position.AddAssign(geometry.NewVector(float64(speed)*float64(lsHoriz), 0, float64(speed)*float64(-lsVert)))
+			speed := 2 //TODO: define actual methods for camera
+			camera.Position.AddAssign(geometry.NewVector(float64(speed)*float64(lsHoriz), 0, float64(speed)*float64(-lsVert)))
 			if lb {
-				cam.Position.AddAssign(geometry.NewVector(0, float64(speed), 0))
+				camera.Position.AddAssign(geometry.NewVector(0, float64(speed), 0))
 			}
 			if rb {
-				cam.Position.AddAssign(geometry.NewVector(0, float64(-speed), 0))
+				camera.Position.AddAssign(geometry.NewVector(0, float64(-speed), 0))
 			}
-			cam.Rotation.AddAssign(geometry.NewVector(0, 0.01*float64(rsHoriz), 0))
-
-			//Double buffering
-			viewport.Image = img
-			viewport.Refresh()
-
-			t := time.Since(start).Milliseconds()
-			if t == 0 {
-				t = 1
-			}
-
-			right.Text = fmt.Sprint("fps : ", 1000/t)
-			right.Refresh()
-
-			start = time.Now()
+			camera.Direction.AddAssign(geometry.NewVector(0, 0.01*float64(rsHoriz), 0))
 		}
 	}()
 
-	myWindow.Resize(fyne.NewSize(utilities.RESOLUTION_X, utilities.RESOLUTION_Y))
+	myWindow.Resize(fyne.NewSize(utils.RESOLUTION_X, utils.RESOLUTION_Y))
 	myWindow.ShowAndRun()
 }

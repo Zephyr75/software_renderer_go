@@ -1,22 +1,16 @@
 package geometry
 
 import (
-	"image/color"
 	"math"
-	"overdrive/src/utilities"
+	"overdrive/src/utils"
 )
 
 /**
  * Generic 3-dimensional vector for all math operations
  */
 type Vector3 struct {
-	X, Y, Z     float64     // Coordinates in 3D space
-	U, V        float32       // Texture coordinates
-	LightAmount color.Color //Light pass
-}
-
-func (v *Vector3) ResetLightAmount() {
-	v.LightAmount = color.Black
+	X, Y, Z       float64 // Coordinates in 3D space
+	U, V          float32 // Texture coordinates
 }
 
 func (v Vector3) Norm() float64 {
@@ -33,7 +27,7 @@ func (v Vector3) Cross(v2 Vector3) Vector3 {
 		v.Y*v2.Z - v.Z*v2.Y,
 		v.Z*v2.X - v.X*v2.Z,
 		v.X*v2.Y - v.Y*v2.X,
-		0, 0, color.Black,
+		0, 0,
 	}
 }
 
@@ -59,15 +53,15 @@ func (v Vector3) Converted() Point {
 }
 
 func (v *Vector3) applyPerspective() {
-	z0 := utilities.Z0()
+	z0 := utils.Z0()
 	v.X = v.X * z0 / (z0 + v.Z)
 	v.Y = v.Y * z0 / (z0 + v.Z)
 	v.Z = z0
 }
 
 func (v *Vector3) centerScreen() {
-	v.X += utilities.RESOLUTION_X / 2
-	v.Y += utilities.RESOLUTION_Y / 2
+	v.X += utils.RESOLUTION_X / 2
+	v.Y += utils.RESOLUTION_Y / 2
 }
 
 func (v Vector3) toPoint() Point {
@@ -87,15 +81,15 @@ func (v Vector3) Distance(v2 Vector3) float32 {
 */
 
 func ZeroVector() Vector3 {
-	return Vector3{0, 0, 0, 0, 0, color.Black}
+	return Vector3{0, 0, 0, 0, 0}
 }
 
 func NewVector(x, y, z float64) Vector3 {
-	return Vector3{x, y, z,0, 0, color.Black}
+	return Vector3{x, y, z, 0, 0}
 }
 
 func TextureVector(x, y, z float64, u, v float32) Vector3 {
-	return Vector3{x, y, z, u, v, color.Black}
+	return Vector3{x, y, z, u, v}
 }
 
 /*
@@ -111,7 +105,7 @@ func (v Vector3) Add(v2 Vector3) Vector3 {
 		v.X + v2.X,
 		v.Y + v2.Y,
 		v.Z + v2.Z,
-		0, 0, color.Black,
+		0, 0,
 	}
 }
 
@@ -126,7 +120,7 @@ func (v Vector3) Sub(v2 Vector3) Vector3 {
 		v.X - v2.X,
 		v.Y - v2.Y,
 		v.Z - v2.Z,
-		0, 0, color.Black,
+		0, 0,
 	}
 }
 
@@ -141,7 +135,7 @@ func (v Vector3) Mul(x float64) Vector3 {
 		v.X * x,
 		v.Y * x,
 		v.Z * x,
-		0, 0, color.Black,
+		0, 0,
 	}
 }
 
@@ -156,7 +150,7 @@ func (v Vector3) Div(x float64) Vector3 {
 		v.X / x,
 		v.Y / x,
 		v.Z / x,
-		0, 0, color.Black,
+		0, 0,
 	}
 }
 
@@ -171,7 +165,7 @@ func (v Vector3) Neg() Vector3 {
 		-v.X,
 		-v.Y,
 		-v.Z,
-		0, 0, color.Black,
+		0, 0,
 	}
 }
 

@@ -3,7 +3,6 @@ package mesh
 import (
 	"bufio"
 	"fmt"
-	"image/color"
 	"log"
 	"os"
 	"overdrive/src/geometry"
@@ -29,7 +28,6 @@ func ReadObjFile(name string, mtl material.Material) Mesh {
 		if scanner.Text()[0] == 'v' && scanner.Text()[1] == ' ' {
 			var vertex geometry.Vector3
 			fmt.Sscanf(scanner.Text(), "v %f %f %f", &vertex.X, &vertex.Y, &vertex.Z)
-			vertex.LightAmount = color.Black
 			vertices = append(vertices, vertex)
 		}
 		// Add texture coordinates to the list

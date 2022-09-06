@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func GetImageFromFilePath(filePath string) Material {
+func ReadImageFile(filePath string) Material {
 	f, err := os.Open(filePath)
 	if err != nil {
 		return WhiteMaterial()
