@@ -42,6 +42,7 @@ func (l Light) LightPercent(v geometry.Vector3, normal geometry.Vector3) float32
 			direction := l.Position.Sub(v)
 			dim := 1 - direction.Norm()/l.Length
 			direction.Normalize()
+			// fmt.Println(normal.Dot(direction), dim)
 			percentToApply = normal.Dot(direction) * dim
 	}
 	if percentToApply < 0 {

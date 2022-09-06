@@ -102,8 +102,10 @@ func Draw(t geometry.Triangle, img *image.RGBA, zBuffer []float32, mtl material.
 						g += float32(gLight / 257)
 						b += float32(bLight / 257)
 					} else {
+						// fmt.Println(light.ZBuffer[y*utils.RESOLUTION_X+x], current.Distance(light.Position))
 						if light.ZBuffer[y*utils.RESOLUTION_X+x] >= current.Distance(light.Position) {
 							percent := light.LightPercent(current, normal)
+							// fmt.Println(percent)
 							rLight, gLight, bLight, _ := light.Color.RGBA()
 							r += float32(rLight / 257) * percent
 							g += float32(gLight / 257) * percent
@@ -125,15 +127,6 @@ func Draw(t geometry.Triangle, img *image.RGBA, zBuffer []float32, mtl material.
 							v *= height
 							rBase, gBase, bBase, _ = mtl.Image.At(int(u), int(v)).RGBA()
 						}
-						
-						
-			//Compute how much light each vertex receives using forward rendering
-			// normal := t.Normal()
-			// for _, light := range lights {
-			// 	light.LightPercent(t.A, normal)
-			// 	light.LightPercent(t.B, normal)
-			// 	light.LightPercent(t.C, normal)
-			// }
 
 						// fmt.Println(r, g, b)
 						// fmt.Println(rBase, gBase, bBase)

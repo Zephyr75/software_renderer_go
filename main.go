@@ -56,16 +56,17 @@ func main() {
 
 	go func() {
 
-		camera := render.NewCamera(geometry.NewVector(0, 0, -100), geometry.NewVector(100, 0, 0))
+		camera := render.NewCamera(geometry.NewVector(0, 0, 0), geometry.NewVector(0, 0, 0))
 
-		pointLight := render.PointLight(geometry.NewVector(0, 0, 0), geometry.ZeroVector(), color.RGBA{255, 255, 255, 255}, 5000)
+		pointLight := render.PointLight(geometry.NewVector(-50, 0, 0), geometry.ZeroVector(), color.RGBA{255, 255, 255, 255}, 5000)
 		ambientLight := render.AmbientLight(color.RGBA{50, 50, 50, 255})
 		lights := []*render.Light{&pointLight, &ambientLight}
 
 		start := time.Now()
 
 		// suzanne := mesh.ReadObjFile("models/cubeRetro.obj", material.ReadImageFile("images/retro9.png"))
-		suzanne := mesh.ReadObjFile("models/suzanne.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
+		suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
+		suzanne.Translate(geometry.NewVector(0, 0, 100))
 
 		// ground := mesh.ReadObjFile("models/terrain.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
 		// ground.Translate(geometry.NewVector(0, 100, 0))
@@ -89,7 +90,7 @@ func main() {
 					for i := 0; i < len(light.ZBuffer); i++ {
 						light.ZBuffer[i] = -1
 					}
-					suzanne.LightPass(*light)
+					suzanne.LightPass(light)
 					// ground.LightPass(light)
 				}(light)
 			}

@@ -19,7 +19,7 @@ type Mesh struct {
 	Material  material.Material
 }
 
-func (m Mesh) LightPass(light render.Light) image.Image {
+func (m Mesh) LightPass(light *render.Light) image.Image {
 	var wg sync.WaitGroup
 	wg.Add(len(m.Triangles))
 	for i := range m.Triangles {
