@@ -118,10 +118,10 @@ func main() {
 			start = time.Now()
 
 			////////////////////////////////////////////////////////////////
-			state, err := js.Read()
-			if err != nil {
-				panic(err)
-			}
+			state, _ := js.Read()
+			// if err != nil {
+			// 	panic(err)
+			// }
 
 			// a := (state.Buttons & 1) > 0
 			// b := (state.Buttons & 2) > 0
@@ -131,10 +131,10 @@ func main() {
 			rb := (state.Buttons & 32) > 0
 			// fmt.Println("a:", a, "b:", b, "x:", x, "y:", y, "lb:", lb, "rb:", rb)
 
-			lsHoriz := float64(state.AxisData[0] / 32767)
-			lsVert := float64(state.AxisData[1] / 32767)
+			lsHoriz := 0//float64(state.AxisData[0] / 32767)
+			lsVert := 0//float64(state.AxisData[1] / 32767)
 			// rsVert := float64(state.AxisData[3] / 32767)
-			rsHoriz := float64(state.AxisData[4] / 32767)
+			rsHoriz := 0//float64(state.AxisData[4] / 32767)
 			// crossHoriz := float64(state.AxisData[5] / 32767)
 			// crossVert := float64(state.AxisData[6] / 32767)
 			// trigger := float64(state.AxisData[2] / 32641)

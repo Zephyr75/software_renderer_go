@@ -16,7 +16,7 @@ const (
 	Ambient     LightType = 2
 )
 
-// Light component in the scene of a given type and color
+// Light component with given type, color and radius
 type Light struct {
 	Position  geometry.Vector3
 	Direction geometry.Vector3
@@ -130,11 +130,10 @@ func f(start, end geometry.Point, y int) int {
 }
 
 /*
- ██████  ██████  ███    ██ ███████ ████████ ██████  ██    ██  ██████ ████████  ██████  ██████  ███████
-██      ██    ██ ████   ██ ██         ██    ██   ██ ██    ██ ██         ██    ██    ██ ██   ██ ██
-██      ██    ██ ██ ██  ██ ███████    ██    ██████  ██    ██ ██         ██    ██    ██ ██████  ███████
-██      ██    ██ ██  ██ ██      ██    ██    ██   ██ ██    ██ ██         ██    ██    ██ ██   ██      ██
- ██████  ██████  ██   ████ ███████    ██    ██   ██  ██████   ██████    ██     ██████  ██   ██ ███████
+ __   __        __  ___  __        __  ___  __   __   __  
+/  ` /  \ |\ | /__`  |  |__) |  | /  `  |  /  \ |__) /__` 
+\__, \__/ | \| .__/  |  |  \ \__/ \__,  |  \__/ |  \ .__/                                                    
+
 */
 
 func AmbientLight(color color.Color) Light {
