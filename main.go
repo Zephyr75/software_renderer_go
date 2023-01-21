@@ -64,8 +64,8 @@ func main() {
 
 		start := time.Now()
 
-		// suzanne := mesh.ReadObjFile("models/cubeRetro.obj", material.ReadImageFile("images/retro9.png"))
-		suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
+		suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ReadImageFile("images/suzanne2.png"))
+		//suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
 		suzanne.Translate(geometry.NewVector(0, 0, 100))
 
 		// ground := mesh.ReadObjFile("models/terrain.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
