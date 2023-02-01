@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"runtime"
+	// "sync"
 
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -58,6 +59,7 @@ func main() {
     }
 
 	i := 0
+    time := glfw.GetTime()
 
     for !window.ShouldClose() {
 
@@ -68,21 +70,52 @@ func main() {
         // -------------------------
         // MODIFY OR LOAD IMAGE HERE
         // -------------------------
+        
+        // set pixels to random colors in parallel
+        // wg := sync.WaitGroup{}
+        // for x := 0; x < w; x++ {
+        //     for y := 0; y < h; y++ {
+        //         wg.Add(1)
+        //         go func(x, y int) {
+        //             defer wg.Done()
+        //             img.Set(x, y, color.RGBA{uint8(x + i), uint8(y + i), 0, 255})
+        //         }(x, y)
+        //     }
+        // }
+        // wg.Wait()
+
+        
+        // define an array of uint8s
+        var pixels = make([]uint8, w * h * 4)
+
+
+
 		for x := 0; x < w; x++ {
 			for y := 0; y < h; y++ {
-				img.Set(x, y, color.RGBA{uint8(x + i), uint8(y + i), 0, 255})
+                pixels[(x + y * w) * 4 + 0] = uint8(x + i)
+				// img.Set(x, y, color.RGBA{uint8(x + i), uint8(y + i), 0, 255})
 			}
 		}
+
+        // img.Set()
+
 		i++
 
 		img.Set(0, 0, color.RGBA{255, 0, 0, 255})
 
         gl.BindTexture(gl.TEXTURE_2D, texture)
-        gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(img.Pix))
+        gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(pixels))
 
         gl.BlitFramebuffer(0, 0, int32(w), int32(h), 0, 0, int32(w), int32(h), gl.COLOR_BUFFER_BIT, gl.LINEAR)
 
         window.SwapBuffers()
         glfw.PollEvents()
+
+        if glfw.GetTime() - time > 1 {
+            println("FPS:", i)
+            i = 0
+            time = glfw.GetTime()
+        }
+
     }
 }
