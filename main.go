@@ -17,18 +17,15 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-	"github.com/0xcafed00d/joystick"
-
 	"fmt"
 	"sync"
 	"time"
 )
 
-func main() {
-	js, err := joystick.Open(0)
-	if err != nil {
-		panic(err)
-	}
+func main2() {
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Canvas")
@@ -118,7 +115,7 @@ func main() {
 			start = time.Now()
 
 			////////////////////////////////////////////////////////////////
-			state, _ := js.Read()
+			//state, _ := js.Read()
 			// if err != nil {
 			// 	panic(err)
 			// }
@@ -127,8 +124,8 @@ func main() {
 			// b := (state.Buttons & 2) > 0
 			// x := (state.Buttons & 4) > 0
 			// y := (state.Buttons & 8) > 0
-			lb := (state.Buttons & 16) > 0
-			rb := (state.Buttons & 32) > 0
+			//lb := (state.Buttons & 16) > 0
+			//rb := (state.Buttons & 32) > 0
 			// fmt.Println("a:", a, "b:", b, "x:", x, "y:", y, "lb:", lb, "rb:", rb)
 
 			lsHoriz := 0//float64(state.AxisData[0] / 32767)
@@ -140,16 +137,10 @@ func main() {
 			// trigger := float64(state.AxisData[2] / 32641)
 			// fmt.Println("lsHoriz:", lsHoriz, "lsVert:", lsVert, "rsHoriz:", rsHoriz, "rsVert:", rsVert, "crossHoriz:", crossHoriz, "crossVert:", crossVert, "trigger:", trigger)
 
-			js.Close()
 
 			speed := 2 //TODO: define actual methods for camera
 			camera.Position.AddAssign(geometry.NewVector(float64(speed)*float64(lsHoriz), 0, float64(speed)*float64(-lsVert)))
-			if lb {
-				camera.Position.AddAssign(geometry.NewVector(0, float64(speed), 0))
-			}
-			if rb {
-				camera.Position.AddAssign(geometry.NewVector(0, float64(-speed), 0))
-			}
+			
 			camera.Direction.AddAssign(geometry.NewVector(0, 0.01*float64(rsHoriz), 0))
 		}
 	}()
