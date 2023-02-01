@@ -10,14 +10,6 @@ import (
 	"overdrive/src/render"
 	"overdrive/src/utils"
 
-	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/canvas"
-
-	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/layout"
-	"fyne.io/fyne/v2/widget"
-	"fmt"
 	"sync"
 	"time"
 )
@@ -27,9 +19,6 @@ func main2() {
 	//	panic(err)
 	//}
 
-	myApp := app.New()
-	myWindow := myApp.NewWindow("Canvas")
-	myCanvas := myWindow.Canvas()
 
 	img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
 
@@ -40,16 +29,6 @@ func main2() {
 		zBuffer[i] = -1
 	}
 
-	viewport := canvas.NewImageFromImage(img)
-
-	bottom := widget.NewButton("Assets browser", func() {
-		fmt.Println("tapped")
-	})
-
-	right := canvas.NewText("fps", color.White)
-	content := container.New(layout.NewBorderLayout(nil, bottom, nil, right), bottom, right, viewport)
-
-	myCanvas.SetContent(content)
 
 	go func() {
 
@@ -101,17 +80,12 @@ func main2() {
 				zBuffer[i] = -1
 			}
 
-			//Double buffering
-			viewport.Image = img
-			viewport.Refresh()
 
 			//Compute fps count and display it on screen
 			t := time.Since(start).Milliseconds()
 			if t == 0 {
 				t = 1
 			}
-			right.Text = fmt.Sprint("fps : ", 1000/t)
-			right.Refresh()
 			start = time.Now()
 
 			////////////////////////////////////////////////////////////////
@@ -145,6 +119,4 @@ func main2() {
 		}
 	}()
 
-	myWindow.Resize(fyne.NewSize(utils.RESOLUTION_X, utils.RESOLUTION_Y))
-	myWindow.ShowAndRun()
 }
