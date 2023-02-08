@@ -132,6 +132,9 @@ func main() {
 			zBuffer[i] = -1
 		}
 
+
+		camera.Direction.AddAssign(geometry.NewVector(0, 0.01*float64(0.1), 0))
+
 		/////////////////////////
 
 		i++
