@@ -88,7 +88,7 @@ func main() {
 
 
 	//suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ReadImageFile("images/suzanne2.png"))
-	suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
+	suzanne := mesh.ReadObjFile("models/suzanne4.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
 	suzanne.Translate(geometry.NewVector(0, 0, 100))
 
 	/////////////////////////
