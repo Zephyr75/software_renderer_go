@@ -3,6 +3,10 @@ package main
 import (
 	"image"
 	"image/color"
+	"runtime"
+	"sync"
+
+	// "sync"
 
 	"overdrive/src/geometry"
 	"overdrive/src/material"
@@ -10,26 +14,62 @@ import (
 	"overdrive/src/render"
 	"overdrive/src/utils"
 
-	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/canvas"
-
-	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/layout"
-	"fyne.io/fyne/v2/widget"
-	"fmt"
-	"sync"
-	"time"
+	"github.com/go-gl/gl/all-core/gl"
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
-func main2() {
-	//if err != nil {
-	//	panic(err)
-	//}
+func init() {
+	// GLFW: This is needed to arrange that main() runs on main thread.
+	// See documentation for functions that are only allowed to be called from the main thread.
+	runtime.LockOSThread()
+}
 
-	myApp := app.New()
-	myWindow := myApp.NewWindow("Canvas")
-	myCanvas := myWindow.Canvas()
+func main() {
+	err := glfw.Init()
+	if err != nil {
+		panic(err)
+	}
+	defer glfw.Terminate()
+
+	window, err := glfw.CreateWindow(utils.RESOLUTION_X, utils.RESOLUTION_Y, "My Window", nil, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	window.MakeContextCurrent()
+
+	err = gl.Init()
+	if err != nil {
+		panic(err)
+	}
+
+	var texture uint32
+	{
+		gl.GenTextures(1, &texture)
+
+		gl.BindTexture(gl.TEXTURE_2D, texture)
+		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+
+		gl.BindImageTexture(0, texture, 0, false, 0, gl.WRITE_ONLY, gl.RGBA8)
+	}
+
+	var framebuffer uint32
+	{
+		gl.GenFramebuffers(1, &framebuffer)
+		gl.BindFramebuffer(gl.FRAMEBUFFER, framebuffer)
+		gl.FramebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0)
+
+		gl.BindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer)
+		gl.BindFramebuffer(gl.DRAW_FRAMEBUFFER, 0)
+	}
+
+	i := 0
+	time := glfw.GetTime()
+
+	/////////////////////////
 
 	img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
 
@@ -40,111 +80,80 @@ func main2() {
 		zBuffer[i] = -1
 	}
 
-	viewport := canvas.NewImageFromImage(img)
+	camera := render.NewCamera(geometry.NewVector(0, 0, 0), geometry.NewVector(0, 0, 0))
 
-	bottom := widget.NewButton("Assets browser", func() {
-		fmt.Println("tapped")
-	})
+	pointLight := render.PointLight(geometry.NewVector(-50, 0, 0), geometry.ZeroVector(), color.RGBA{255, 255, 255, 255}, 5000)
+	ambientLight := render.AmbientLight(color.RGBA{50, 50, 50, 255})
+	lights := []*render.Light{&pointLight, &ambientLight}
 
-	right := canvas.NewText("fps", color.White)
-	content := container.New(layout.NewBorderLayout(nil, bottom, nil, right), bottom, right, viewport)
 
-	myCanvas.SetContent(content)
+	//suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ReadImageFile("images/suzanne2.png"))
+	suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
+	suzanne.Translate(geometry.NewVector(0, 0, 100))
 
-	go func() {
+	/////////////////////////
 
-		camera := render.NewCamera(geometry.NewVector(0, 0, 0), geometry.NewVector(0, 0, 0))
+	for !window.ShouldClose() {
 
-		pointLight := render.PointLight(geometry.NewVector(-50, 0, 0), geometry.ZeroVector(), color.RGBA{255, 255, 255, 255}, 5000)
-		ambientLight := render.AmbientLight(color.RGBA{50, 50, 50, 255})
-		lights := []*render.Light{&pointLight, &ambientLight}
+		var w, h = window.GetSize()
 
-		start := time.Now()
+		// -------------------------
+		// MODIFY OR LOAD IMAGE HERE
+		// -------------------------
 
-		suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ReadImageFile("images/suzanne2.png"))
-		//suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
-		suzanne.Translate(geometry.NewVector(0, 0, 100))
+		// define an array of uint8s
+		var pixels = make([]uint8, w*h*4)
 
-		// ground := mesh.ReadObjFile("models/terrain.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
-		// ground.Translate(geometry.NewVector(0, 100, 0))
 
-		for {
+		/////////////////////////
 
-			img = image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
+		img = image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
 
-			for x := 0; x < utils.RESOLUTION_X; x++ {
-				for y := 0; y < utils.RESOLUTION_Y; y++ {
-					img.Set(x, y, color.RGBA{107, 211, 232, 255})
+		// Fill all light buffers
+		var wgLight sync.WaitGroup
+		wgLight.Add(len(lights))
+		for _, light := range lights {
+			go func(light *render.Light) {
+				defer wgLight.Done()
+				for i := 0; i < len(light.ZBuffer); i++ {
+					light.ZBuffer[i] = -1
 				}
-			}
-
-			// Fill all light buffers
-			var wgLight sync.WaitGroup
-			wgLight.Add(len(lights))
-			for _, light := range lights {
-				go func(light *render.Light) {
-					defer wgLight.Done()
-					for i := 0; i < len(light.ZBuffer); i++ {
-						light.ZBuffer[i] = -1
-					}
-					suzanne.LightPass(light)
-					// ground.LightPass(light)
-				}(light)
-			}
-			wgLight.Wait()
-
-			suzanne.Draw(img, zBuffer, camera, lights)
-			// ground.Draw(img, zBuffer, camera, lights)
-
-			//Reset camera zBuffer
-			for i := 0; i < len(zBuffer); i++ {
-				zBuffer[i] = -1
-			}
-
-			//Double buffering
-			viewport.Image = img
-			viewport.Refresh()
-
-			//Compute fps count and display it on screen
-			t := time.Since(start).Milliseconds()
-			if t == 0 {
-				t = 1
-			}
-			right.Text = fmt.Sprint("fps : ", 1000/t)
-			right.Refresh()
-			start = time.Now()
-
-			////////////////////////////////////////////////////////////////
-			//state, _ := js.Read()
-			// if err != nil {
-			// 	panic(err)
-			// }
-
-			// a := (state.Buttons & 1) > 0
-			// b := (state.Buttons & 2) > 0
-			// x := (state.Buttons & 4) > 0
-			// y := (state.Buttons & 8) > 0
-			//lb := (state.Buttons & 16) > 0
-			//rb := (state.Buttons & 32) > 0
-			// fmt.Println("a:", a, "b:", b, "x:", x, "y:", y, "lb:", lb, "rb:", rb)
-
-			lsHoriz := 0//float64(state.AxisData[0] / 32767)
-			lsVert := 0//float64(state.AxisData[1] / 32767)
-			// rsVert := float64(state.AxisData[3] / 32767)
-			rsHoriz := 0//float64(state.AxisData[4] / 32767)
-			// crossHoriz := float64(state.AxisData[5] / 32767)
-			// crossVert := float64(state.AxisData[6] / 32767)
-			// trigger := float64(state.AxisData[2] / 32641)
-			// fmt.Println("lsHoriz:", lsHoriz, "lsVert:", lsVert, "rsHoriz:", rsHoriz, "rsVert:", rsVert, "crossHoriz:", crossHoriz, "crossVert:", crossVert, "trigger:", trigger)
-
-
-			speed := 2 //TODO: define actual methods for camera
-			camera.Position.AddAssign(geometry.NewVector(float64(speed)*float64(lsHoriz), 0, float64(speed)*float64(-lsVert)))
-			
-			camera.Direction.AddAssign(geometry.NewVector(0, 0.01*float64(rsHoriz), 0))
+				suzanne.LightPass(light)
+				// ground.LightPass(light)
+			}(light)
 		}
-	}()
+		wgLight.Wait()
 
-	myWindow.Resize(fyne.NewSize(utils.RESOLUTION_X, utils.RESOLUTION_Y))
-	myWindow.ShowAndRun()
+		suzanne.Draw(pixels, zBuffer, camera, lights)
+		// ground.Draw(img, zBuffer, camera, lights)
+
+		//Reset camera zBuffer
+		for i := 0; i < len(zBuffer); i++ {
+			zBuffer[i] = -1
+		}
+
+
+		camera.Direction.AddAssign(geometry.NewVector(0, 0.01*float64(0.1), 0))
+
+		/////////////////////////
+
+		i++
+
+		img.Set(0, 0, color.RGBA{255, 0, 0, 255})
+
+		gl.BindTexture(gl.TEXTURE_2D, texture)
+		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(pixels))
+
+		gl.BlitFramebuffer(0, 0, int32(w), int32(h), 0, 0, int32(w), int32(h), gl.COLOR_BUFFER_BIT, gl.LINEAR)
+
+		window.SwapBuffers()
+		glfw.PollEvents()
+
+		if glfw.GetTime()-time > 1 {
+			println("FPS:", i)
+			i = 0
+			time = glfw.GetTime()
+		}
+
+	}
 }
