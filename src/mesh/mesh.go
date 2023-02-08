@@ -39,7 +39,7 @@ func (m Mesh) LightPass(light *render.Light) image.Image {
 /**
  * Render pipeline drawing the mesh on screen
  */
-func (m Mesh) Draw(img *image.RGBA, zBuffer []float32, cam render.Camera, lights []*render.Light) {
+func (m Mesh) Draw(pixels []byte, zBuffer []float32, cam render.Camera, lights []*render.Light) {
 	wg := sync.WaitGroup{}
 	for i := range m.Triangles {
 		wg.Add(1)
@@ -57,7 +57,7 @@ func (m Mesh) Draw(img *image.RGBA, zBuffer []float32, cam render.Camera, lights
 			normal := t.Normal()
 			if normal.Z < 0 {
 				//Rasterization
-				draw.Draw(t, img, zBuffer, m.Material, lights, normal)
+				draw.Draw(t, pixels, zBuffer, m.Material, lights, normal)
 			}
 			wg.Done()
 		}(m.Triangles[i])

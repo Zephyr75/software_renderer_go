@@ -104,22 +104,10 @@ func main() {
 		// define an array of uint8s
 		var pixels = make([]uint8, w*h*4)
 
-		for x := 0; x < w; x++ {
-			for y := 0; y < h; y++ {
-				pixels[(x+y*w)*4+0] = uint8(x + i)
-				// img.Set(x, y, color.RGBA{uint8(x + i), uint8(y + i), 0, 255})
-			}
-		}
 
 		/////////////////////////
 
 		img = image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
-
-		for x := 0; x < utils.RESOLUTION_X; x++ {
-			for y := 0; y < utils.RESOLUTION_Y; y++ {
-				img.Set(x, y, color.RGBA{107, 211, 232, 255})
-			}
-		}
 
 		// Fill all light buffers
 		var wgLight sync.WaitGroup
@@ -136,7 +124,7 @@ func main() {
 		}
 		wgLight.Wait()
 
-		suzanne.Draw(img, zBuffer, camera, lights)
+		suzanne.Draw(pixels, zBuffer, camera, lights)
 		// ground.Draw(img, zBuffer, camera, lights)
 
 		//Reset camera zBuffer
@@ -151,7 +139,7 @@ func main() {
 		img.Set(0, 0, color.RGBA{255, 0, 0, 255})
 
 		gl.BindTexture(gl.TEXTURE_2D, texture)
-		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(img.Pix))
+		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(pixels))
 
 		gl.BlitFramebuffer(0, 0, int32(w), int32(h), 0, 0, int32(w), int32(h), gl.COLOR_BUFFER_BIT, gl.LINEAR)
 

@@ -1,8 +1,6 @@
 package draw
 
 import (
-	"image"
-	"image/color"
 	"overdrive/src/geometry"
 	"overdrive/src/material"
 	"overdrive/src/render"
@@ -10,7 +8,7 @@ import (
 	"sync"
 )
 
-func Draw(t geometry.Triangle, img *image.RGBA, zBuffer []float32, mtl material.Material, lights []*render.Light, normal geometry.Vector3) {
+func Draw(t geometry.Triangle, pixels []byte, zBuffer []float32, mtl material.Material, lights []*render.Light, normal geometry.Vector3) {
 	vertices := []geometry.Vector3{t.A, t.B, t.C}
 	points := make([]geometry.Point, 3)
 	for i, v := range vertices {
@@ -131,11 +129,11 @@ func Draw(t geometry.Triangle, img *image.RGBA, zBuffer []float32, mtl material.
 						// fmt.Println(r, g, b)
 						// fmt.Println(rBase, gBase, bBase)
 						// fmt.Println("-----------------")
-						img.Set(x, y, color.RGBA{
-							uint8(r * float32(rBase) / 65535),
-							uint8(g * float32(gBase) / 65535),
-							uint8(b * float32(bBase) / 65535),
-							255})
+
+						pixels[(x+y*utils.RESOLUTION_X)*4+0] = uint8(r * float32(rBase) / 65535)
+						pixels[(x+y*utils.RESOLUTION_X)*4+1] = uint8(g * float32(gBase) / 65535)
+						pixels[(x+y*utils.RESOLUTION_X)*4+2] = uint8(b * float32(bBase) / 65535)
+						pixels[(x+y*utils.RESOLUTION_X)*4+3] = 255
 					}
 				}
 			}
