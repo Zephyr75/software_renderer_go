@@ -19,7 +19,7 @@ type Mesh struct {
 	Material  material.Material
 }
 
-func (m Mesh) LightPass(light *render.Light) image.Image {
+func (m Mesh) LightPass(light render.Light) image.Image {
 	var wg sync.WaitGroup
 	wg.Add(len(m.Triangles))
 	for i := range m.Triangles {
@@ -39,18 +39,20 @@ func (m Mesh) LightPass(light *render.Light) image.Image {
 /**
  * Render pipeline drawing the mesh on screen
  */
-func (m Mesh) Draw(pixels []byte, zBuffer []float32, cam render.Camera, lights []*render.Light) {
+func (m Mesh) Draw(pixels []byte, zBuffer []float32, cam render.Camera, lights []render.Light) {
 	wg := sync.WaitGroup{}
 	for i := range m.Triangles {
 		wg.Add(1)
 		go func(t geometry.Triangle) {
 
 			//Apply camera transform
+			/*
 			cam.ApplyCamera(&t)
 			for _, light := range lights {
 				light.Position.AddAssign(cam.Position.Neg())
 				light.Direction.AddAssign(cam.Position.Neg())
 			}
+			*/
 
 
 			//Back-face culling

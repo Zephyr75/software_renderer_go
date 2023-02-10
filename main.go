@@ -1,7 +1,6 @@
 package main
 
 import (
-	"image"
 	"image/color"
 	"runtime"
 	"sync"
@@ -69,9 +68,6 @@ func main() {
 	i := 0
 	time := glfw.GetTime()
 
-	/////////////////////////
-
-	img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
 
 	//Depth buffer implemented on the z-axis
 	zBuffer := make([]float32, utils.RESOLUTION_X*utils.RESOLUTION_Y)
@@ -83,12 +79,13 @@ func main() {
 	camera := render.NewCamera(geometry.NewVector(0, 0, 0), geometry.NewVector(0, 0, 0))
 
 	pointLight := render.PointLight(geometry.NewVector(-50, 0, 0), geometry.ZeroVector(), color.RGBA{255, 255, 255, 255}, 5000)
+	//pointLight2 := render.PointLight(geometry.NewVector(50, 0, 0), geometry.ZeroVector(), color.RGBA{255, 255, 255, 255}, 5000)
 	ambientLight := render.AmbientLight(color.RGBA{50, 50, 50, 255})
-	lights := []*render.Light{&pointLight, &ambientLight}
+	lights := []render.Light{pointLight, ambientLight}
 
 
 	//suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ReadImageFile("images/suzanne2.png"))
-	suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
+	suzanne := mesh.ReadObjFile("models/cubeRetro.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
 	suzanne.Translate(geometry.NewVector(0, 0, 100))
 
 	/////////////////////////
@@ -97,58 +94,42 @@ func main() {
 
 		var w, h = window.GetSize()
 
-		// -------------------------
-		// MODIFY OR LOAD IMAGE HERE
-		// -------------------------
-
 		// define an array of uint8s
 		var pixels = make([]uint8, w*h*4)
-
-
-		/////////////////////////
-
-		img = image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
 
 		// Fill all light buffers
 		var wgLight sync.WaitGroup
 		wgLight.Add(len(lights))
 		for _, light := range lights {
-			go func(light *render.Light) {
+			go func(light render.Light) {
 				defer wgLight.Done()
 				for i := 0; i < len(light.ZBuffer); i++ {
 					light.ZBuffer[i] = -1
 				}
 				suzanne.LightPass(light)
-				// ground.LightPass(light)
 			}(light)
 		}
 		wgLight.Wait()
 
 		suzanne.Draw(pixels, zBuffer, camera, lights)
-		// ground.Draw(img, zBuffer, camera, lights)
 
 		//Reset camera zBuffer
 		for i := 0; i < len(zBuffer); i++ {
 			zBuffer[i] = -1
 		}
 
-
 		camera.Direction.AddAssign(geometry.NewVector(0, 0.01*float64(0.1), 0))
 
-		/////////////////////////
-
-		i++
-
-		img.Set(0, 0, color.RGBA{255, 0, 0, 255})
-
+		
 		gl.BindTexture(gl.TEXTURE_2D, texture)
 		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(pixels))
-
+		
 		gl.BlitFramebuffer(0, 0, int32(w), int32(h), 0, 0, int32(w), int32(h), gl.COLOR_BUFFER_BIT, gl.LINEAR)
-
+		
 		window.SwapBuffers()
 		glfw.PollEvents()
-
+		
+		i++
 		if glfw.GetTime()-time > 1 {
 			println("FPS:", i)
 			i = 0
