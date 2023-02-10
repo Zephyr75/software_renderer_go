@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-func Draw(t geometry.Triangle, pixels []byte, zBuffer []float32, mtl material.Material, lights []*render.Light, normal geometry.Vector3) {
+func Draw(t geometry.Triangle, pixels []byte, zBuffer []float32, mtl material.Material, lights []render.Light, normal geometry.Vector3) {
 	vertices := []geometry.Vector3{t.A, t.B, t.C}
 	points := make([]geometry.Point, 3)
 	for i, v := range vertices {
@@ -41,6 +41,7 @@ func Draw(t geometry.Triangle, pixels []byte, zBuffer []float32, mtl material.Ma
 	dist0 := v0.Distance(geometry.ZeroVector())
 	dist1 := v1.Distance(geometry.ZeroVector())
 	dist2 := v2.Distance(geometry.ZeroVector())
+	
 	
 	wg := sync.WaitGroup{}
 
