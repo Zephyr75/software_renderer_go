@@ -77,13 +77,13 @@ func main() {
 
 	camera := render.NewCamera(geometry.NewVector(0, 0, 0), geometry.NewVector(0, 0, 0))
 
-	pointLight := render.PointLight(geometry.NewVector(-200, 0, 70), geometry.ZeroVector(), color.RGBA{255, 255, 255, 255}, 5000)
+	pointLight := render.PointLight(geometry.NewVector(-200, 0, 100), geometry.ZeroVector(), color.RGBA{255, 255, 255, 255}, 5000)
 	//pointLight2 := render.PointLight(geometry.NewVector(50, 0, 0), geometry.ZeroVector(), color.RGBA{255, 255, 255, 255}, 5000)
 	ambientLight := render.AmbientLight(color.RGBA{50, 50, 50, 255})
 	lights := []render.Light{pointLight, ambientLight}
 
 	//suzanne := mesh.ReadObjFile("models/suzanne2.obj", material.ReadImageFile("images/suzanne2.png"))
-	suzanne := mesh.ReadObjFile("models/suzanne2_test2.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
+	suzanne := mesh.ReadObjFile("models/suzanne2_test3.obj", material.ColorMaterial(color.RGBA{255, 255, 255, 255}))
 	suzanne.Translate(geometry.NewVector(0, 0, 100))
 
 	/////////////////////////

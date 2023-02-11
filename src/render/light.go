@@ -119,6 +119,16 @@ func (l Light) FillBuffer(t geometry.Triangle) {
 						theta := math.Atan2(current.Y-l.Position.Y, current.X-l.Position.X) * 180 / math.Pi
 						phi := math.Atan2(current.Z-l.Position.Z, current.X-l.Position.X) * 180 / math.Pi
 
+						//println("theta: ", int(theta), "phi: ", int(phi))
+
+
+						if x == 900 && y == 500 {
+							println("theta: ", int(theta), "phi: ", int(phi))
+						}
+						if x == 600 && y == 500 {
+							println("theta: ", int(theta), "phi: ", int(phi))
+						}
+
 						
 						//set theta between 0 and 360
 						if theta < 0 {
@@ -130,7 +140,7 @@ func (l Light) FillBuffer(t geometry.Triangle) {
 							phi += 180
 						}
 						
-						println("theta: ", int(theta), "phi: ", int(phi))
+						//println("theta: ", int(theta), "phi: ", int(phi))
 
 						index := phi*360 + theta
 
@@ -138,18 +148,23 @@ func (l Light) FillBuffer(t geometry.Triangle) {
 							index = 360*180 - 1
 						}
 
+						if int(index) == 4834 {
+							//l.ZBuffer[y*utils.RESOLUTION_X+x] = 0
+							//println("x: ", x, "y: ", y, "z: ", z, "zBuffer: ", l.ZBuffer[l.ZIndices[y*utils.RESOLUTION_X+x]])
+						}
 						l.ZIndices[y*utils.RESOLUTION_X+x] = int(index)
 
 						l.ZBuffer[int(index)] = z
+
 					}
 				}
 
 				if x == 840 && y == 480 {
 					//l.ZBuffer[y*utils.RESOLUTION_X+x] = 0
-					//println("x: ", x, "y: ", y, "z: ", z, "zBuffer: ", l.ZIndices[y*utils.RESOLUTION_X+x])
+					//println("x: ", x, "y: ", y, "z: ", z, "zBuffer: ", l.ZBuffer[l.ZIndices[y*utils.RESOLUTION_X+x]])
 				}
 				if x == 660 && y == 480 {
-					//println("x: ", x, "y: ", y, "z: ", z, "zBuffer: ", l.ZIndices[y*utils.RESOLUTION_X+x])
+					//println("x: ", x, "y: ", y, "z: ", z, "zBuffer: ", l.ZBuffer[l.ZIndices[y*utils.RESOLUTION_X+x]])
 				}
 			}
 		}(y)
