@@ -123,10 +123,10 @@ func (l Light) FillBuffer(t geometry.Triangle) {
 
 
 						if x == 900 && y == 500 {
-							println("theta: ", int(theta), "phi: ", int(phi))
+							println("x: ", x, "y: ", y, "theta: ", int(theta), "phi: ", int(phi), "z: ", z)
 						}
 						if x == 600 && y == 500 {
-							println("theta: ", int(theta), "phi: ", int(phi))
+							println("x: ", x, "y: ", y, "theta: ", int(theta), "phi: ", int(phi), "z: ", z)
 						}
 
 						
