@@ -1,12 +1,13 @@
 package main
 
 import (
+	"image/color"
 	"runtime"
 
 	// "sync"
 
-	"overdrive/src/utils"
 	"overdrive/src/ui"
+	"overdrive/src/utils"
 
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -74,7 +75,11 @@ func main() {
 		// define an array of uint8s
 		var screen = make([]uint8, w*h*4)
 
-		button := ui.Button(ui.Center, ui.PaddingEqual(ui.Pixel, 10), ui.Size{ui.Pixel, 100, 100}, nil)
+		button := ui.Button{
+			Alignment: ui.AlignmentBottomLeft,
+			Padding:   ui.PaddingEqual(ui.Pixel, 10),
+			Color:     color.RGBA{255, 255, 0, 255},
+		}
 
 		button.Draw(screen)
 

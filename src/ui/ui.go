@@ -1,5 +1,8 @@
 package ui
 
+import (
+)
+
 type ScaleType byte
 
 const (
@@ -52,15 +55,15 @@ Alignment
 type Alignment byte
 
 const (
-	Center      Alignment = 0
-	Top         Alignment = 1
-	Bottom      Alignment = 2
-	Left        Alignment = 3
-	Right       Alignment = 4
-	TopLeft     Alignment = 5
-	TopRight    Alignment = 6
-	BottomLeft  Alignment = 7
-	BottomRight Alignment = 8
+	AlignmentCenter      Alignment = 0
+	AlignmentTop         Alignment = 1
+	AlignmentBottom      Alignment = 2
+	AlignmentLeft        Alignment = 3
+	AlignmentRight       Alignment = 4
+	AlignmentTopLeft     Alignment = 5
+	AlignmentTopRight    Alignment = 6
+	AlignmentBottomLeft  Alignment = 7
+	AlignmentBottomRight Alignment = 8
 )
 
 /*
@@ -72,32 +75,12 @@ type Size struct {
 	Height int
 }
 
-type UIElement struct {
-	Alignment Alignment
-	Padding   Padding
-	Size      Size
-	Child     *UIElement
+
+
+type UIElement interface {
+	Draw(screen []byte)
+	GetParentSize(size Size)
 }
-
-func Button(alignment Alignment, padding Padding, size Size, child *UIElement) UIElement {
-	return UIElement{
-		Alignment: alignment,
-		Padding:   padding,
-		Size:      size,
-		Child:     child,
-	}
-}
-
-func (element UIElement) Draw(screen []byte) {
-	// TODO
-	println("Draw")
-}
-
-
-
-
-
-
 
 /*
 Button
