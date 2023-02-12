@@ -83,7 +83,6 @@ type UIElement interface {
 	Debug()
 }
 
-
 type Properties struct {
 	MaxSize   Size
 	Center    Point
@@ -98,57 +97,59 @@ type Point struct {
 	Y int
 }
 
-func (props Properties) Draw(screen []byte) {
+func (props *Properties) Draw(screen []byte) {
+	if props.MaxSize.Width == 0 || props.MaxSize.Height == 0 {
+		props.MaxSize.Width = utils.RESOLUTION_X
+		props.MaxSize.Height = utils.RESOLUTION_Y
+		props.MaxSize.Scale = ScalePixel
+	}
 
 	maxWidth := props.MaxSize.Width
 	maxHeight := props.MaxSize.Height
-	if props.MaxSize.Width == 0 {
-		maxWidth = utils.RESOLUTION_X
+	if props.MaxSize.Scale == ScaleRelative {
+		maxWidth = utils.RESOLUTION_X * props.MaxSize.Width / 100
+		maxHeight = utils.RESOLUTION_Y * props.MaxSize.Height / 100
 	}
-	if props.MaxSize.Width == 0 {
-		maxHeight = utils.RESOLUTION_Y
+
+	if props.Size.Width == 0 || props.Size.Height == 0 {
+		props.Size.Width = props.MaxSize.Width
+		props.Size.Height = props.MaxSize.Height
+		props.Size.Scale = ScalePixel
 	}
 
 	centerX := props.Center.X
 	centerY := props.Center.Y
-	if props.Center.X == 0 {
-		centerX = maxWidth / 2
-	}
-	if props.Center.Y == 0 {
-		centerY = maxHeight / 2
-	}
+
+
+	println("-----------------")
+	println(centerX, " ", centerY)
 
 	width := props.Size.Width
 	height := props.Size.Height
-	if props.Size.Width == 0 {
-		width = maxWidth
-	}
-	if props.Size.Height == 0 {
-		height = maxHeight
-	}
 	if props.Size.Scale == ScaleRelative {
 		width = maxWidth * props.Size.Width / 100
 		height = maxHeight * props.Size.Height / 100
 	}
 
-
 	switch props.Alignment {
 	case AlignmentBottom:
-		centerY += height / 2 - maxHeight / 2
+		centerY += height/2 - maxHeight/2
 	case AlignmentTop:
-		centerY -= height / 2 - maxHeight / 2
+		centerY -= height/2 - maxHeight/2
 	case AlignmentLeft:
-		centerX -= width / 2 - maxWidth / 2
+		centerX -= width/2 - maxWidth/2
 	case AlignmentRight:
-		centerX += width / 2 - maxWidth / 2
+		centerX += width/2 - maxWidth/2
 	}
+	println(maxWidth, " ", maxHeight)
+	println(centerX, " ", centerY)
+	println(width, " ", height)
 
 	centerX -= width / 2
 	centerY -= height / 2
 
-	println(centerX, " ", centerY, " ", width, " ", height)
 
-	for i := 0; i < width; i++ {	
+	for i := 0; i < width; i++ {
 		for j := 0; j < height; j++ {
 			r, g, b, _ := props.Color.RGBA()
 			screen[(centerX+i)*4+(centerY+j)*utils.RESOLUTION_X*4] = byte(r)

@@ -7,20 +7,23 @@ type Column struct {
 }
 
 func (column Column) Draw(screen []byte) {
+	
 	column.Properties.Draw(screen)
 
 	for child := range column.Children {
+		
 		column.Children[child].SetProperties(
 			Size{
-				Scale:  ScaleRelative,
-				Width:  100,
-				Height: 100 / len(column.Children),
+				Scale:  column.Properties.Size.Scale,
+				Width:  column.Properties.Size.Width,
+				Height: column.Properties.Size.Height / len(column.Children),
 			},
 			Point{
 				X: column.Properties.Center.X,
-				Y: column.Properties.Center.Y - column.Properties.MaxSize.Height/2 + (child+1)*column.Properties.MaxSize.Height/(len(column.Children)+1),
+				Y: column.Properties.Center.Y - column.Properties.MaxSize.Height/2 + (2*child+1)*column.Properties.MaxSize.Height/(len(column.Children)*2),
 			},
 		)
+		println("duh", column.Properties.Center.Y - column.Properties.MaxSize.Height/2 + (child+1)*column.Properties.MaxSize.Height/(len(column.Children)+1))
 		column.Children[child].Draw(screen)
 	}
 }
