@@ -75,30 +75,33 @@ func main() {
 
 		//Color:    color.RGBA{0, 56, 68, 255},
 
-		parent := ui.Button{
-			Properties: ui.Properties{
-				Alignment: ui.AlignmentBottomLeft,
-				Padding:   ui.PaddingEqual(ui.ScalePixel, 10),
-				Color:     color.RGBA{255, 235, 198, 255},
+		parent := ui.Column{
+			Properties: &ui.Properties{
+				Alignment: ui.AlignmentCenter,
+				Color:     color.RGBA{0, 235, 198, 255},
+				MaxSize: ui.Size{
+					Scale:  ui.ScalePixel,
+					Width:  utils.RESOLUTION_X,
+					Height: utils.RESOLUTION_Y,
+				},
+				Center: ui.Point{
+					X: utils.RESOLUTION_X / 2,
+					Y: utils.RESOLUTION_Y / 2,
+				},
 			},
-			Child: ui.Column{
-				Properties: ui.Properties{
-					Alignment: ui.AlignmentCenter,
-					Color:     color.RGBA{0, 235, 198, 255}},
-				Children: []ui.UIElement{
-					ui.Button{
-						Properties: ui.Properties{
-							Alignment: ui.AlignmentLeft,
-							Size:      ui.Size{Scale: ui.ScaleRelative, Width: 40, Height: 50},
-							Color:     color.RGBA{0, 56, 68, 255},
-						},
+			Children: []ui.UIElement{
+				ui.Button{
+					Properties: &ui.Properties{
+						Alignment: ui.AlignmentCenter,
+						Size:      ui.Size{Scale: ui.ScalePixel, Width: 40, Height: 50},
+						Color:     color.RGBA{0, 56, 68, 255},
 					},
-					ui.Button{
-						Properties: ui.Properties{
-							Alignment: ui.AlignmentRight,
-							Size:      ui.Size{Scale: ui.ScaleRelative, Width: 40, Height: 50},
-							Color:     color.RGBA{0, 108, 103, 255},
-						},
+				},
+				ui.Button{
+					Properties: &ui.Properties{
+						Alignment: ui.AlignmentCenter,
+						Size:      ui.Size{Scale: ui.ScalePixel, Width: 40, Height: 50},
+						Color:     color.RGBA{0, 108, 103, 255},
 					},
 				},
 			},
