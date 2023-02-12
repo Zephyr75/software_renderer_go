@@ -88,21 +88,19 @@ func main() {
 				ui.Button{
 					Properties: &ui.Properties{
 						Alignment: ui.AlignmentCenter,
-						Size:      ui.Size{Scale: ui.ScaleRelative, Width: 90, Height: 90},
+						Padding: ui.PaddingEqual(ui.ScalePixel, 10),
 						Color:     color.RGBA{0, 108, 103, 255},
 					},
 				},
 				ui.Button{
 					Properties: &ui.Properties{
 						Alignment: ui.AlignmentCenter,
-						Size:      ui.Size{Scale: ui.ScaleRelative, Width: 90, Height: 90},
 						Color:     color.RGBA{0, 56, 68, 255},
 					},
 				},
 				ui.Button{
 					Properties: &ui.Properties{
 						Alignment: ui.AlignmentCenter,
-						Size:      ui.Size{Scale: ui.ScaleRelative, Width: 90, Height: 90},
 						Color:     color.RGBA{0, 108, 103, 255},
 					},
 				},

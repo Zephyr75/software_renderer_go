@@ -20,7 +20,7 @@ func (column Column) Draw(screen []byte) {
 			},
 			Point{
 				X: column.Properties.Center.X,
-				Y: column.Properties.Center.Y - column.Properties.MaxSize.Height/2 + (2*child+1)*column.Properties.MaxSize.Height/(len(column.Children)*2),
+				Y: column.Properties.Center.Y - column.Properties.MaxSize.Height/2 + (2*(len(column.Children) - child - 1)+1)*column.Properties.MaxSize.Height/(len(column.Children)*2),
 			},
 		)
 		println("duh", column.Properties.Center.Y - column.Properties.MaxSize.Height/2 + (child+1)*column.Properties.MaxSize.Height/(len(column.Children)+1))

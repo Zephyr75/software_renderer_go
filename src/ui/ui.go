@@ -121,9 +121,6 @@ func (props *Properties) Draw(screen []byte) {
 	centerY := props.Center.Y
 
 
-	println("-----------------")
-	println(centerX, " ", centerY)
-
 	width := props.Size.Width
 	height := props.Size.Height
 	if props.Size.Scale == ScaleRelative {
@@ -141,9 +138,19 @@ func (props *Properties) Draw(screen []byte) {
 	case AlignmentRight:
 		centerX += width/2 - maxWidth/2
 	}
-	println(maxWidth, " ", maxHeight)
-	println(centerX, " ", centerY)
-	println(width, " ", height)
+
+	if props.Padding.Scale == ScaleRelative {
+		height -= (maxHeight * props.Padding.Top / 100) + (maxHeight * props.Padding.Bottom / 100)
+		width -= (maxWidth * props.Padding.Left / 100) + (maxWidth * props.Padding.Right / 100)
+		centerX += (maxWidth * props.Padding.Left / 100) - (maxWidth * props.Padding.Right / 100)
+		centerY += (maxHeight * props.Padding.Top / 100) - (maxHeight * props.Padding.Bottom / 100)
+	} else {
+		height -= props.Padding.Top + props.Padding.Bottom
+		width -= props.Padding.Left + props.Padding.Right
+		centerX += props.Padding.Left - props.Padding.Right
+		centerY += props.Padding.Top - props.Padding.Bottom
+	}
+
 
 	centerX -= width / 2
 	centerY -= height / 2
