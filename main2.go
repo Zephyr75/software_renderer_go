@@ -64,8 +64,6 @@ func main() {
 	i := 0
 	time := glfw.GetTime()
 
-
-
 	/////////////////////////
 
 	for !window.ShouldClose() {
@@ -75,17 +73,38 @@ func main() {
 		// define an array of uint8s
 		var screen = make([]uint8, w*h*4)
 
-		button := ui.Button{
-			Alignment: ui.AlignmentBottomLeft,
-			Padding:   ui.PaddingEqual(ui.Pixel, 10),
-			Color:     color.RGBA{255, 255, 0, 255},
+		//Color:    color.RGBA{0, 56, 68, 255},
+
+		parent := ui.Button{
+			Properties: ui.Properties{
+				Alignment: ui.AlignmentBottomLeft,
+				Padding:   ui.PaddingEqual(ui.ScalePixel, 10),
+				Color:     color.RGBA{255, 235, 198, 255},
+			},
+			Child: ui.Column{
+				Properties: ui.Properties{
+					Alignment: ui.AlignmentCenter,
+					Color:     color.RGBA{0, 235, 198, 255}},
+				Children: []ui.UIElement{
+					ui.Button{
+						Properties: ui.Properties{
+							Alignment: ui.AlignmentLeft,
+							Size:      ui.Size{Scale: ui.ScaleRelative, Width: 40, Height: 50},
+							Color:     color.RGBA{0, 56, 68, 255},
+						},
+					},
+					ui.Button{
+						Properties: ui.Properties{
+							Alignment: ui.AlignmentRight,
+							Size:      ui.Size{Scale: ui.ScaleRelative, Width: 40, Height: 50},
+							Color:     color.RGBA{0, 108, 103, 255},
+						},
+					},
+				},
+			},
 		}
 
-		button.Draw(screen)
-
-
-
-		
+		parent.Draw(screen)
 
 		gl.BindTexture(gl.TEXTURE_2D, texture)
 		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(screen))
