@@ -25,7 +25,7 @@ type Light struct {
 	Color     color.Color
 	Length    float64
 	ZIndices  []int
-	ZBuffer	  []float32
+	ZBuffer   []float32
 }
 
 // Compute how much light a vertex gets
@@ -113,50 +113,71 @@ func (l Light) FillBuffer(t geometry.Triangle) {
 				if x >= 0 && x < utils.RESOLUTION_X && y >= 0 && y < utils.RESOLUTION_Y {
 					old_z := l.ZBuffer[l.ZIndices[y*utils.RESOLUTION_X+x]]
 
-					if z < old_z || old_z < 0 {
+					theta := math.Atan2(current.Y-l.Position.Y, current.X-l.Position.X) * 180 / math.Pi
+					phi := math.Atan2(current.Z-l.Position.Z, current.X-l.Position.X) * 180 / math.Pi
+
+					if true || z < old_z || old_z < 0 {
 						//set theta to the angle in degrees around the up axis between the light and the vertex current
 						//set phi to the angle in degrees around the right axis between the light and the vertex current
-						theta := math.Atan2(current.Y-l.Position.Y, current.X-l.Position.X) * 180 / math.Pi
-						phi := math.Atan2(current.Z-l.Position.Z, current.X-l.Position.X) * 180 / math.Pi
 
 						//println("theta: ", int(theta), "phi: ", int(phi))
 
-
-						if x == 900 && y == 500 {
-							println("x: ", x, "y: ", y, "theta: ", int(theta), "phi: ", int(phi), "z: ", z)
-						}
-						if x == 600 && y == 500 {
-							println("x: ", x, "y: ", y, "theta: ", int(theta), "phi: ", int(phi), "z: ", z)
-						}
-
-						
 						//set theta between 0 and 360
 						if theta < 0 {
 							theta += 360
 						}
-						
+
 						//set phi between 0 180
 						if phi < 0 {
 							phi += 180
 						}
+
 						
-						//println("theta: ", int(theta), "phi: ", int(phi))
-
-						index := phi*360 + theta
-
+						index := uint64(uint64(phi)*uint64(360) + uint64(theta))
+						
+						
 						if index >= 360*180 {
-							index = 360*180 - 1
+							continue
+							//index = 360*180 - 1
 						}
-
-						if int(index) == 4834 {
+						
+						
+						if index == 4834 {
 							//l.ZBuffer[y*utils.RESOLUTION_X+x] = 0
 							//println("x: ", x, "y: ", y, "z: ", z, "zBuffer: ", l.ZBuffer[l.ZIndices[y*utils.RESOLUTION_X+x]])
 						}
 						l.ZIndices[y*utils.RESOLUTION_X+x] = int(index)
-
-						l.ZBuffer[int(index)] = z
+						
+						l.ZBuffer[index] = z
+						
+						if x == 900 && y == 500 {
+							println("z: ", z)
+							println("index: ", index)
+						}
+						if (index == 64080) {
+							println("theta: ", int(theta), "phi: ", int(phi))
+							println("x: ", x, "y: ", y)
+						}
 
 					}
+
+
+					//println("b: ", l.ZBuffer[l.ZIndices[y*utils.RESOLUTION_X+x]])
+
+					/*
+					if 	x == 900 && y == 500 {
+						println("----------------------")
+						println(z < old_z || old_z < 0)
+						println("x: ", x, "y: ", y)
+						println("z: ", z)
+						println("o: ", old_z)
+						println("b: ", l.ZBuffer[l.ZIndices[y*utils.RESOLUTION_X+x]])
+					}
+					*/
+
+					/*if x == 900 && y == 500 {
+						println("b: ", l.ZBuffer[l.ZIndices[y*utils.RESOLUTION_X+x]])
+					}*/
 				}
 
 				if x == 840 && y == 480 {

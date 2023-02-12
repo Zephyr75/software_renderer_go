@@ -27,9 +27,7 @@ func Draw(t geometry.Triangle, pixels []byte, zBuffer []float32, mtl material.Ma
 	var v0, v1, v2 = vertices[0], vertices[1], vertices[2]
 	var top, mid, bottom = p0.Y, p1.Y, p2.Y
 
-	//_, gBase, bBase, _ := byte(0), byte(0), byte(0), byte(0)
-
-	//mtl.Color.RGBA()
+	rBase, gBase, bBase, _ := mtl.Color.RGBA()
 
 	var width, height float32
 	if mtl.MaterialType == material.Texture {
@@ -110,7 +108,7 @@ func Draw(t geometry.Triangle, pixels []byte, zBuffer []float32, mtl material.Ma
 
 						//println(uint(current.Distance(light.Position)))
 
-						if true { //light.ZBuffer[y*utils.RESOLUTION_X+x] == current.Distance(light.Position) {
+						if light.ZBuffer[light.ZIndices[y*utils.RESOLUTION_X+x]] >= current.Distance(light.Position) {
 
 
 							percent := light.LightPercent(current, normal)
@@ -127,19 +125,15 @@ func Draw(t geometry.Triangle, pixels []byte, zBuffer []float32, mtl material.Ma
 							index := theta*360 + phi
 							*/
 
-							index := light.ZIndices[y*utils.RESOLUTION_X+x]
 	
-							z := light.ZBuffer[index]
+							//z := light.ZBuffer[light.ZIndices[y*utils.RESOLUTION_X+x]] / 2
 
-							max := utils.Min(int(z), 255)
+
+							//max := utils.Min(int(z), 255)
 							//max := utils.Min(int(current.Distance(light.Position)), 255)
 
-							if index == 4834 {
-								//pixels[(x+y*utils.RESOLUTION_X)*4+1] = 255 //uint8(g * float32(gBase) / 65535)
-							}
 
-
-							pixels[(x+y*utils.RESOLUTION_X)*4+0] = byte(max)
+							//pixels[(x+y*utils.RESOLUTION_X)*4+0] = byte(max)
 						}
 
 					}
@@ -163,9 +157,9 @@ func Draw(t geometry.Triangle, pixels []byte, zBuffer []float32, mtl material.Ma
 						// fmt.Println(rBase, gBase, bBase)
 						// fmt.Println("-----------------")
 
-						//pixels[(x+y*utils.RESOLUTION_X)*4+0] = uint8(r * float32(rBase) / 65535)
-						//pixels[(x+y*utils.RESOLUTION_X)*4+1] = 0 //uint8(g * float32(gBase) / 65535)
-						pixels[(x+y*utils.RESOLUTION_X)*4+2] = 0 //uint8(b * float32(bBase) / 65535)
+						pixels[(x+y*utils.RESOLUTION_X)*4+0] = uint8(r * float32(rBase) / 65535)
+						pixels[(x+y*utils.RESOLUTION_X)*4+1] = uint8(g * float32(gBase) / 65535)
+						pixels[(x+y*utils.RESOLUTION_X)*4+2] = uint8(b * float32(bBase) / 65535)
 						//pixels[(x+y*utils.RESOLUTION_X)*4+0] = rBase//uint8(r * float32(rBase) / 65535)
 						//pixels[(x+y*utils.RESOLUTION_X)*4+1] = gBase//uint8(g * float32(gBase) / 65535)
 						//pixels[(x+y*utils.RESOLUTION_X)*4+2] = bBase//uint8(b * float32(bBase) / 65535)
@@ -181,6 +175,12 @@ func Draw(t geometry.Triangle, pixels []byte, zBuffer []float32, mtl material.Ma
 
 	pixels[(600+500*utils.RESOLUTION_X)*4+1] = 255
 	pixels[(900+500*utils.RESOLUTION_X)*4+1] = 255
+
+	pixels[(903+503*utils.RESOLUTION_X)*4+1] = 255
+	pixels[(908+503*utils.RESOLUTION_X)*4+1] = 255
+	pixels[(629+501*utils.RESOLUTION_X)*4+1] = 255
+	pixels[(622+500*utils.RESOLUTION_X)*4+1] = 255
+
 
 }
 
