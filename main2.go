@@ -75,7 +75,7 @@ func main() {
 
 		//Color:    color.RGBA{0, 56, 68, 255},
 
-		parent := ui.Column{
+		parent := ui.Row{
 			Properties: &ui.Properties{
 				Alignment: ui.AlignmentCenter,
 				Color:     color.RGBA{0, 235, 198, 255},
