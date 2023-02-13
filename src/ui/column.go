@@ -9,6 +9,7 @@ import (
 
 type Column struct {
 	Properties *Properties
+	Style	   Style
 	Children   []UIElement
 }
 

@@ -8,6 +8,7 @@ import (
 
 type Row struct {
 	Properties *Properties
+	Style	   Style
 	Children   []UIElement
 }
 

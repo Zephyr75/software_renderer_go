@@ -9,6 +9,7 @@ import (
 
 type Button struct {
 	Properties *Properties
+	Style	   Style
 	Child      UIElement
 }
 
