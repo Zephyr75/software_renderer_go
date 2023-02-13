@@ -75,10 +75,17 @@ func main() {
 
 		//Color:    color.RGBA{0, 56, 68, 255},
 
+		green := color.RGBA{201, 203, 163, 255}
+		yellow := color.RGBA{255, 225, 168, 255}
+		orange := color.RGBA{226, 109, 92, 255}
+		red := color.RGBA{114, 61, 70, 255}
+		brown := color.RGBA{71, 45, 48, 255}
+
+
 		parent := ui.Row{
 			Properties: &ui.Properties{
 				Alignment: ui.AlignmentCenter,
-				Color:     color.RGBA{0, 235, 198, 255},
+				Color:     yellow,
 				Center: ui.Point{
 					X: utils.RESOLUTION_X / 2,
 					Y: utils.RESOLUTION_Y / 2,
@@ -89,19 +96,33 @@ func main() {
 					Properties: &ui.Properties{
 						Alignment: ui.AlignmentCenter,
 						Padding: ui.PaddingEqual(ui.ScalePixel, 10),
-						Color:     color.RGBA{0, 108, 103, 255},
+						Color:     brown,
+					},
+				},
+				ui.Column{
+					Properties: &ui.Properties{
+						Color:     yellow,
+						Alignment: ui.AlignmentCenter,
+					},
+					Children: []ui.UIElement{
+						ui.Button{
+							Properties: &ui.Properties{
+								Alignment: ui.AlignmentCenter,
+								Color:     red,
+							},
+						},
+						ui.Button{
+							Properties: &ui.Properties{
+								Alignment: ui.AlignmentCenter,
+								Color:     orange,
+							},
+						},
 					},
 				},
 				ui.Button{
 					Properties: &ui.Properties{
 						Alignment: ui.AlignmentCenter,
-						Color:     color.RGBA{0, 56, 68, 255},
-					},
-				},
-				ui.Button{
-					Properties: &ui.Properties{
-						Alignment: ui.AlignmentCenter,
-						Color:     color.RGBA{0, 108, 103, 255},
+						Color:     green,
 					},
 				},
 			},
