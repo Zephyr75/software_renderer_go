@@ -109,6 +109,11 @@ func main() {
 							Properties: &ui.Properties{
 								Alignment: ui.AlignmentCenter,
 								Color:     red,
+								Size: ui.Size{
+									Scale: ui.ScaleRelative,
+									Width:  50,
+									Height: 50,
+								},
 								Function: func() {
 									println("Button 1")
 								},
@@ -135,6 +140,27 @@ func main() {
 		}
 
 		parent.Draw(screen, window)
+
+		exit := ui.Button{
+			Properties: &ui.Properties{
+				Center: ui.Point{
+					X: utils.RESOLUTION_X / 2,
+					Y: utils.RESOLUTION_Y / 2,
+				},
+				Alignment: ui.AlignmentTopLeft,
+				Color:     color.RGBA{255, 255, 255, 255},
+				Size: ui.Size{
+					Scale: ui.ScalePixel,
+					Width:  100,
+					Height: 50,
+				},
+				Function: func() {
+					window.SetShouldClose(true)
+				},
+			},
+		}
+
+		exit.Draw(screen, window)
 
 		gl.BindTexture(gl.TEXTURE_2D, texture)
 		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(screen))

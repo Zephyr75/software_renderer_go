@@ -133,13 +133,25 @@ func (props *Properties) Draw(screen []byte, window *glfw.Window) {
 
 	switch props.Alignment {
 	case AlignmentBottom:
-		centerY += height/2 - maxHeight/2
-	case AlignmentTop:
 		centerY -= height/2 - maxHeight/2
+	case AlignmentTop:
+		centerY += height/2 - maxHeight/2
 	case AlignmentLeft:
-		centerX -= width/2 - maxWidth/2
-	case AlignmentRight:
 		centerX += width/2 - maxWidth/2
+	case AlignmentRight:
+		centerX -= width/2 - maxWidth/2
+	case AlignmentTopLeft:
+		centerX += width/2 - maxWidth/2
+		centerY += height/2 - maxHeight/2
+	case AlignmentTopRight:
+		centerX -= width/2 - maxWidth/2
+		centerY += height/2 - maxHeight/2
+	case AlignmentBottomLeft:
+		centerX += width/2 - maxWidth/2
+		centerY -= height/2 - maxHeight/2
+	case AlignmentBottomRight:
+		centerX -= width/2 - maxWidth/2
+		centerY -= height/2 - maxHeight/2
 	}
 
 	if props.Padding.Scale == ScaleRelative {
