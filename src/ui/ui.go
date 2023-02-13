@@ -183,9 +183,10 @@ func (props *Properties) Draw(screen []byte, window *glfw.Window) {
 
 	for i := 0; i < width; i++ {
 		for j := 0; j < height; j++ {
-			screen[(centerX+i)*4+(centerY+j)*utils.RESOLUTION_X*4] = byte(r)
-			screen[(centerX+i)*4+(centerY+j)*utils.RESOLUTION_X*4+1] = byte(g)
-			screen[(centerX+i)*4+(centerY+j)*utils.RESOLUTION_X*4+2] = byte(b)
+			trueJ := utils.RESOLUTION_Y - (centerY + j) - 1
+			screen[(centerX+i)*4+trueJ*utils.RESOLUTION_X*4] = byte(r)
+			screen[(centerX+i)*4+trueJ*utils.RESOLUTION_X*4+1] = byte(g)
+			screen[(centerX+i)*4+trueJ*utils.RESOLUTION_X*4+2] = byte(b)
 		}
 	}
 }
