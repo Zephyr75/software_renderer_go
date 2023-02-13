@@ -1,17 +1,19 @@
 package ui
 
+import "github.com/go-gl/glfw/v3.3/glfw"
+
 
 type Button struct {
 	Properties *Properties
 	Child      UIElement
 }
 
-func (button Button) Draw(screen []byte) {
-	button.Properties.Draw(screen)
+func (button Button) Draw(screen []byte, window *glfw.Window) {
+	button.Properties.Draw(screen, window)
 	
 	if button.Child != nil {
 		button.Child.SetProperties(button.Properties.Size, button.Properties.Center)
-		button.Child.Draw(screen)
+		button.Child.Draw(screen, window)
 	}
 }
 

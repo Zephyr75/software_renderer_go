@@ -3,6 +3,8 @@ package ui
 import (
 	"image/color"
 	"overdrive/src/utils"
+
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 type ScaleType byte
@@ -78,7 +80,7 @@ type Size struct {
 }
 
 type UIElement interface {
-	Draw(screen []byte)
+	Draw(screen []byte, window *glfw.Window)
 	SetProperties(size Size, center Point)
 	Debug()
 }
@@ -97,7 +99,7 @@ type Point struct {
 	Y int
 }
 
-func (props *Properties) Draw(screen []byte) {
+func (props *Properties) Draw(screen []byte, window *glfw.Window) {
 	if props.MaxSize.Width == 0 || props.MaxSize.Height == 0 {
 		props.MaxSize.Width = utils.RESOLUTION_X
 		props.MaxSize.Height = utils.RESOLUTION_Y
@@ -155,10 +157,18 @@ func (props *Properties) Draw(screen []byte) {
 	centerX -= width / 2
 	centerY -= height / 2
 
+	x, y := window.GetCursorPos()
+
+	r, g, b, _ := props.Color.RGBA()
+
+	if x > float64(centerX) && x < float64(centerX+width) && y > float64(centerY) && y < float64(centerY+height) {
+		r = r / 2
+		g = g / 2
+		b = b / 2
+	}
 
 	for i := 0; i < width; i++ {
 		for j := 0; j < height; j++ {
-			r, g, b, _ := props.Color.RGBA()
 			screen[(centerX+i)*4+(centerY+j)*utils.RESOLUTION_X*4] = byte(r)
 			screen[(centerX+i)*4+(centerY+j)*utils.RESOLUTION_X*4+1] = byte(g)
 			screen[(centerX+i)*4+(centerY+j)*utils.RESOLUTION_X*4+2] = byte(b)

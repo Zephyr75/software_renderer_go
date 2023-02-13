@@ -1,14 +1,16 @@
 package ui
 
+import "github.com/go-gl/glfw/v3.3/glfw"
+
 
 type Column struct {
 	Properties *Properties
 	Children   []UIElement
 }
 
-func (column Column) Draw(screen []byte) {
+func (column Column) Draw(screen []byte, window *glfw.Window) {
 	
-	column.Properties.Draw(screen)
+	column.Properties.Draw(screen, window)
 
 	for child := range column.Children {
 		
@@ -23,7 +25,7 @@ func (column Column) Draw(screen []byte) {
 				Y: column.Properties.Center.Y - column.Properties.MaxSize.Height/2 + (2*(len(column.Children) - child - 1)+1)*column.Properties.MaxSize.Height/(len(column.Children)*2),
 			},
 		)
-		column.Children[child].Draw(screen)
+		column.Children[child].Draw(screen, window)
 	}
 }
 

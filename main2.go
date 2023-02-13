@@ -128,7 +128,7 @@ func main() {
 			},
 		}
 
-		parent.Draw(screen)
+		parent.Draw(screen, window)
 
 		gl.BindTexture(gl.TEXTURE_2D, texture)
 		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(screen))
