@@ -3,8 +3,6 @@ package main
 import (
 	"image"
 	"image/color"
-	"io/ioutil"
-	"log"
 	"runtime"
 
 	// "sync"
@@ -15,7 +13,6 @@ import (
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 
-	"github.com/goki/freetype"
 )
 
 
@@ -72,33 +69,6 @@ func main() {
 
 	img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
 
-	/////////////////////////
-
-	font := "JBMono.ttf"
-	fontSize := 30
-	fontColor := color.RGBA{0, 200, 200, 255}
-	dpi := 72
-
-	// Load font
-	fontBytes, err := ioutil.ReadFile(font)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	f, err := freetype.ParseFont(fontBytes)
-
-	// Load freetype context
-	c := freetype.NewContext()
-	c.SetDPI(float64(dpi))
-	c.SetFont(f)
-	c.SetFontSize(float64(fontSize))
-	c.SetClip(img.Bounds())
-	c.SetDst(img)
-	c.SetSrc(image.NewUniform(fontColor))
-
-	text := []string{"Hello duuuuuuuuuuuuuuuuuuuuuude", "World", "!"}
-
-	/////////////////////////
 
 	for !window.ShouldClose() {
 		var w, h = window.GetSize()
@@ -189,7 +159,24 @@ func main() {
 
 		exit.Draw(img, window)
 
-		drawText(c, text)
+		text := ui.Text{
+			Properties: &ui.Properties{
+				Center: ui.Point{
+					X: utils.RESOLUTION_X / 2,
+					Y: utils.RESOLUTION_Y / 2,
+				},
+				Alignment: ui.AlignmentTopLeft,
+				Padding:  ui.PaddingEqual(ui.ScalePixel, 100),
+				Color:     color.RGBA{255, 255, 255, 255},
+				Size: ui.Size{
+					Scale:  ui.ScalePixel,
+					Width:  100,
+					Height: 50,
+				},
+			},
+		}
+
+		text.Draw(img, window)
 
 		gl.BindTexture(gl.TEXTURE_2D, texture)
 
@@ -221,15 +208,3 @@ func main() {
 	}
 }
 
-func drawText(c *freetype.Context, text []string) {
-	// Draw the text.
-	pt := freetype.Pt(10, 10+int(c.PointToFixed(30)>>6))
-	for _, s := range text {
-		_, err := c.DrawString(s, pt)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		pt.Y += c.PointToFixed(30 * 1.5)
-	}
-}

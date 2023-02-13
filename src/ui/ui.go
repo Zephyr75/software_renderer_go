@@ -96,6 +96,16 @@ type Properties struct {
 	Function   func()
 }
 
+type Style struct {
+	Color color.Color
+}
+
+type StyleText struct {
+	Font      string
+	FontSize  int
+	FontColor color.Color
+}
+
 type Point struct {
 	X int
 	Y int
