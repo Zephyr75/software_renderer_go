@@ -14,7 +14,7 @@ type Row struct {
 
 func (row Row) Draw(img *image.RGBA, window *glfw.Window) {
 	
-	row.Properties.Draw(img, window)
+	Draw(img, window, row.Properties, row.Style)
 
 	for child := range row.Children {
 		

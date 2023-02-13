@@ -15,12 +15,18 @@ import (
 
 type Text struct {
 	Properties *Properties
+	StyleText  StyleText
 }
 
 func (text Text) Draw(img *image.RGBA, window *glfw.Window) {
-	text.Properties.Draw(img, window)
+	//Draw(img, window, text.Properties, Style{})
 
-	drawText(img, []string{"Hello, World!"}, "JBMono.ttf", 30, text.Properties.Center.X, 0)
+	maxWidth, maxHeight := GetMaxDimensions(text.Properties)
+	width, height := GetDimensions(text.Properties, maxWidth, maxHeight)
+	centerX, centerY := GetCenter(text.Properties, width, height, maxWidth, maxHeight)
+	
+
+	drawText(img, []string{"Hello, World!"}, text.StyleText.Font, float64(text.StyleText.FontSize), text.StyleText.FontColor, centerX, centerY)
 
 }
 
@@ -34,9 +40,7 @@ func (text Text) Debug() {
 	println(text.Properties.Center.Y)
 }
 
-func drawText(img *image.RGBA, text []string, font string, fontSize float64, x, y int) {
-	fontColor := color.RGBA{0, 200, 200, 255}
-	dpi := 72
+func drawText(img *image.RGBA, text []string, font string, fontSize float64, fontColor color.Color, x, y int) {
 
 	// Load font
 	fontBytes, err := ioutil.ReadFile(font)
@@ -48,7 +52,7 @@ func drawText(img *image.RGBA, text []string, font string, fontSize float64, x, 
 
 	// Load freetype context
 	c := freetype.NewContext()
-	c.SetDPI(float64(dpi))
+	c.SetDPI(72)
 	c.SetFont(f)
 	c.SetFontSize(fontSize)
 	c.SetClip(img.Bounds())

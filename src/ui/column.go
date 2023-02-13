@@ -15,7 +15,7 @@ type Column struct {
 
 func (column Column) Draw(img *image.RGBA, window *glfw.Window) {
 	
-	column.Properties.Draw(img, window)
+	Draw(img, window, column.Properties, column.Style)
 
 	for child := range column.Children {
 		

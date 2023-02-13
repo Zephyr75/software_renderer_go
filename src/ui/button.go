@@ -2,6 +2,7 @@ package ui
 
 import (
 	"image"
+	"image/color"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
@@ -13,8 +14,17 @@ type Button struct {
 	Child      UIElement
 }
 
+func NewButton(props *Properties) Button {
+	return Button{
+		Properties: props,
+		Style: Style{
+			Color: color.RGBA{0, 0, 0, 0},
+		},
+	}
+}
+
 func (button Button) Draw(img *image.RGBA, window *glfw.Window) {
-	button.Properties.Draw(img, window)
+	Draw(img, window, button.Properties, button.Style)
 	
 	if button.Child != nil {
 		button.Child.SetProperties(button.Properties.Size, button.Properties.Center)

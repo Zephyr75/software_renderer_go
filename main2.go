@@ -5,16 +5,15 @@ import (
 	"image/color"
 	"runtime"
 
-	// "sync"
-
 	"overdrive/src/ui"
 	"overdrive/src/utils"
 
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 
-)
 
+    "github.com/anthonynsimon/bild/transform"
+)
 
 func init() {
 	// GLFW: This is needed to arrange that main() runs on main thread.
@@ -69,7 +68,6 @@ func main() {
 
 	img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
 
-
 	for !window.ShouldClose() {
 		var w, h = window.GetSize()
 
@@ -82,30 +80,35 @@ func main() {
 		parent := ui.Row{
 			Properties: &ui.Properties{
 				Alignment: ui.AlignmentCenter,
-				Color:     yellow,
 				Center: ui.Point{
 					X: utils.RESOLUTION_X / 2,
 					Y: utils.RESOLUTION_Y / 2,
 				},
+			},
+			Style: ui.Style{
+				Color: yellow,
 			},
 			Children: []ui.UIElement{
 				ui.Button{
 					Properties: &ui.Properties{
 						Alignment: ui.AlignmentCenter,
 						Padding:   ui.PaddingEqual(ui.ScalePixel, 10),
-						Color:     brown,
+					},
+					Style: ui.Style{
+						Color: brown,
 					},
 				},
 				ui.Column{
 					Properties: &ui.Properties{
-						Color:     yellow,
 						Alignment: ui.AlignmentCenter,
+					},
+					Style: ui.Style{
+						Color: yellow,
 					},
 					Children: []ui.UIElement{
 						ui.Button{
 							Properties: &ui.Properties{
 								Alignment: ui.AlignmentCenter,
-								Color:     red,
 								Size: ui.Size{
 									Scale:  ui.ScaleRelative,
 									Width:  50,
@@ -115,14 +118,19 @@ func main() {
 									println("Button 1")
 								},
 							},
+							Style: ui.Style{
+								Color: red,
+							},
 						},
 						ui.Button{
 							Properties: &ui.Properties{
 								Alignment: ui.AlignmentCenter,
-								Color:     orange,
 								Function: func() {
 									println("Button 2")
 								},
+							},
+							Style: ui.Style{
+								Color: orange,
 							},
 						},
 					},
@@ -130,7 +138,25 @@ func main() {
 				ui.Button{
 					Properties: &ui.Properties{
 						Alignment: ui.AlignmentCenter,
-						Color:     green,
+					},
+					Style: ui.Style{
+						Color: green,
+					},
+					Child: ui.Text{
+						Properties: &ui.Properties{
+							Alignment: ui.AlignmentCenter,
+							//Padding:   ui.PaddingEqual(ui.ScalePixel, 100),
+							Size: ui.Size{
+								Scale:  ui.ScalePixel,
+								Width:  100,
+								Height: 50,
+							},
+						},
+						StyleText: ui.StyleText{
+							Font: "JBMono.ttf",
+							FontSize: 20,
+							FontColor: color.RGBA{0, 0, 0, 255},
+						},
 					},
 				},
 			},
@@ -145,7 +171,6 @@ func main() {
 					Y: utils.RESOLUTION_Y / 2,
 				},
 				Alignment: ui.AlignmentTopLeft,
-				Color:     color.RGBA{255, 255, 255, 255},
 				Size: ui.Size{
 					Scale:  ui.ScalePixel,
 					Width:  100,
@@ -155,43 +180,17 @@ func main() {
 					window.SetShouldClose(true)
 				},
 			},
+			Style: ui.Style{
+				Color: color.RGBA{255, 255, 255, 255},
+			},
 		}
 
 		exit.Draw(img, window)
 
-		text := ui.Text{
-			Properties: &ui.Properties{
-				Center: ui.Point{
-					X: utils.RESOLUTION_X / 2,
-					Y: utils.RESOLUTION_Y / 2,
-				},
-				Alignment: ui.AlignmentTopLeft,
-				Padding:  ui.PaddingEqual(ui.ScalePixel, 100),
-				Color:     color.RGBA{255, 255, 255, 255},
-				Size: ui.Size{
-					Scale:  ui.ScalePixel,
-					Width:  100,
-					Height: 50,
-				},
-			},
-		}
-
-		text.Draw(img, window)
 
 		gl.BindTexture(gl.TEXTURE_2D, texture)
 
-		//get byte array from the image
-
-		new_img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
-
-		// flip the image
-		for y := 0; y < h; y++ {
-			for x := 0; x < w; x++ {
-				new_img.Set(x, y, img.At(x, h-y-1))
-			}
-		}
-
-		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(new_img.Pix))
+		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(transform.FlipV(img).Pix))
 
 		gl.BlitFramebuffer(0, 0, int32(w), int32(h), 0, 0, int32(w), int32(h), gl.COLOR_BUFFER_BIT, gl.LINEAR)
 
@@ -207,4 +206,3 @@ func main() {
 
 	}
 }
-

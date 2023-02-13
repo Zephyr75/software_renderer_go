@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"overdrive/src/utils"
+	"sync"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
@@ -92,7 +93,6 @@ type Properties struct {
 	Size      Size
 	Alignment Alignment
 	Padding   Padding
-	Color     color.Color
 	Function   func()
 }
 
@@ -111,7 +111,50 @@ type Point struct {
 	Y int
 }
 
-func (props *Properties) Draw(img *image.RGBA, window *glfw.Window) {
+func Draw(img *image.RGBA, window *glfw.Window, props *Properties, style Style) {
+	maxWidth, maxHeight := GetMaxDimensions(props)
+	width, height := GetDimensions(props, maxWidth, maxHeight)
+	centerX, centerY := GetCenter(props, width, height, maxWidth, maxHeight)
+
+	x, y := window.GetCursorPos()
+
+	r, g, b, _ := style.Color.RGBA()
+
+	if x > float64(centerX) && x < float64(centerX+width) && y > float64(centerY) && y < float64(centerY+height) {
+		r -= 30
+		g -= 30
+		b -= 30
+		if r < 0 {
+			r = 0
+		}
+		if g < 0 {
+			g = 0
+		}
+		if b < 0 {
+			b = 0
+		}
+		if window.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
+			if props.Function != nil {
+				props.Function()
+			}
+		}
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(width)
+	for i := 0; i < width; i++ {
+		go func(i int) {
+			for j := 0; j < height; j++ {
+				//trueJ := utils.RESOLUTION_Y - (centerY + j) - 1
+				img.Set(centerX+i, (centerY + j), color.RGBA{byte(r), byte(g), byte(b), 255})
+			}
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+}
+
+func GetMaxDimensions(props *Properties) (int, int) {
 	if props.MaxSize.Width == 0 || props.MaxSize.Height == 0 {
 		props.MaxSize.Width = utils.RESOLUTION_X
 		props.MaxSize.Height = utils.RESOLUTION_Y
@@ -125,15 +168,16 @@ func (props *Properties) Draw(img *image.RGBA, window *glfw.Window) {
 		maxHeight = utils.RESOLUTION_Y * props.MaxSize.Height / 100
 	}
 
+	return maxWidth, maxHeight
+}
+
+
+func GetDimensions(props *Properties, maxWidth, maxHeight int) (int, int) {
 	if props.Size.Width == 0 || props.Size.Height == 0 {
 		props.Size.Width = props.MaxSize.Width
 		props.Size.Height = props.MaxSize.Height
 		props.Size.Scale = ScalePixel
 	}
-
-	centerX := props.Center.X
-	centerY := props.Center.Y
-
 
 	width := props.Size.Width
 	height := props.Size.Height
@@ -142,6 +186,21 @@ func (props *Properties) Draw(img *image.RGBA, window *glfw.Window) {
 		height = maxHeight * props.Size.Height / 100
 	}
 
+	if props.Padding.Scale == ScaleRelative {
+		height -= (maxHeight * props.Padding.Top / 100) + (maxHeight * props.Padding.Bottom / 100)
+		width -= (maxWidth * props.Padding.Left / 100) + (maxWidth * props.Padding.Right / 100)
+	} else {
+		height -= props.Padding.Top + props.Padding.Bottom
+		width -= props.Padding.Left + props.Padding.Right
+	}
+
+	return width, height
+}
+
+func GetCenter(props *Properties, width, height, maxWidth, maxHeight int) (int, int) {
+	centerX := props.Center.X
+	centerY := props.Center.Y
+	
 	switch props.Alignment {
 	case AlignmentBottom:
 		centerY -= height/2 - maxHeight/2
@@ -166,60 +225,19 @@ func (props *Properties) Draw(img *image.RGBA, window *glfw.Window) {
 	}
 
 	if props.Padding.Scale == ScaleRelative {
-		height -= (maxHeight * props.Padding.Top / 100) + (maxHeight * props.Padding.Bottom / 100)
-		width -= (maxWidth * props.Padding.Left / 100) + (maxWidth * props.Padding.Right / 100)
 		centerX += (maxWidth * props.Padding.Left / 100) - (maxWidth * props.Padding.Right / 100)
 		centerY += (maxHeight * props.Padding.Top / 100) - (maxHeight * props.Padding.Bottom / 100)
 	} else {
-		height -= props.Padding.Top + props.Padding.Bottom
-		width -= props.Padding.Left + props.Padding.Right
 		centerX += props.Padding.Left - props.Padding.Right
 		centerY += props.Padding.Top - props.Padding.Bottom
 	}
 
-
 	centerX -= width / 2
 	centerY -= height / 2
 
-	x, y := window.GetCursorPos()
-
-	r, g, b, _ := props.Color.RGBA()
-	/*
-	r /= 256
-	g /= 256
-	b /= 256
-	*/
-
-
-	if x > float64(centerX) && x < float64(centerX+width) && y > float64(centerY) && y < float64(centerY+height) {
-		r -= 30
-		g -= 30
-		b -= 30
-		if r < 0 {
-			r = 0
-		}
-		if g < 0 {
-			g = 0
-		}
-		if b < 0 {
-			b = 0
-		}
-		if window.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-			if props.Function != nil {
-				props.Function()
-			}
-		}
-	}
-
-
-
-	for i := 0; i < width; i++ {
-		for j := 0; j < height; j++ {
-			//trueJ := utils.RESOLUTION_Y - (centerY + j) - 1
-			img.Set(centerX+i, (centerY + j), color.RGBA{byte(r), byte(g), byte(b), 255})
-		}
-	}
+	return centerX, centerY
 }
+
 
 /*
 Button
