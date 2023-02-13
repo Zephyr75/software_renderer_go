@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"image"
 	"image/color"
 	"overdrive/src/utils"
 
@@ -80,7 +81,7 @@ type Size struct {
 }
 
 type UIElement interface {
-	Draw(screen []byte, window *glfw.Window)
+	Draw(img *image.RGBA, window *glfw.Window)
 	SetProperties(size Size, center Point)
 	Debug()
 }
@@ -100,7 +101,7 @@ type Point struct {
 	Y int
 }
 
-func (props *Properties) Draw(screen []byte, window *glfw.Window) {
+func (props *Properties) Draw(img *image.RGBA, window *glfw.Window) {
 	if props.MaxSize.Width == 0 || props.MaxSize.Height == 0 {
 		props.MaxSize.Width = utils.RESOLUTION_X
 		props.MaxSize.Height = utils.RESOLUTION_Y
@@ -173,6 +174,12 @@ func (props *Properties) Draw(screen []byte, window *glfw.Window) {
 	x, y := window.GetCursorPos()
 
 	r, g, b, _ := props.Color.RGBA()
+	/*
+	r /= 256
+	g /= 256
+	b /= 256
+	*/
+
 
 	if x > float64(centerX) && x < float64(centerX+width) && y > float64(centerY) && y < float64(centerY+height) {
 		r -= 30
@@ -198,10 +205,8 @@ func (props *Properties) Draw(screen []byte, window *glfw.Window) {
 
 	for i := 0; i < width; i++ {
 		for j := 0; j < height; j++ {
-			trueJ := utils.RESOLUTION_Y - (centerY + j) - 1
-			screen[(centerX+i)*4+trueJ*utils.RESOLUTION_X*4] = byte(r)
-			screen[(centerX+i)*4+trueJ*utils.RESOLUTION_X*4+1] = byte(g)
-			screen[(centerX+i)*4+trueJ*utils.RESOLUTION_X*4+2] = byte(b)
+			//trueJ := utils.RESOLUTION_Y - (centerY + j) - 1
+			img.Set(centerX+i, (centerY + j), color.RGBA{byte(r), byte(g), byte(b), 255})
 		}
 	}
 }

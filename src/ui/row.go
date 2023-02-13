@@ -1,15 +1,19 @@
 package ui
 
-import "github.com/go-gl/glfw/v3.3/glfw"
+import (
+	"image"
+
+	"github.com/go-gl/glfw/v3.3/glfw"
+)
 
 type Row struct {
 	Properties *Properties
 	Children   []UIElement
 }
 
-func (row Row) Draw(screen []byte, window *glfw.Window) {
+func (row Row) Draw(img *image.RGBA, window *glfw.Window) {
 	
-	row.Properties.Draw(screen, window)
+	row.Properties.Draw(img, window)
 
 	for child := range row.Children {
 		
@@ -24,7 +28,7 @@ func (row Row) Draw(screen []byte, window *glfw.Window) {
 				Y: row.Properties.Center.Y,
 			},
 		)
-		row.Children[child].Draw(screen, window)
+		row.Children[child].Draw(img, window)
 	}
 }
 

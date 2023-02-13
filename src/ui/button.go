@@ -1,6 +1,10 @@
 package ui
 
-import "github.com/go-gl/glfw/v3.3/glfw"
+import (
+	"image"
+
+	"github.com/go-gl/glfw/v3.3/glfw"
+)
 
 
 type Button struct {
@@ -8,12 +12,12 @@ type Button struct {
 	Child      UIElement
 }
 
-func (button Button) Draw(screen []byte, window *glfw.Window) {
-	button.Properties.Draw(screen, window)
+func (button Button) Draw(img *image.RGBA, window *glfw.Window) {
+	button.Properties.Draw(img, window)
 	
 	if button.Child != nil {
 		button.Child.SetProperties(button.Properties.Size, button.Properties.Center)
-		button.Child.Draw(screen, window)
+		button.Child.Draw(img, window)
 	}
 }
 

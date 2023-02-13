@@ -1,6 +1,7 @@
 package main
 
 import (
+	"image"
 	"image/color"
 	"runtime"
 
@@ -11,6 +12,12 @@ import (
 
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
+
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/basicfont"
+	"golang.org/x/image/math/fixed"
+
+
 )
 
 func init() {
@@ -71,7 +78,9 @@ func main() {
 		var w, h = window.GetSize()
 
 		// define an array of uint8s
-		var screen = make([]uint8, w*h*4)
+		//var screen = make([]uint8, w*h*4)
+
+		img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
 
 		//Color:    color.RGBA{0, 56, 68, 255},
 
@@ -139,7 +148,7 @@ func main() {
 			},
 		}
 
-		parent.Draw(screen, window)
+		parent.Draw(img, window)
 
 		exit := ui.Button{
 			Properties: &ui.Properties{
@@ -160,10 +169,30 @@ func main() {
 			},
 		}
 
-		exit.Draw(screen, window)
+		exit.Draw(img, window)
+
+		//print text to screen using the font package
+		addLabel(img, 10, 10, "Hello World")
+		
+
 
 		gl.BindTexture(gl.TEXTURE_2D, texture)
-		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(screen))
+
+		//get byte array from the image
+		
+		new_img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
+
+		// flip the image
+		for y := 0; y < h; y++ {
+			for x := 0; x < w; x++ {
+				new_img.Set(x, y, img.At(x, h-y-1))
+			}
+		}
+
+		
+
+		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(new_img.Pix))
+
 
 		gl.BlitFramebuffer(0, 0, int32(w), int32(h), 0, 0, int32(w), int32(h), gl.COLOR_BUFFER_BIT, gl.LINEAR)
 
@@ -178,4 +207,18 @@ func main() {
 		}
 
 	}
+}
+
+
+func addLabel(img *image.RGBA, x, y int, label string) {
+    col := color.RGBA{200, 100, 0, 255}
+    point := fixed.Point26_6{X: fixed.I(x), Y: fixed.I(y)}
+
+    d := &font.Drawer{
+        Dst:  img,
+        Src:  image.NewUniform(col),
+        Face: basicfont.Face7x13,
+        Dot:  point,
+    }
+    d.DrawString(label)
 }
