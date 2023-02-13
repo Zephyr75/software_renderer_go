@@ -162,10 +162,24 @@ func (props *Properties) Draw(screen []byte, window *glfw.Window) {
 	r, g, b, _ := props.Color.RGBA()
 
 	if x > float64(centerX) && x < float64(centerX+width) && y > float64(centerY) && y < float64(centerY+height) {
-		r = r / 2
-		g = g / 2
-		b = b / 2
+		r -= 30
+		g -= 30
+		b -= 30
+		if r < 0 {
+			r = 0
+		}
+		if g < 0 {
+			g = 0
+		}
+		if b < 0 {
+			b = 0
+		}
 	}
+
+	if window.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
+		println("Clicked")
+	}
+
 
 	for i := 0; i < width; i++ {
 		for j := 0; j < height; j++ {
