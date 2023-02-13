@@ -3,6 +3,8 @@ package main
 import (
 	"image"
 	"image/color"
+	"io/ioutil"
+	"log"
 	"runtime"
 
 	// "sync"
@@ -13,12 +15,9 @@ import (
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 
-	"golang.org/x/image/font"
-	"golang.org/x/image/font/basicfont"
-	"golang.org/x/image/math/fixed"
-
-
+	"github.com/goki/freetype"
 )
+
 
 func init() {
 	// GLFW: This is needed to arrange that main() runs on main thread.
@@ -71,25 +70,44 @@ func main() {
 	i := 0
 	time := glfw.GetTime()
 
+	img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
+
+	/////////////////////////
+
+	font := "JBMono.ttf"
+	fontSize := 30
+	fontColor := color.RGBA{0, 200, 200, 255}
+	dpi := 72
+
+	// Load font
+	fontBytes, err := ioutil.ReadFile(font)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	f, err := freetype.ParseFont(fontBytes)
+
+	// Load freetype context
+	c := freetype.NewContext()
+	c.SetDPI(float64(dpi))
+	c.SetFont(f)
+	c.SetFontSize(float64(fontSize))
+	c.SetClip(img.Bounds())
+	c.SetDst(img)
+	c.SetSrc(image.NewUniform(fontColor))
+
+	text := []string{"Hello duuuuuuuuuuuuuuuuuuuuuude", "World", "!"}
+
 	/////////////////////////
 
 	for !window.ShouldClose() {
-
 		var w, h = window.GetSize()
-
-		// define an array of uint8s
-		//var screen = make([]uint8, w*h*4)
-
-		img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
-
-		//Color:    color.RGBA{0, 56, 68, 255},
 
 		green := color.RGBA{201, 203, 163, 255}
 		yellow := color.RGBA{255, 225, 168, 255}
 		orange := color.RGBA{226, 109, 92, 255}
 		red := color.RGBA{114, 61, 70, 255}
 		brown := color.RGBA{71, 45, 48, 255}
-
 
 		parent := ui.Row{
 			Properties: &ui.Properties{
@@ -104,7 +122,7 @@ func main() {
 				ui.Button{
 					Properties: &ui.Properties{
 						Alignment: ui.AlignmentCenter,
-						Padding: ui.PaddingEqual(ui.ScalePixel, 10),
+						Padding:   ui.PaddingEqual(ui.ScalePixel, 10),
 						Color:     brown,
 					},
 				},
@@ -119,7 +137,7 @@ func main() {
 								Alignment: ui.AlignmentCenter,
 								Color:     red,
 								Size: ui.Size{
-									Scale: ui.ScaleRelative,
+									Scale:  ui.ScaleRelative,
 									Width:  50,
 									Height: 50,
 								},
@@ -159,7 +177,7 @@ func main() {
 				Alignment: ui.AlignmentTopLeft,
 				Color:     color.RGBA{255, 255, 255, 255},
 				Size: ui.Size{
-					Scale: ui.ScalePixel,
+					Scale:  ui.ScalePixel,
 					Width:  100,
 					Height: 50,
 				},
@@ -171,15 +189,12 @@ func main() {
 
 		exit.Draw(img, window)
 
-		//print text to screen using the font package
-		addLabel(img, 10, 10, "Hello World")
-		
-
+		drawText(c, text)
 
 		gl.BindTexture(gl.TEXTURE_2D, texture)
 
 		//get byte array from the image
-		
+
 		new_img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
 
 		// flip the image
@@ -189,10 +204,7 @@ func main() {
 			}
 		}
 
-		
-
 		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, int32(w), int32(h), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(new_img.Pix))
-
 
 		gl.BlitFramebuffer(0, 0, int32(w), int32(h), 0, 0, int32(w), int32(h), gl.COLOR_BUFFER_BIT, gl.LINEAR)
 
@@ -209,16 +221,15 @@ func main() {
 	}
 }
 
-
-func addLabel(img *image.RGBA, x, y int, label string) {
-    col := color.RGBA{200, 100, 0, 255}
-    point := fixed.Point26_6{X: fixed.I(x), Y: fixed.I(y)}
-
-    d := &font.Drawer{
-        Dst:  img,
-        Src:  image.NewUniform(col),
-        Face: basicfont.Face7x13,
-        Dot:  point,
-    }
-    d.DrawString(label)
+func drawText(c *freetype.Context, text []string) {
+	// Draw the text.
+	pt := freetype.Pt(10, 10+int(c.PointToFixed(30)>>6))
+	for _, s := range text {
+		_, err := c.DrawString(s, pt)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		pt.Y += c.PointToFixed(30 * 1.5)
+	}
 }
