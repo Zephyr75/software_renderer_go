@@ -15,6 +15,7 @@ import (
     "github.com/anthonynsimon/bild/transform"
 )
 
+
 func init() {
 	// GLFW: This is needed to arrange that main() runs on main thread.
 	// See documentation for functions that are only allowed to be called from the main thread.
@@ -66,10 +67,10 @@ func main() {
 	i := 0
 	time := glfw.GetTime()
 
-	img := image.NewRGBA(image.Rect(0, 0, utils.RESOLUTION_X, utils.RESOLUTION_Y))
-
 	for !window.ShouldClose() {
 		var w, h = window.GetSize()
+
+		img := image.NewRGBA(image.Rect(0, 0, w, h))
 
 		green := color.RGBA{201, 203, 163, 255}
 		white := color.RGBA{0, 0, 0, 255}
@@ -81,8 +82,8 @@ func main() {
 			Properties: &ui.Properties{
 				Alignment: ui.AlignmentCenter,
 				Center: ui.Point{
-					X: utils.RESOLUTION_X / 2,
-					Y: utils.RESOLUTION_Y / 2,
+					X: w / 2,
+					Y: h / 2,
 				},
 			},
 			Style: ui.Style{
@@ -167,8 +168,8 @@ func main() {
 		exit := ui.Button{
 			Properties: &ui.Properties{
 				Center: ui.Point{
-					X: utils.RESOLUTION_X / 2,
-					Y: utils.RESOLUTION_Y / 2,
+					X: w / 2,
+					Y: h / 2,
 				},
 				Alignment: ui.AlignmentTopLeft,
 				Size: ui.Size{

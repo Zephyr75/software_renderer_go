@@ -3,7 +3,6 @@ package ui
 import (
 	"image"
 	"image/color"
-	"overdrive/src/utils"
 	"sync"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -112,7 +111,7 @@ type Point struct {
 }
 
 func Draw(img *image.RGBA, window *glfw.Window, props *Properties, style Style) {
-	maxWidth, maxHeight := GetMaxDimensions(props)
+	maxWidth, maxHeight := GetMaxDimensions(props, window)
 	width, height := GetDimensions(props, maxWidth, maxHeight)
 	centerX, centerY := GetCenter(props, width, height, maxWidth, maxHeight)
 
@@ -151,18 +150,20 @@ func Draw(img *image.RGBA, window *glfw.Window, props *Properties, style Style) 
 	wg.Wait()
 }
 
-func GetMaxDimensions(props *Properties) (int, int) {
+func GetMaxDimensions(props *Properties, window *glfw.Window) (int, int) {
+	var w, h = window.GetSize()
+
 	if props.MaxSize.Width == 0 || props.MaxSize.Height == 0 {
-		props.MaxSize.Width = utils.RESOLUTION_X
-		props.MaxSize.Height = utils.RESOLUTION_Y
+		props.MaxSize.Width = w
+		props.MaxSize.Height = h
 		props.MaxSize.Scale = ScalePixel
 	}
 
 	maxWidth := props.MaxSize.Width
 	maxHeight := props.MaxSize.Height
 	if props.MaxSize.Scale == ScaleRelative {
-		maxWidth = utils.RESOLUTION_X * props.MaxSize.Width / 100
-		maxHeight = utils.RESOLUTION_Y * props.MaxSize.Height / 100
+		maxWidth = w * props.MaxSize.Width / 100
+		maxHeight = h * props.MaxSize.Height / 100
 	}
 
 	return maxWidth, maxHeight

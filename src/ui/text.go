@@ -21,7 +21,7 @@ type Text struct {
 func (text Text) Draw(img *image.RGBA, window *glfw.Window) {
 	//Draw(img, window, text.Properties, Style{})
 
-	maxWidth, maxHeight := GetMaxDimensions(text.Properties)
+	maxWidth, maxHeight := GetMaxDimensions(text.Properties, window)
 	width, height := GetDimensions(text.Properties, maxWidth, maxHeight)
 	centerX, centerY := GetCenter(text.Properties, width, height, maxWidth, maxHeight)
 	
