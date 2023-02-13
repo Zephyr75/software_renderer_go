@@ -72,7 +72,7 @@ func main() {
 		var w, h = window.GetSize()
 
 		green := color.RGBA{201, 203, 163, 255}
-		yellow := color.RGBA{255, 225, 168, 255}
+		white := color.RGBA{0, 0, 0, 255}
 		orange := color.RGBA{226, 109, 92, 255}
 		red := color.RGBA{114, 61, 70, 255}
 		brown := color.RGBA{71, 45, 48, 255}
@@ -86,7 +86,7 @@ func main() {
 				},
 			},
 			Style: ui.Style{
-				Color: yellow,
+				Color: white,
 			},
 			Children: []ui.UIElement{
 				ui.Button{
@@ -103,7 +103,7 @@ func main() {
 						Alignment: ui.AlignmentCenter,
 					},
 					Style: ui.Style{
-						Color: yellow,
+						Color: white,
 					},
 					Children: []ui.UIElement{
 						ui.Button{

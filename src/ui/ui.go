@@ -121,17 +121,14 @@ func Draw(img *image.RGBA, window *glfw.Window, props *Properties, style Style) 
 	r, g, b, _ := style.Color.RGBA()
 
 	if x > float64(centerX) && x < float64(centerX+width) && y > float64(centerY) && y < float64(centerY+height) {
-		r -= 30
-		g -= 30
-		b -= 30
-		if r < 0 {
-			r = 0
+		if r % 255 > 30 {
+			r -= 30
 		}
-		if g < 0 {
-			g = 0
+		if g % 255 > 30 {
+			g -= 30
 		}
-		if b < 0 {
-			b = 0
+		if b % 255 > 30 {
+			b -= 30
 		}
 		if window.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
 			if props.Function != nil {
