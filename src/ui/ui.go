@@ -92,6 +92,7 @@ type Properties struct {
 	Alignment Alignment
 	Padding   Padding
 	Color     color.Color
+	Function   func()
 }
 
 type Point struct {
@@ -174,11 +175,13 @@ func (props *Properties) Draw(screen []byte, window *glfw.Window) {
 		if b < 0 {
 			b = 0
 		}
+		if window.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
+			if props.Function != nil {
+				props.Function()
+			}
+		}
 	}
 
-	if window.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		println("Clicked")
-	}
 
 
 	for i := 0; i < width; i++ {

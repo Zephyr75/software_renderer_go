@@ -109,12 +109,18 @@ func main() {
 							Properties: &ui.Properties{
 								Alignment: ui.AlignmentCenter,
 								Color:     red,
+								Function: func() {
+									println("Button 1")
+								},
 							},
 						},
 						ui.Button{
 							Properties: &ui.Properties{
 								Alignment: ui.AlignmentCenter,
 								Color:     orange,
+								Function: func() {
+									println("Button 2")
+								},
 							},
 						},
 					},
