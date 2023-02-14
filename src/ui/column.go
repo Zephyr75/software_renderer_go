@@ -8,24 +8,24 @@ import (
 
 
 type Column struct {
-	Properties *Properties
+	Properties Properties
 	Style	   Style
 	Children   []UIElement
 }
 
 func (column Column) Draw(img *image.RGBA, window *glfw.Window) {
 	
-	Draw(img, window, column.Properties, column.Style)
+	Draw(img, window, &column.Properties, column.Style)
 
 	for child := range column.Children {
 		
 		column.Children[child].SetProperties(
-			Size{
+			&Size{
 				Scale:  column.Properties.Size.Scale,
 				Width:  column.Properties.Size.Width,
 				Height: column.Properties.Size.Height / len(column.Children),
 			},
-			Point{
+			&Point{
 				X: column.Properties.Center.X,
 				Y: column.Properties.Center.Y - column.Properties.MaxSize.Height/2 + (2*child+1)*column.Properties.MaxSize.Height/(len(column.Children)*2),
 			},
@@ -35,7 +35,7 @@ func (column Column) Draw(img *image.RGBA, window *glfw.Window) {
 }
 
 
-func (column Column) SetProperties(size Size, center Point) {
+func (column Column) SetProperties(size *Size, center *Point) {
 	column.Properties.MaxSize = size
 	column.Properties.Center = center
 }

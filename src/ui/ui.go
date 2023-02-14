@@ -8,6 +8,10 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
+var maxSizes []Size
+var centers []Point
+
+
 type ScaleType byte
 
 const (
@@ -82,13 +86,13 @@ type Size struct {
 
 type UIElement interface {
 	Draw(img *image.RGBA, window *glfw.Window)
-	SetProperties(size Size, center Point)
+	SetProperties(size *Size, center *Point)
 	Debug()
 }
 
 type Properties struct {
-	MaxSize   Size
-	Center    Point
+	MaxSize   *Size
+	Center    *Point
 	Size      Size
 	Alignment Alignment
 	Padding   Padding
@@ -152,7 +156,6 @@ func Draw(img *image.RGBA, window *glfw.Window, props *Properties, style Style) 
 
 func GetMaxDimensions(props *Properties, window *glfw.Window) (int, int) {
 	var w, h = window.GetSize()
-
 	if props.MaxSize.Width == 0 || props.MaxSize.Height == 0 {
 		props.MaxSize.Width = w
 		props.MaxSize.Height = h

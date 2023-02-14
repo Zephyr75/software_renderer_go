@@ -14,16 +14,16 @@ import (
 
 
 type Text struct {
-	Properties *Properties
+	Properties Properties
 	StyleText  StyleText
 }
 
 func (text Text) Draw(img *image.RGBA, window *glfw.Window) {
 	//Draw(img, window, text.Properties, Style{})
 
-	maxWidth, maxHeight := GetMaxDimensions(text.Properties, window)
-	width, height := GetDimensions(text.Properties, maxWidth, maxHeight)
-	centerX, centerY := GetCenter(text.Properties, width, height, maxWidth, maxHeight)
+	maxWidth, maxHeight := GetMaxDimensions(&text.Properties, window)
+	width, height := GetDimensions(&text.Properties, maxWidth, maxHeight)
+	centerX, centerY := GetCenter(&text.Properties, width, height, maxWidth, maxHeight)
 	
 
 	drawText(img, []string{"Hello, World!"}, text.StyleText.Font, float64(text.StyleText.FontSize), text.StyleText.FontColor, centerX, centerY)
@@ -32,8 +32,8 @@ func (text Text) Draw(img *image.RGBA, window *glfw.Window) {
 
 
 func (text Text) SetProperties(size Size, center Point) {
-	text.Properties.MaxSize = size
-	text.Properties.Center = center
+	*text.Properties.MaxSize = size
+	*text.Properties.Center = center
 }
 
 func (text Text) Debug() {

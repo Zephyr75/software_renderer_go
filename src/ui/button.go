@@ -1,44 +1,43 @@
 package ui
 
 import (
+	"fmt"
 	"image"
-	"image/color"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 
 type Button struct {
-	Properties *Properties
+	Properties Properties
 	Style	   Style
 	Child      UIElement
 }
 
-func NewButton(props *Properties) Button {
-	return Button{
-		Properties: props,
-		Style: Style{
-			Color: color.RGBA{0, 0, 0, 0},
-		},
-	}
-}
-
 func (button Button) Draw(img *image.RGBA, window *glfw.Window) {
-	Draw(img, window, button.Properties, button.Style)
+
+	//fmt.Println(button.Properties.MaxSize)
+	//fmt.Println(button.Properties.Center)
+	Draw(img, window, &button.Properties, button.Style)
 	
 	if button.Child != nil {
-		button.Child.SetProperties(button.Properties.Size, button.Properties.Center)
+		button.Child.SetProperties(&button.Properties.Size, button.Properties.Center)
 		button.Child.Draw(img, window)
 	}
 }
 
 
-func (button Button) SetProperties(size Size, center Point) {
+func (button Button) SetProperties(size *Size, center *Point) {
 	button.Properties.MaxSize = size
 	button.Properties.Center = center
-	//println("Button: ", center.X, " ", center.Y, " ", size.Width, " ", size.Height)
+
+	//fmt.Println(button.Properties.MaxSize)
+	//fmt.Println(button.Properties.Center)
+
 }
 
 func (button Button) Debug() {
-	println(button.Properties.Center.Y)
+	fmt.Println("Debug")
+	fmt.Println(button.Properties.MaxSize)
+	fmt.Println(button.Properties.Center)
 }

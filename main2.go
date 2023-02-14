@@ -11,10 +11,8 @@ import (
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 
-
-    "github.com/anthonynsimon/bild/transform"
+	"github.com/anthonynsimon/bild/transform"
 )
-
 
 func init() {
 	// GLFW: This is needed to arrange that main() runs on main thread.
@@ -72,18 +70,23 @@ func main() {
 
 		img := image.NewRGBA(image.Rect(0, 0, w, h))
 
-		green := color.RGBA{201, 203, 163, 255}
+		//green := color.RGBA{201, 203, 163, 255}
 		white := color.RGBA{0, 0, 0, 255}
-		orange := color.RGBA{226, 109, 92, 255}
-		red := color.RGBA{114, 61, 70, 255}
+		//orange := color.RGBA{226, 109, 92, 255}
+		//red := color.RGBA{114, 61, 70, 255}
 		brown := color.RGBA{71, 45, 48, 255}
 
 		parent := ui.Row{
-			Properties: &ui.Properties{
+			Properties: ui.Properties{
 				Alignment: ui.AlignmentCenter,
-				Center: ui.Point{
+				Center: &ui.Point{
 					X: w / 2,
 					Y: h / 2,
+				},
+				MaxSize: &ui.Size{
+					Scale:  ui.ScalePixel,
+					Width:  w,
+					Height: h,
 				},
 			},
 			Style: ui.Style{
@@ -91,103 +94,107 @@ func main() {
 			},
 			Children: []ui.UIElement{
 				ui.Button{
-					Properties: &ui.Properties{
+					Properties: ui.Properties{
 						Alignment: ui.AlignmentCenter,
 						Padding:   ui.PaddingEqual(ui.ScalePixel, 10),
+
 					},
 					Style: ui.Style{
 						Color: brown,
 					},
 				},
-				ui.Column{
-					Properties: &ui.Properties{
-						Alignment: ui.AlignmentCenter,
+				/*
+					ui.Column{
+						Properties: ui.Properties{
+							Alignment: ui.AlignmentCenter,
+						},
+						Style: ui.Style{
+							Color: white,
+						},
+						Children: []ui.UIElement{
+							ui.Button{
+								Properties: ui.Properties{
+									Alignment: ui.AlignmentCenter,
+									Size: ui.Size{
+										Scale:  ui.ScaleRelative,
+										Width:  50,
+										Height: 50,
+									},
+									Function: func() {
+										println("Button 1")
+									},
+								},
+								Style: ui.Style{
+									Color: red,
+								},
+							},
+							ui.Button{
+								Properties: ui.Properties{
+									Alignment: ui.AlignmentCenter,
+									Function: func() {
+										println("Button 2")
+									},
+								},
+								Style: ui.Style{
+									Color: orange,
+								},
+							},
+						},
 					},
-					Style: ui.Style{
-						Color: white,
-					},
-					Children: []ui.UIElement{
-						ui.Button{
-							Properties: &ui.Properties{
+					ui.Button{
+						Properties: ui.Properties{
+							Alignment: ui.AlignmentCenter,
+						},
+						Style: ui.Style{
+							Color: green,
+						},
+						Child: ui.Text{
+							Properties: ui.Properties{
 								Alignment: ui.AlignmentCenter,
+								//Padding:   ui.PaddingEqual(ui.ScalePixel, 100),
 								Size: ui.Size{
-									Scale:  ui.ScaleRelative,
-									Width:  50,
+									Scale:  ui.ScalePixel,
+									Width:  100,
 									Height: 50,
 								},
-								Function: func() {
-									println("Button 1")
-								},
 							},
-							Style: ui.Style{
-								Color: red,
-							},
-						},
-						ui.Button{
-							Properties: &ui.Properties{
-								Alignment: ui.AlignmentCenter,
-								Function: func() {
-									println("Button 2")
-								},
-							},
-							Style: ui.Style{
-								Color: orange,
+							StyleText: ui.StyleText{
+								Font: "JBMono.ttf",
+								FontSize: 20,
+								FontColor: color.RGBA{0, 0, 0, 255},
 							},
 						},
 					},
-				},
-				ui.Button{
-					Properties: &ui.Properties{
-						Alignment: ui.AlignmentCenter,
-					},
-					Style: ui.Style{
-						Color: green,
-					},
-					Child: ui.Text{
-						Properties: &ui.Properties{
-							Alignment: ui.AlignmentCenter,
-							//Padding:   ui.PaddingEqual(ui.ScalePixel, 100),
-							Size: ui.Size{
-								Scale:  ui.ScalePixel,
-								Width:  100,
-								Height: 50,
-							},
-						},
-						StyleText: ui.StyleText{
-							Font: "JBMono.ttf",
-							FontSize: 20,
-							FontColor: color.RGBA{0, 0, 0, 255},
-						},
-					},
-				},
+				*/
 			},
 		}
 
 		parent.Draw(img, window)
 
-		exit := ui.Button{
-			Properties: &ui.Properties{
-				Center: ui.Point{
-					X: w / 2,
-					Y: h / 2,
+		/*
+			exit := ui.Button{
+				Properties: ui.Properties{
+					Center: &ui.Point{
+						X: w / 2,
+						Y: h / 2,
+					},
+					Alignment: ui.AlignmentTopLeft,
+					Size: ui.Size{
+						Scale:  ui.ScalePixel,
+						Width:  100,
+						Height: 50,
+					},
+					Function: func() {
+						window.SetShouldClose(true)
+					},
 				},
-				Alignment: ui.AlignmentTopLeft,
-				Size: ui.Size{
-					Scale:  ui.ScalePixel,
-					Width:  100,
-					Height: 50,
+				Style: ui.Style{
+					Color: color.RGBA{255, 255, 255, 255},
 				},
-				Function: func() {
-					window.SetShouldClose(true)
-				},
-			},
-			Style: ui.Style{
-				Color: color.RGBA{255, 255, 255, 255},
-			},
-		}
+			}
 
-		exit.Draw(img, window)
-
+			exit.Draw(img, window)
+		*/
 
 		gl.BindTexture(gl.TEXTURE_2D, texture)
 
